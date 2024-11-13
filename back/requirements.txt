@@ -1,0 +1,9 @@
+Flask-Cors
+Flask-Migrate
+Flask-SQLAlchemy
+marshmallow
+psycopg2-binary
+PyJWT
+python-dotenv
+SQLAlchemy
+Werkzeug
