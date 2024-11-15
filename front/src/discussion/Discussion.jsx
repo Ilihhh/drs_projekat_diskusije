@@ -44,7 +44,7 @@
 //       </div>
 //     </div>
 //   );
-// }
+// }import React, { useState } from "react";
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -164,9 +164,14 @@ export default function Discussion(props) {
               <div className="card-body">
                 <p className="card-text">
                   {comment}{" "}
-                  <span role="img" aria-label="wink" className="ms-2">
-                    😉
-                  </span>
+                  <a href="https://emoji.gg/emoji/6909_bigsmoke">
+                    <img
+                      src="https://cdn3.emoji.gg/emojis/6909_bigsmoke.png"
+                      width="64px"
+                      height="64px"
+                      alt="bigsmoke"
+                    />
+                  </a>
                 </p>
               </div>
             </div>
