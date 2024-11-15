@@ -11,12 +11,12 @@ export default function RegisterForm(props) {
       onSubmit={props.onSubmit}
       validationSchema={Yup.object({
         username: Yup.string().required("This field is required"),
-        firstName: Yup.string().required("This field is required"),
-        lastName: Yup.string().required("This field is required"),
+        first_name: Yup.string().required("This field is required"),
+        last_name: Yup.string().required("This field is required"),
         address: Yup.string().required("This field is required"),
         city: Yup.string().required("This field is required"),
         state: Yup.string().required("This field is required"),
-        phoneNumber: Yup.string()
+        phone_number: Yup.string()
           .required("This field is required"),
         email: Yup.string()
           .required("This field is required")
@@ -27,12 +27,12 @@ export default function RegisterForm(props) {
       {(formikProps) => (
         <Form>
           <TextField displayName="Username" field="username" type="text" />
-          <TextField displayName="First Name" field="firstName" type="text" />
-          <TextField displayName="Last Name" field="lastName" type="text" />
+          <TextField displayName="First Name" field="first_name" type="text" />
+          <TextField displayName="Last Name" field="last_name" type="text" />
           <TextField displayName="Address" field="address" type="text" />
           <TextField displayName="City" field="city" type="text" />
           <TextField displayName="State" field="state" type="text" />
-          <TextField displayName="Phone Number" field="phoneNumber" type="tel" />
+          <TextField displayName="Phone Number" field="phone_number" type="tel" />
           <TextField displayName="Email" field="email" type="text" />
           <TextField displayName="Password" field="password" type="password" />
 

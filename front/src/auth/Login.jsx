@@ -10,13 +10,8 @@ export default function Login() {
     async function login(credentials) {
         console.log("Logging in with credentials: ", credentials);
 
-        const mappedCredentials = {                     //Ovo mora da se radi jer je DEGENIRIK (Ilija Brdaric PR 55/2021) nazvao modele u pajton aplikaciji i polja u formi razlicito
-            email: credentials.email,
-            lozinka: credentials.password  
-        };
-
         try {
-            const response = await axios.post(urlLogin, mappedCredentials, {
+            const response = await axios.post(urlLogin, credentials, {
                 headers: {
                     "Content-Type": "application/json"
                 }

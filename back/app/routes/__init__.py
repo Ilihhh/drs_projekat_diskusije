@@ -1,4 +1,4 @@
-from .korisnici import korisnici_blueprint
+from .users import users_blueprint
 
 def initialize_routes(app):
-    app.register_blueprint(korisnici_blueprint)
+    app.register_blueprint(users_blueprint)

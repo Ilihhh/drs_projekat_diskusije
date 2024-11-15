@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify # type: ignore
 import jwt # type: ignore
-from ..models.korisnik import Korisnik
+from ..models.user import User
 from ..config import Config
 
 def token_required(f):
@@ -15,7 +15,7 @@ def token_required(f):
 
         try:
             decoded_token = jwt.decode(token, Config.SECRET_KEY, algorithms=["HS256"])
-            current_user = Korisnik.query.filter_by(korisnicko_ime=decoded_token["korisnicko_ime"]).first()
+            current_user = User.query.filter_by(korisnicko_ime=decoded_token["username"]).first()
         except Exception as e:
             return jsonify({"message": str(e)}), 403
 
