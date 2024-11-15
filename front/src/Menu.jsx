@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink } from "react-router-dom";
 
 export default function Menu() {
   return (
@@ -22,7 +22,7 @@ export default function Menu() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/objave">
+              <NavLink className="nav-link" to="/mydiscussions">
                 Moje Objave
               </NavLink>
             </li>
