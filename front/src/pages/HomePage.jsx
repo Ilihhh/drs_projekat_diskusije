@@ -1,5 +1,6 @@
 import React from "react";
 import Discussion from "../discussion/Discussion";
+import SearchAndCreate from "../discussion/SearchBar";
 
 export default function HomePage() {
   //const comments = ["Nigga", "MEL"];
@@ -18,6 +19,7 @@ export default function HomePage() {
         content="This is an example of how you can use Bootstrap within a React application. You can easily make responsive layouts and nice UI components."
         comments={comments}
       /> */}
+      <SearchAndCreate />
       <Discussion
         title="How to make your posts funnier?"
         author="Jane Doe"
