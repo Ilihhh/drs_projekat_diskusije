@@ -2,9 +2,14 @@ import axios from "axios";
 import LoginForm from "../forms/LoginForm";
 import { useNavigate } from "react-router-dom";
 import { urlLogin } from "../utils/endpoints";
+import { saveToken } from "./handleJWT";
+import { useContext } from "react";
+import AuthenticationContext from "./AuthenticationContext";
+import {getClaims} from "./handleJWT";
 
 export default function Login() {
 
+    const {update} = useContext(AuthenticationContext);
     const navigate = useNavigate();
 
     async function login(credentials) {
@@ -18,7 +23,9 @@ export default function Login() {
             });
 
             console.log("Login successful. Token: ", response.data.token);
-            localStorage.setItem("auth_token", response.data.token);                            //ovo treda se izmesti odavde 
+            // localStorage.setItem("auth_token", response.data.token);                            //ovo treda se izmesti odavde 
+            saveToken(response.data);
+            update(getClaims())
             navigate('/')
 
         } catch (error) {
