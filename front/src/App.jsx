@@ -4,9 +4,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import routes from "./route-config";
 import AuthenticationContext from "./auth/AuthenticationContext";
 import { getClaims } from "./auth/handleJWT";
+import configureInterceptor from "./utils/httpinterceptors"
 
-
-
+configureInterceptor();
 function App() {
 
   const [claims, setClaims] = useState([]);

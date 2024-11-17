@@ -40,7 +40,7 @@ export default function Menu() {
             <Authorized
               role="admin"
               authorized={<li className='nav-item'>
-                <NavLink className='nav-link' to="/approveregistration">
+                <NavLink className='nav-link' to="/approveusers">
                   Approve Registrations
                 </NavLink>
               </li>}

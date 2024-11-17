@@ -1,4 +1,4 @@
-from ..auth.auth import token_required
+from ..auth.auth import token_required, role_required
 from ..services.users_service import UsersService
 from flask import Blueprint, jsonify, request  # type: ignore
 from ..dtos.user_schema import UserSchema
@@ -7,8 +7,11 @@ from ..database import db
 
 users_blueprint = Blueprint('users', __name__)
 
+                                             
 @users_blueprint.route('/users', methods=['GET'])
-def get_users():
+@token_required                                                         #mora da stoji ispod blueprinta :)
+@role_required('admin')                                                 
+def get_users(current_user):                                            #mora da se stavi current_user zbog funkcije token_reqired koja prosledjuje ovo (iako nam ne treba)
     users = User.query.all()  # Fetch all users
     users_schema = UserSchema(many=True)  # many=True means we map multiple users
     return jsonify(users_schema.dump(users))  # Return serialized data
@@ -41,7 +44,7 @@ def login():
         return jsonify({"error": "Invalid credentials"}), 401  
     
 
-@users_blueprint.route('/protected', methods=['GET'])
-@token_required
-def protected(current_user):
-    return jsonify({"message": f"Hello {current_user.username}, your role is {current_user.role}"})
+# @users_blueprint.route('/protected', methods=['GET'])                         
+# @token_required
+# def protected(current_user):
+#     return jsonify({"message": f"Hello {current_user.username}, your role is {current_user.role}"})
