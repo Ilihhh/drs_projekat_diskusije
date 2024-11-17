@@ -33,7 +33,7 @@ export default function Menu() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/objave">
+              <NavLink className="nav-link" to="/mydiscussions">
                 My Discussions
               </NavLink>
             </li>

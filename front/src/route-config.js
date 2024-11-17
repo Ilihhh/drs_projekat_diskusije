@@ -11,7 +11,7 @@ const routes = [
     {path: '/login', element: Login},
     {path: '/', element: HomePage},
     {path: '*', element: RedirectToHomePage},
-    { path: "/mydiscussions", element: MyDiscussions },
+    {path: "/mydiscussions", element: MyDiscussions},
 ];
 
 export default routes;

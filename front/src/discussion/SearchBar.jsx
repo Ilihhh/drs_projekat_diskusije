@@ -1,46 +1,104 @@
 import React, { useState } from "react";
+import Button from "../utils/Button";
 
-export default function SearchAndCreate() {
+export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Funkcija za promenu pretrage
+  const [creatorFirstName, setCreatorFirstName] = useState("");
+  const [creatorLastName, setCreatorLastName] = useState("");
+  const [creatorAddress, setCreatorAddress] = useState("");
+  const [creatorEmail, setCreatorEmail] = useState("");
+  const [creatorUsername, setCreatorUsername] = useState("");
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+    const { name, value } = event.target;
+    switch (name) {
+      case "creatorFirstName":
+        setCreatorFirstName(value);
+        break;
+      case "creatorLastName":
+        setCreatorLastName(value);
+        break;
+      case "creatorAddress":
+        setCreatorAddress(value);
+        break;
+      case "creatorEmail":
+        setCreatorEmail(value);
+        break;
+      case "createUsername":
+        setCreatorUsername(value);
+        break;
+      default:
+        setSearchTerm(value);
+    }
   };
 
-  // Funkcija za simulaciju pretrage
   const handleSearch = () => {
-    console.log("Searching for:", searchTerm);
-    // Ovdje možeš dodati logiku za pretragu diskusija
-  };
-
-  // Funkcija za kreiranje nove diskusije
-  const handleCreateDiscussion = () => {
-    console.log("Creating a new discussion...");
-    // Ovdje možeš dodati logiku za kreiranje diskusije
+    console.log("Searching with parameters:");
+    console.log("Creator First Name:", creatorFirstName);
+    console.log("Creator Last Name:", creatorLastName);
+    console.log("Creator Address:", creatorAddress);
+    console.log("Creator Email:", creatorEmail);
+    console.log("Search Term:", searchTerm);
+    // Logic to perform search based on these parameters
   };
 
   return (
     <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex align-items-center gap-3">
         {/* Search Bar */}
-        <div className="d-flex">
-          <input
-            type="text"
-            className="form-control me-2"
-            placeholder="Search discussions..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          <button className="btn btn-primary" onClick={handleSearch}>
-            Search
-          </button>
-        </div>
+        <input
+          type="text"
+          name="creatorUsername"
+          className="form-control"
+          placeholder="Creator Username"
+          value={creatorUsername}
+          onChange={handleSearchChange}
+        />
+        <input
+          type="text"
+          name="creatorFirstName"
+          className="form-control"
+          placeholder="Creator First Name"
+          value={creatorFirstName}
+          onChange={handleSearchChange}
+        />
 
-        {/* Create Discussion Button */}
-        <button className="btn btn-success" onClick={handleCreateDiscussion}>
-          Create Discussion
-        </button>
+        <input
+          type="text"
+          name="creatorLastName"
+          className="form-control"
+          placeholder="Creator Last Name"
+          value={creatorLastName}
+          onChange={handleSearchChange}
+        />
+
+        <input
+          type="text"
+          name="creatorAddress"
+          className="form-control"
+          placeholder="Creator Address"
+          value={creatorAddress}
+          onChange={handleSearchChange}
+        />
+
+        <input
+          type="email"
+          name="creatorEmail"
+          className="form-control"
+          placeholder="Creator Email"
+          value={creatorEmail}
+          onChange={handleSearchChange}
+        />
+
+        <input
+          type="text"
+          name="searchTerm"
+          className="form-control"
+          placeholder="Search Topic"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+
+        <Button onClick={handleSearch}>Search</Button>
       </div>
     </div>
   );

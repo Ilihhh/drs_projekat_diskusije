@@ -1,25 +1,24 @@
 import React from "react";
 import Discussion from "../discussion/Discussion";
-import SearchAndCreate from "../discussion/SearchBar";
+import CreateLink from "../utils/CreateLink";
+import SearchBar from "../discussion/SearchBar";
 
 export default function HomePage() {
-  //const comments = ["Nigga", "MEL"];
   const comments = [
     "This is literally me 🙈",
     "I’m dying 😂",
     "10/10, would read again 🔥",
     "Big mood 😎",
   ];
+
   return (
-    <div>
-      {/* <Discussion
-        title="HOW TO NIGGA"
-        author="Joe Biden"
-        date="November 15, 2024"
-        content="This is an example of how you can use Bootstrap within a React application. You can easily make responsive layouts and nice UI components."
-        comments={comments}
-      /> */}
-      <SearchAndCreate />
+    <div className="container">
+      <CreateLink
+        to="/create-post"
+      >
+        + Create a Discussion
+      </CreateLink>
+      <SearchBar />
       <Discussion
         title="How to make your posts funnier?"
         author="Jane Doe"
