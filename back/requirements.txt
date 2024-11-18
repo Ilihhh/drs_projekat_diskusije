@@ -7,3 +7,4 @@ PyJWT
 python-dotenv
 SQLAlchemy
 Werkzeug
+flask_socketio

@@ -13,3 +13,6 @@ class UserSchema(Schema):
 
     # Password will not be serialized in the response
     password = fields.Str(load_only=True)
+
+    # Status field for registration requests
+    status = fields.Str(dump_only=True)  # Ensures the status is only returned, not updated via API

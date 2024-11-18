@@ -6,6 +6,8 @@ from ..config import Config  # Import Config class
 import re
 from datetime import datetime, timedelta
 import jwt  # type: ignore
+from .email_service import EmailService
+from ..socketio import socketio  # type: ignore # Instanciran u fajlu ..socketio.py
 
 class UsersService:
 
@@ -57,3 +59,31 @@ class UsersService:
     @staticmethod
     def check_password(user, password):
         return check_password_hash(user.password, password)
+
+    # New method to update user registration status
+    @staticmethod
+    def update_user_status(user_id, new_status):
+        # Fetch user from the database
+        user = User.query.get(user_id)
+
+        if not user:
+            return None, "User not found"
+
+        if new_status not in ["approved", "rejected"]:
+            return None, "Invalid status"
+
+        # Update user status
+        user.status = new_status
+        db.session.commit()
+
+        # Emit event via WebSocket
+        socketio.emit("registration_update", {"user_id": user.id, "status": user.status})
+
+        # Send email to the user about the status update
+        EmailService.send_email(
+            recipient=user.email,
+            subject=f"Your registration has been {new_status}",
+            body=f"Dear {user.first_name},\n\nYour registration status has been updated to {new_status}.\n\nBest regards,\nYour team"
+        )
+
+        return user, None  # Return updated user and no error

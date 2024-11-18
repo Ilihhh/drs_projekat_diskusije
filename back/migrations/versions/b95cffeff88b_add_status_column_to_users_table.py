@@ -1,8 +1,8 @@
-"""Initial
+"""Add status column to users table
 
-Revision ID: 8d58f419bde5
+Revision ID: b95cffeff88b
 Revises: 
-Create Date: 2024-11-15 12:09:33.677413
+Create Date: 2024-11-18 15:48:36.559427
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8d58f419bde5'
+revision = 'b95cffeff88b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,6 +35,7 @@ def upgrade():
     sa.Column('city', sa.String(length=50), nullable=True),
     sa.Column('country', sa.String(length=50), nullable=True),
     sa.Column('phone_number', sa.String(length=20), nullable=True),
+    sa.Column('status', sa.String(length=20), nullable=True),
     sa.Column('role', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
