@@ -1,15 +1,14 @@
-import { useContext } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import AuthenticationContext from './auth/AuthenticationContext';
-import Authorized from './auth/Authorize';
-import Button from './utils/Button'
-import { logout } from './auth/handleJWT';
+import { useContext } from "react";
+import { Link, NavLink } from "react-router-dom";
+import AuthenticationContext from "./auth/AuthenticationContext";
+import Authorized from "./auth/Authorize";
+import Button from "./utils/Button";
+import { logout } from "./auth/handleJWT";
 export default function Menu() {
-
   const { update, claims } = useContext(AuthenticationContext);
 
   function getUsername() {
-    return claims.filter(x => x.name === "username")[0]?.value;
+    return claims.filter((x) => x.name === "username")[0]?.value;
   }
 
   return (
@@ -39,12 +38,23 @@ export default function Menu() {
             </li>
             <Authorized
               role="admin"
-              authorized={<li className='nav-item'>
-                <NavLink className='nav-link' to="/approveusers">
-                  Approve Registrations
-                </NavLink>
-              </li>}
-
+              authorized={
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/approveusers">
+                    Approve Registrations
+                  </NavLink>
+                </li>
+              }
+            />
+            <Authorized
+              role="admin"
+              authorized={
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/topicmanagement">
+                    Topic Management
+                  </NavLink>
+                </li>
+              }
             />
           </ul>
 
@@ -53,7 +63,9 @@ export default function Menu() {
               authorized={
                 <>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/userProfile">{getUsername()}</NavLink>
+                    <NavLink className="nav-link" to="/userProfile">
+                      {getUsername()}
+                    </NavLink>
                   </li>
                   <li className="nav-item">
                     <Button
@@ -71,10 +83,14 @@ export default function Menu() {
               notAuthorized={
                 <>
                   <li className="nav-item">
-                    <Link to="/register" className="nav-link btn btn-link">Register</Link>
+                    <Link to="/register" className="nav-link btn btn-link">
+                      Register
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/login" className="nav-link btn btn-link">Login</Link>
+                    <Link to="/login" className="nav-link btn btn-link">
+                      Login
+                    </Link>
                   </li>
                 </>
               }
