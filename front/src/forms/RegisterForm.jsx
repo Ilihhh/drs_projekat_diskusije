@@ -15,7 +15,7 @@ export default function RegisterForm(props) {
         last_name: Yup.string().required("This field is required"),
         address: Yup.string().required("This field is required"),
         city: Yup.string().required("This field is required"),
-        state: Yup.string().required("This field is required"),
+        country: Yup.string().required("This field is required"),
         phone_number: Yup.string()
           .required("This field is required"),
         email: Yup.string()
@@ -31,7 +31,7 @@ export default function RegisterForm(props) {
           <TextField displayName="Last Name" field="last_name" type="text" />
           <TextField displayName="Address" field="address" type="text" />
           <TextField displayName="City" field="city" type="text" />
-          <TextField displayName="State" field="state" type="text" />
+          <TextField displayName="Country" field="country" type="text" />
           <TextField displayName="Phone Number" field="phone_number" type="tel" />
           <TextField displayName="Email" field="email" type="text" />
           <TextField displayName="Password" field="password" type="password" />
