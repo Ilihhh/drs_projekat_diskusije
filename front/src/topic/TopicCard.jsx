@@ -1,7 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // Importuj useNavigate
 import "../styles/TopicStyle.css";
 
-const TopicCard = ({ topic, onEdit, onDelete, onSelect, selected }) => {
+const TopicCard = ({ topic, onDelete, onSelect, selected }) => {
+  const navigate = useNavigate(); // Koristi useNavigate za navigaciju
+
+  const handleEdit = (id) => {
+    navigate(`/edit-topic/${id}`); // Navigiraj na stranicu za editovanje teme sa ID-jem
+  };
+
   return (
     <div
       className={`topic-card ${selected ? "selected" : ""}`}
@@ -13,8 +20,8 @@ const TopicCard = ({ topic, onEdit, onDelete, onSelect, selected }) => {
         <button
           className="edit-btn"
           onClick={(e) => {
-            e.stopPropagation();
-            onEdit(topic.id);
+            e.stopPropagation(); // Sprečavamo da klik na edit dugme selektuje karticu
+            handleEdit(topic.id); // Pozivamo handleEdit sa ID-jem teme
           }}
         >
           Edit

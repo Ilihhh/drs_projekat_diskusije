@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import TopicCard from "./TopicCard";
 import "../styles/TopicStyle.css"; // Osiguravamo da importujemo CSS
-import { Link } from "react-router-dom"; // Importujemo Link iz react-router-dom
+import { Link, useNavigate } from "react-router-dom"; // Importujemo Link i useNavigate
 import axios from "axios"; // Importujemo axios za slanje HTTP zahteva
 import { urlTopics } from "../utils/endpoints";
 
@@ -10,6 +10,7 @@ const TopicList = () => {
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [loading, setLoading] = useState(true); // Za praćenje statusa učitavanja
   const [error, setError] = useState(null); // Za praćenje grešaka
+  const navigate = useNavigate(); // Hook za navigaciju
 
   // Učitaj podatke sa backend-a
   useEffect(() => {
@@ -25,8 +26,10 @@ const TopicList = () => {
       });
   }, []); // Empty dependency array znači da se efekat poziva samo jednom prilikom mount-a komponente
 
+  // Funkcija koja će se pozvati prilikom klika na "Edit"
   const handleEdit = (id) => {
-    alert(`Edit topic with ID: ${id}`);
+    // Preusmeravanje korisnika na stranicu za editovanje teme sa ID-em teme
+    navigate(`/edit-topic/${id}`);
   };
 
   const handleDelete = (id) => {
@@ -96,7 +99,7 @@ const TopicList = () => {
           <TopicCard
             key={topic.id}
             topic={topic}
-            onEdit={handleEdit}
+            onEdit={handleEdit} // Prosljeđujemo handleEdit funkciju
             onDelete={handleDelete}
             onSelect={handleSelect}
             selected={selectedTopics.includes(topic.id)}

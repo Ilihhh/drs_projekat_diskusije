@@ -1,10 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 
-function CreateTopicForm() {
+function TopicForm() {
   const [title, setTitle] = useState(""); // Polje za unos naziva teme
   const [description, setDescription] = useState(""); // Polje za unos opisa
   const [error, setError] = useState(""); // Polje za prikazivanje grešaka
+  const [isEditing, setIsEditing] = useState(false); // Da li uređujemo postojeću temu
+
+  const { id } = useParams(); // Preuzimanje ID-ja teme iz URL-a
+  const navigate = useNavigate(); // Za navigaciju na početnu stranicu nakon uspešnog editovanja
+
+  // Učitaj podatke teme sa servera ako postoji ID
+  useEffect(() => {
+    if (id) {
+      console.log("Fetching data for topic with ID:", id); // Proveri ID
+      setIsEditing(true); // Ako postoji ID, uređujemo postojeću temu
+      axios
+        .get(`/topics/${id}`) // Poziv na backend da bi učitali podatke teme
+        .then((response) => {
+          const { name, description } = response.data; // Primaš 'name' umesto 'title'
+          console.log("Topic data loaded:", response.data); // Proveri podatke
+          setTitle(name); // Postavljamo 'name' iz odgovora u 'title' state
+          setDescription(description);
+        })
+        .catch((error) => {
+          console.error("Error loading topic:", error);
+          setError("There was an error loading the topic");
+        });
+    }
+  }, [id]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -18,30 +43,38 @@ function CreateTopicForm() {
     const authorId = 1; // Zameni sa stvarnim ID-om korisnika
     const creationDate = new Date().toISOString(); // Automatski dodeljujemo trenutni datum
 
-    // Pravimo objekat sa podacima koje šaljemo serveru
-    const newTopic = {
-      title,
+    const topicData = {
+      name: title, // Šaljemo 'name' na back-end, jer server očekuje 'name', a ne 'title'
       description,
       creation_date: creationDate,
       author_id: authorId,
     };
 
-    // Poziv API-a za kreiranje nove teme
-    axios
-      .post("/api/topics", newTopic)
+    // Ako uređujemo postojeću temu, šaljemo PUT zahtev
+    const apiCall = isEditing
+      ? axios.put(`/api/topics/${id}`, topicData) // PUT zahtev za update
+      : axios.post("/api/topics", topicData); // POST zahtev za kreiranje nove teme
+
+    apiCall
       .then((response) => {
-        console.log("Topic created:", response.data);
-        // Ovdje možete resetovati formu ili preusmeriti korisnika
+        console.log(
+          isEditing ? "Topic updated:" : "Topic created:",
+          response.data
+        );
+        navigate("/"); // Preusmeravamo na početnu stranicu nakon uspešnog unosa
       })
       .catch((error) => {
-        console.error("Error creating topic:", error);
-        setError("There was an error creating the topic");
+        console.error(
+          isEditing ? "Error updating topic:" : "Error creating topic:",
+          error
+        );
+        setError("There was an error processing the topic");
       });
   };
 
   return (
     <div className="container mt-5">
-      <h2>Create a New Topic</h2>
+      <h2>{isEditing ? "Edit Topic" : "Create Topic"}</h2>
       {error && <div className="alert alert-danger">{error}</div>}
 
       <form onSubmit={handleSubmit}>
@@ -52,9 +85,9 @@ function CreateTopicForm() {
           <input
             type="text"
             className="form-control"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            id="title" // Ovo je ID polja koje se koristi za unos naziva
+            value={title} // Ovdje se koristi title stanje
+            onChange={(e) => setTitle(e.target.value)} // Update stanje pri unosu
             required
           />
         </div>
@@ -74,11 +107,11 @@ function CreateTopicForm() {
         </div>
 
         <button type="submit" className="btn btn-primary">
-          Create Topic
+          {isEditing ? "Update Topic" : "Create Topic"}
         </button>
       </form>
     </div>
   );
 }
 
-export default CreateTopicForm;
+export default TopicForm;
