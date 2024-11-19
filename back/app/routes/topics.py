@@ -17,3 +17,18 @@ def get_all_topics(user):
     topics_data = topic_schema.dump(topics)
     
     return jsonify(topics_data), 200  # Vraća listu topika u JSON formatu
+
+@topics_blueprint.route('/topics/<int:id>', methods=['GET'])
+@token_required
+def get_topic_by_id(user, id):
+    # Pronalaženje topika sa određenim ID-jem
+    topic = Topic.query.get(id)
+
+    if topic is None:
+        return jsonify({"message": "Topic not found"}), 404  # Ako topik nije pronađen
+
+    # Serializacija podataka pomoću TopicSchema
+    topic_schema = TopicSchema()
+    topic_data = topic_schema.dump(topic)
+    
+    return jsonify(topic_data), 200  # Vraća pojedinačan topik u JSON formatu

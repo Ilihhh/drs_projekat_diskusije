@@ -1,29 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TopicCard from "./TopicCard";
-import "../styles/TopicStyle.css";
+import "../styles/TopicStyle.css"; // Osiguravamo da importujemo CSS
+import { Link, useNavigate } from "react-router-dom"; // Importujemo Link i useNavigate
+import axios from "axios"; // Importujemo axios za slanje HTTP zahteva
+import { urlTopics } from "../utils/endpoints";
 
 const TopicList = () => {
-  const [topics, setTopics] = useState([
-    {
-      id: 1,
-      name: "Novi Sad",
-      description: "Novi Sad drugi najveci grad u Republici Srbiji",
-    },
-    { id: 2, name: "Beograd", description: "Beograd je glavni grad Srbije" },
-    { id: 3, name: "Niš", description: "Niš je treći najveći grad u Srbiji" },
-    {
-      id: 4,
-      name: "Novi Sad",
-      description: "Novi Sad drugi najveci grad u Republici Srbiji",
-    },
-    { id: 5, name: "Beograd", description: "Beograd je glavni grad Srbije" },
-    { id: 6, name: "Niš", description: "Niš je treći najveći grad u Srbiji" },
-  ]);
-
+  const [topics, setTopics] = useState([]); // Početno stanje sa praznom listom
   const [selectedTopics, setSelectedTopics] = useState([]);
+  const [loading, setLoading] = useState(true); // Za praćenje statusa učitavanja
+  const [error, setError] = useState(null); // Za praćenje grešaka
+  const navigate = useNavigate(); // Hook za navigaciju
 
+  // Učitaj podatke sa backend-a
+  useEffect(() => {
+    axios
+      .get(urlTopics) // Poziv na backend za dobijanje svih topika
+      .then((response) => {
+        setTopics(response.data); // Postavljamo podatke u stanje
+        setLoading(false); // Učitavanje je završeno
+      })
+      .catch((err) => {
+        setError("Failed to load topics"); // Postavljamo grešku u slučaju neuspeha
+        setLoading(false); // Učitavanje je završeno
+      });
+  }, []); // Empty dependency array znači da se efekat poziva samo jednom prilikom mount-a komponente
+
+  // Funkcija koja će se pozvati prilikom klika na "Edit"
   const handleEdit = (id) => {
-    alert(`Edit topic with ID: ${id}`);
+    // Preusmeravanje korisnika na stranicu za editovanje teme sa ID-em teme
+    navigate(`/edit-topic/${id}`);
   };
 
   const handleDelete = (id) => {
@@ -54,11 +60,17 @@ const TopicList = () => {
     setSelectedTopics([]);
   };
 
+  if (loading) {
+    return <div>Loading...</div>; // Prikazivanje poruke dok se podaci učitavaju
+  }
+
+  if (error) {
+    return <div>{error}</div>; // Prikazivanje greške u slučaju neuspešnog učitavanja
+  }
+
   return (
     <div>
-      <div
-        style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}
-      >
+      <div className="button-group">
         <button
           onClick={handleSelectAll}
           className="select-all-btn" // Dodali smo klasu za Select All dugme
@@ -74,6 +86,12 @@ const TopicList = () => {
         >
           Delete Selected
         </button>
+
+        {/* Dugme za kreiranje nove teme */}
+        <Link to="/create-topic">
+          <button className="btn-create-topic">Create Topic</button>{" "}
+          {/* Koristimo novu klasu */}
+        </Link>
       </div>
 
       <div className="topic-list">
@@ -81,7 +99,7 @@ const TopicList = () => {
           <TopicCard
             key={topic.id}
             topic={topic}
-            onEdit={handleEdit}
+            onEdit={handleEdit} // Prosljeđujemo handleEdit funkciju
             onDelete={handleDelete}
             onSelect={handleSelect}
             selected={selectedTopics.includes(topic.id)}
