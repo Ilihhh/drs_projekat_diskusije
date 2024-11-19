@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Discussion from "../discussion/Discussion"; // Putanja do Discussion komponente
+import { urlAllDiscussions } from "../utils/endpoints";
 
 export default function HomePage() {
   const [discussions, setDiscussions] = useState([]); // Inicijalizacija discussions stanja
@@ -8,7 +9,7 @@ export default function HomePage() {
   useEffect(() => {
     // Poziv za preuzimanje diskusija sa servera
     axios
-      .get("/api/discussions") // Putanja za API poziv
+      .get(urlAllDiscussions) // Putanja za API poziv
       .then((response) => {
         setDiscussions(response.data); // Postavljanje podataka u stanje
       })

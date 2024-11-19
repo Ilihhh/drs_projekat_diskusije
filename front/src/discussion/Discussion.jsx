@@ -1,8 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 import Authorized from "../auth/Authorize";
+import { urlAllDiscussions } from "../utils/endpoints";
 
-export default function Discussion({
+export default function DiscussionPage() {
+  const [discussions, setDiscussions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDiscussions = async () => {
+      try {
+        
+        const response = await axios.get(urlAllDiscussions, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setDiscussions(response.data);
+      } catch (err) {
+        console.error("Error fetching discussions:", err);
+        setError("Failed to fetch discussions. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDiscussions();
+  }, []);
+
+  if (loading) return <div>Loading discussions...</div>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
+
+  return (
+    <div className="container mt-4">
+      {discussions.length === 0 ? (
+        <div className="alert alert-info">No discussions available.</div>
+      ) : (
+        discussions.map((discussion, index) => (
+          <Discussion
+            key={index}
+            title={discussion.title}
+            author={discussion.author}
+            date={discussion.date}
+            content={discussion.content}
+            description={discussion.description}
+            comments={discussion.comments || []}
+          />
+        ))
+      )}
+    </div>
+  );
+}
+
+function Discussion({
   title,
   author,
   date,
@@ -35,7 +85,7 @@ export default function Discussion({
           </div>
         </div>
 
-        {/* Glasanje */}
+        {/* Voting */}
         <div className="text-center">
           <button
             className={`btn ${
@@ -57,7 +107,7 @@ export default function Discussion({
         </div>
       </div>
 
-      {/* Prikaz opisa teme */}
+      {/* Topic Description */}
       {description && (
         <div className="card-body bg-light">
           <h6>Topic Description:</h6>
@@ -65,12 +115,12 @@ export default function Discussion({
         </div>
       )}
 
-      {/* Sadržaj posta */}
+      {/* Post Content */}
       <div className="card-body bg-light">
         <p className="card-text">{content}</p>
       </div>
 
-      {/* Komentari */}
+      {/* Comments */}
       <div className="card-footer">
         <h6>Comments</h6>
         {comments.map((comment, index) => (
@@ -88,7 +138,7 @@ export default function Discussion({
         </button>
       </div>
 
-      {/* Admin funkcionalnosti: Kreiranje, Izmena i Brisanje */}
+      {/* Admin Functionalities */}
       <Authorized
         role="admin"
         authorized={
