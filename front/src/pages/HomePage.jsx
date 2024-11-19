@@ -2,7 +2,6 @@ import React from "react";
 import Discussion from "../discussion/Discussion";
 import CreateLink from "../utils/CreateLink";
 import SearchBar from "../discussion/SearchBar";
-import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const comments = [

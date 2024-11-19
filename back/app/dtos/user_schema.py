@@ -10,6 +10,7 @@ class UserSchema(Schema):
     city = fields.Str()
     country = fields.Str()
     phone_number = fields.Str()
+    address = fields.Str()  # Dodato polje za adresu
 
     # Password will not be serialized in the response
     password = fields.Str(load_only=True)

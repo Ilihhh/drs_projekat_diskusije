@@ -24,14 +24,22 @@ export function getClaims() {
     const token = localStorage.getItem(tokenKey);
 
     if (!token) {
-        console.log("molim")
+        console.log("Nema tokena");
         return [];
     }
 
     const expiration = localStorage.getItem(expirationKey);
-    const expirationDate = new Date(expiration);
+    if (!expiration) {
+        console.log("Nema expiration vrednosti");
+        return [];
+    }
 
-    if (expirationDate <= new Date()) {
+    // Pretvori expiration u milisekunde (pomnoženo sa 1000)
+    const expirationDate = new Date(parseInt(expiration) * 1000);
+    const currentDate = new Date();
+
+    // Poredi datum isteka sa trenutnim vremenom
+    if (expirationDate <= currentDate) {
         logout();
         console.log("token je istekao");
         return []; // Token je istekao
@@ -45,6 +53,7 @@ export function getClaims() {
 
     return response;
 }
+
 
 export function logout() {
     localStorage.removeItem(tokenKey);
