@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { io } from "socket.io-client"; // Importuj socket.io-client
 import Loading from "../utils/Loading";
 
 export default function ApproveUsers() {
@@ -10,8 +11,8 @@ export default function ApproveUsers() {
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await axios.get("/users"); // radi testa se dobavljaju svi korisnici
-        setUsers(response.data); 
+        const response = await axios.get("/registration-requests"); // Dobavljanje korisnika sa statusom "pending"
+        setUsers(response.data);
       } catch (err) {
         setError("Failed to fetch users");
       } finally {
@@ -20,16 +21,48 @@ export default function ApproveUsers() {
     }
 
     fetchUsers();
+
+    // WebSocket konekcija
+    const socket = io("http://localhost:5000"); 
+
+    socket.on("user-status-changed", (updatedUser) => {
+      // Kada server pošalje događaj o promeni statusa korisnika
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === updatedUser.id ? { ...user, status: updatedUser.status } : user
+        )
+      );
+    });
+
+    return () => {
+      socket.disconnect(); // Očistiti konekciju prilikom uklanjanja komponente
+    };
   }, []);
 
-  const handleAccept = (userId) => {
-    // Funkcija za prihvatanje korisnika (za implementaciju)
-    console.log(`User ${userId} accepted`);
+  const handleAccept = async (userId) => {
+    try {
+      await axios.put(`/update-registration/${userId}`, {
+        status: "approved", // Slanje statusa kao 'approved'
+      });
+      // Nakon što je korisnik prihvaćen, filtriramo ga iz liste korisnika
+      setUsers(users.filter(user => user.id !== userId));
+      console.log(`User ${userId} accepted`);
+    } catch (err) {
+      setError("Failed to accept user");
+    }
   };
 
-  const handleReject = (userId) => {
-    // Funkcija za odbijanje korisnika (za implementaciju)
-    console.log(`User ${userId} rejected`);
+  const handleReject = async (userId) => {
+    try {
+      await axios.put(`/update-registration/${userId}`, {
+        status: "rejected", // Slanje statusa kao 'rejected'
+      });
+      // Nakon što je korisnik odbijen, filtriramo ga iz liste korisnika
+      setUsers(users.filter(user => user.id !== userId));
+      console.log(`User ${userId} rejected`);
+    } catch (err) {
+      setError("Failed to reject user");
+    }
   };
 
   if (loading) return <Loading />;

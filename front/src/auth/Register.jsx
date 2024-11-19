@@ -41,7 +41,7 @@ export default function Register() {
           last_name: "",
           address: "",
           city: "",
-          state: "",
+          country: "",
           phone_number: "",
           email: "",
           password: "",

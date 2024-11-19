@@ -12,6 +12,8 @@ class User(db.Model):
     city = db.Column(db.String(50))
     country = db.Column(db.String(50))
     phone_number = db.Column(db.String(20))
+    status = db.Column(db.String(20), default="pending")  # pending, approved, rejected
+
     
     # Column to store role
     role = db.Column(db.String(50), nullable=False, default="user")  # Example: 'admin', 'user', etc.

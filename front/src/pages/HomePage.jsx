@@ -1,31 +1,37 @@
-import React from "react";
-import Discussion from "../discussion/Discussion";
-import CreateLink from "../utils/CreateLink";
-import SearchBar from "../discussion/SearchBar";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Discussion from "../discussion/Discussion"; // Putanja do Discussion komponente
+import { urlAllDiscussions } from "../utils/endpoints";
 
 export default function HomePage() {
-  const comments = [
-    "This is literally me 🙈",
-    "I’m dying 😂",
-    "10/10, would read again 🔥",
-    "Big mood 😎",
-  ];
+  const [discussions, setDiscussions] = useState([]); // Inicijalizacija discussions stanja
+
+  useEffect(() => {
+    // Poziv za preuzimanje diskusija sa servera
+    axios
+      .get(urlAllDiscussions) // Putanja za API poziv
+      .then((response) => {
+        setDiscussions(response.data); // Postavljanje podataka u stanje
+      })
+      .catch((error) => {
+        console.error("Error fetching discussions:", error);
+      });
+  }, []); // useEffect se pokreće samo jednom prilikom učitavanja komponente
 
   return (
-    <div className="container">
-      <CreateLink
-        to="/create-post"
-      >
-        + Create a Discussion
-      </CreateLink>
-      <SearchBar />
-      <Discussion
-        title="How to make your posts funnier?"
-        author="Jane Doe"
-        date="November 15, 2024"
-        content="Ever wondered how to add a little bit of humor to your online posts? Here are some tips: 1. Use emojis, 2. Use memes, 3. Be yourself and don't be afraid to be a little silly!"
-        comments={comments}
-      />
+    <div className="row">
+      {discussions.map((discussion) => (
+        <div key={discussion.id} className="col-md-4">
+          <Discussion
+            title={discussion.title}
+            author={discussion.author}
+            date={discussion.date}
+            content={discussion.content}
+            description={discussion.description} // Prosleđujemo description
+            comments={discussion.comments}
+          />
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,0 +1,119 @@
+/* Stilizacija kartica */
+.topic-card {
+  width: 300px; /* Povećali smo širinu kartica */
+  height: 400px; /* Povećali smo visinu kartica */
+  background-color: #f0f0f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* Vertikalna orijentacija */
+  justify-content: space-between;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Promena boje kada je kartica selektovana */
+.topic-card.selected {
+  background-color: #d4edda; /* svetlo zelena */
+  border: 2px solid #28a745; /* zelena ivica */
+}
+
+/* Stilizacija naslova */
+.topic-card h3 {
+  font-size: 1.6rem; /* Veći font za ime */
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Stilizacija opisa */
+.topic-card p {
+  font-size: 1rem;
+  color: #555;
+  flex-grow: 1; /* Da opis zauzima prostor */
+}
+
+/* Stilizacija dugmadi unutar kartica */
+.topic-card button {
+  width: 100px;
+  height: 35px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  margin-right: 10px;
+}
+
+/* Edit dugme - hover efekat žute boje */
+.topic-card .edit-btn:hover {
+  background-color: #ffc107; /* Žuta boja pri hoveru */
+}
+
+/* Delete dugme - hover efekat crvene boje */
+.topic-card .delete-btn:hover {
+  background-color: #dc3545; /* Crvena boja pri hoveru */
+}
+
+/* Stilizacija liste kartica */
+.topic-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+/* Stilizacija dugmadi za selektovanje svih kartica - SELECT ALL */
+.select-all-btn {
+  padding: 10px 20px;
+  background-color: #007bff; /* Plava boja za Select All */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+  margin-right: 15px;
+  margin-top: 20px;
+}
+
+/* Hover efekat - žuta boja za Select All */
+.select-all-btn:hover {
+  background-color: #ffc107; /* Žuta boja pri hoveru */
+}
+
+.select-all-btn:disabled {
+  background-color: #e0e0e0; /* Svetla boja kada je dugme onemogućeno */
+  cursor: not-allowed;
+}
+
+/* Stilizacija dugmadi za brisanje selektovanih kartica - DELETE SELECTED */
+.delete-selected-btn {
+  padding: 10px 20px;
+  background-color: #007bff; /* Plava boja za Delete */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+/* Hover efekat - crvena boja za Delete Selected */
+.delete-selected-btn:hover {
+  background-color: #dc3545; /* Crvena boja pri hoveru */
+}
+
+.delete-selected-btn:disabled {
+  background-color: #e0e0e0; /* Svetla boja kada je dugme onemogućeno */
+  cursor: not-allowed;
+}
+
+/* Dodatni stil za dugmadi koje nisu selektovane */
+button:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
