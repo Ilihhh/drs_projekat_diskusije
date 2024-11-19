@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import RegisterForm from "../forms/RegisterForm";
+import RegisterEditForm from "../forms/RegisterEditForm";
 import { urlRegister } from "../utils/endpoints";
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +34,8 @@ export default function Register() {
   return (
     <>
       <h3>Register</h3>
-      <RegisterForm
+      <RegisterEditForm
+        edit={false}
         model={{
           username: "",
           first_name: "",

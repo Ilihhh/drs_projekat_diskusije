@@ -69,7 +69,7 @@ export default function Menu() {
               authorized={
                 <>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/userProfile">
+                    <NavLink className="nav-link" to="/userinfo">
                       {getUsername()}
                     </NavLink>
                   </li>

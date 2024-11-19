@@ -4,7 +4,7 @@ import TextField from "./TextField";
 import Button from "../utils/Button";
 import { Link } from "react-router-dom";
 
-export default function RegisterForm(props) {
+export default function RegisterEditForm(props) {
   return (
     <Formik
       initialValues={props.model}
@@ -21,7 +21,7 @@ export default function RegisterForm(props) {
         email: Yup.string()
           .required("This field is required")
           .email("You have to insert valid email"),
-        password: Yup.string().required("This field is required"),
+        password: props.edit? Yup.string() : Yup.string().required("This field is required"),
       })}
     >
       {(formikProps) => (
@@ -37,7 +37,7 @@ export default function RegisterForm(props) {
           <TextField displayName="Password" field="password" type="password" />
 
           <Button disabled={formikProps.isSubmitting} type="submit">
-            Register
+            Confirm
           </Button>
           <Link className="btn btn-secondary" to="/">
             Cancel

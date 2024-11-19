@@ -5,6 +5,5 @@ export const urlDiscussions = `${baseURL}/mydiscussions`;
 export const urlAllDiscussions = `${baseURL}/discussions`;
 export const urlTopics = `${baseURL}/topics`;
 export const urlTopicManagement = `${baseURL}/topicmanagement`;
-
-
-
+export const urlUserInfo = `${baseURL}/userinfo`
+export const urlUserEdit = `${baseURL}/edituser`

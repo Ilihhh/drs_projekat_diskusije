@@ -7,6 +7,8 @@ import ApproveUsers from "./users/ApproveUsers";
 import RedirectToHomePage from "./utils/RedirectToHomePage";
 import DiscussionForm from "./forms/DiscussionForm";
 import TopicForm from "./forms/TopicForm";
+import EditUser from "./users/EditUser";
+import UserInfo from "./users/UserInfo";
 
 const routes = [
   { path: "/approveusers", element: ApproveUsers },
@@ -19,6 +21,8 @@ const routes = [
   { path: "/topicmanagement", element: TopicPage },
   { path: "/create-topic", element: TopicForm },
   { path: "/edit-topic/:id", element: TopicForm },
+  { path: "/edituser", element: EditUser },
+  { path: "/userinfo", element: UserInfo}
 ];
 
 export default routes;
