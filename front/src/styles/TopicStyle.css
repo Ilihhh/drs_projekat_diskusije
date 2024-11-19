@@ -65,18 +65,27 @@
   justify-content: space-evenly;
 }
 
+/* Stilizacija div-a koji sadrži dugmadi za Select All, Delete Selected i Create Topic */
+.button-group {
+  display: flex;
+  gap: 10px; /* Manji razmak između dugmadi */
+  align-items: center; /* Poravnanje dugmadi po vertikali */
+  margin-bottom: 20px; /* Razmak između dugmadi i liste topika */
+}
+
 /* Stilizacija dugmadi za selektovanje svih kartica - SELECT ALL */
-.select-all-btn {
+.select-all-btn,
+.delete-selected-btn,
+.btn-create-topic {
   padding: 10px 20px;
-  background-color: #007bff; /* Plava boja za Select All */
+  background-color: #007bff; /* Plava boja */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1.1rem;
-  transition: background-color 0.3s ease;
-  margin-right: 15px;
-  margin-top: 20px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-right: 10px; /* Manji razmak između dugmadi */
 }
 
 /* Hover efekat - žuta boja za Select All */
@@ -84,36 +93,28 @@
   background-color: #ffc107; /* Žuta boja pri hoveru */
 }
 
-.select-all-btn:disabled {
-  background-color: #e0e0e0; /* Svetla boja kada je dugme onemogućeno */
-  cursor: not-allowed;
-}
-
-/* Stilizacija dugmadi za brisanje selektovanih kartica - DELETE SELECTED */
-.delete-selected-btn {
-  padding: 10px 20px;
-  background-color: #007bff; /* Plava boja za Delete */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: background-color 0.3s ease;
-  margin-top: 20px;
-}
-
 /* Hover efekat - crvena boja za Delete Selected */
 .delete-selected-btn:hover {
   background-color: #dc3545; /* Crvena boja pri hoveru */
 }
 
-.delete-selected-btn:disabled {
+/* Hover efekat - zelena boja za Create Topic */
+.btn-create-topic:hover {
+  background-color: #28a745; /* Zelena boja pri hoveru */
+  transform: scale(1.05); /* Blagi efekat uvećanja */
+}
+
+/* Stilizacija dugmadi za selektovanje svih kartica - SELECT ALL */
+.select-all-btn:disabled,
+.delete-selected-btn:disabled,
+.btn-create-topic:disabled {
   background-color: #e0e0e0; /* Svetla boja kada je dugme onemogućeno */
   cursor: not-allowed;
 }
 
-/* Dodatni stil za dugmadi koje nisu selektovane */
-button:disabled {
-  background-color: #e0e0e0;
-  cursor: not-allowed;
+/* Stilizacija liste kartica */
+.topic-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }
