@@ -13,8 +13,14 @@ class Discussion(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'), nullable=False)
 
-    # Relationship to Comments
+    # Relationships
     comments = db.relationship('Comment', backref='discussion', lazy=True)
-    
+
+    def get_likes_count(self):
+        return len([reaction for reaction in self.reactions if reaction.reaction == "like"])
+
+    def get_dislikes_count(self):
+        return len([reaction for reaction in self.reactions if reaction.reaction == "dislike"])
+
     def __repr__(self):
         return f"<Discussion {self.title}>"
