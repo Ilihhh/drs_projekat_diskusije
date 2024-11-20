@@ -9,22 +9,21 @@ export default function Discussion({
   text,
   description,
   comments,
+  likes_count,
+  dislikes_count
 }) {
-  const [votes, setVotes] = useState(0);
   const [clicked, setClicked] = useState(false);
   const [newComment, setNewComment] = useState(""); // Stanje za novi komentar
   const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
 
+
   const handleVote = (voteType) => {
     if (voteType === "upvote") {
-      setVotes(votes + 1);
       setClicked(true);
     } else if (voteType === "downvote") {
-      setVotes(votes - 1);
       setClicked(true);
     }
-  };
-
+  }
   const handleAddComment = () => {
     if (newComment.trim()) {
       setAllComments([...allComments, newComment]);
@@ -33,6 +32,7 @@ export default function Discussion({
     }
   };
 
+
   return (
     <div className="card shadow-lg rounded mb-4">
       <div className="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
@@ -40,7 +40,7 @@ export default function Discussion({
           <div>
             <h5 className="card-title">{title}</h5>
             <p className="card-subtitle text-muted">
-              Posted by {author} on {creation_date.replace("T", " ")}
+              Posted by {author} on {creation_date ? creation_date.replace("T", " ") : null}
             </p>
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function Discussion({
           >
             👍
           </button>
-          <div>{votes}</div>
+          <div>{likes_count-dislikes_count}</div>
           <button
             className={`btn ${
               clicked ? "btn-danger" : "btn-outline-danger"

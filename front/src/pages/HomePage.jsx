@@ -34,8 +34,10 @@ export default function HomePage() {
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
-        discussions.map((discussion, index) => (
-          <Discussion
+        discussions.map((discussion, index) => {
+          console.log(discussion);
+
+          return <Discussion
             key={index}
             title={discussion.title}
             author={discussion.author}
@@ -43,8 +45,11 @@ export default function HomePage() {
             text={discussion.text}
             description={discussion.description}
             comments={discussion.comments || []}
+            likes_count={discussion.likes_count}
+            dislikes_count={discussion.dislikes_count
+            }
           />
-        ))
+})
       )}
     </div>
   );
