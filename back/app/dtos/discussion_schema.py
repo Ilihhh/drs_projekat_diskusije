@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields  # type: ignore
+from marshmallow import Schema, fields # type: ignore
 from datetime import datetime
 from ..dtos.topic_schema import TopicSchema
 
@@ -12,4 +12,16 @@ class DiscussionSchema(Schema):
     comments = fields.List(fields.Nested('CommentSchema', exclude=('discussion',)))
 
     # Dodavanje povezane teme
-    topic = fields.Nested(TopicSchema, dump_only=True) 
+    topic = fields.Nested(TopicSchema, dump_only=True)
+
+    # Dodavanje broja lajkova i dislajkova
+    likes_count = fields.Method("get_likes_count", dump_only=True)
+    dislikes_count = fields.Method("get_dislikes_count", dump_only=True)
+
+    def get_likes_count(self, obj):
+        """Broj lajkova za diskusiju."""
+        return obj.get_likes_count()
+
+    def get_dislikes_count(self, obj):
+        """Broj dislajkova za diskusiju."""
+        return obj.get_dislikes_count()

@@ -1,37 +1,56 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Discussion from "../discussion/Discussion"; // Putanja do Discussion komponente
+import { useState, useEffect } from "react";
+import Discussion from "../discussion/Discussion";
 import { urlAllDiscussions } from "../utils/endpoints";
+import axios from "axios";
 
 export default function HomePage() {
-  const [discussions, setDiscussions] = useState([]); // Inicijalizacija discussions stanja
+  const [discussions, setDiscussions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Poziv za preuzimanje diskusija sa servera
-    axios
-      .get(urlAllDiscussions) // Putanja za API poziv
-      .then((response) => {
-        setDiscussions(response.data); // Postavljanje podataka u stanje
-      })
-      .catch((error) => {
-        console.error("Error fetching discussions:", error);
-      });
-  }, []); // useEffect se pokreće samo jednom prilikom učitavanja komponente
+    const fetchDiscussions = async () => {
+      try {
+        const response = await axios.get(urlAllDiscussions, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setDiscussions(response.data);
+      } catch (err) {
+        console.error("Error fetching discussions:", err);
+        setError("Failed to fetch discussions. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDiscussions();
+  }, []);
+
+  if (loading) return <div>Loading discussions...</div>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="row">
-      {discussions.map((discussion) => (
-        <div key={discussion.id} className="col-md-4">
-          <Discussion
+    <div className="container mt-4">
+      {discussions.length === 0 ? (
+        <div className="alert alert-info">No discussions available.</div>
+      ) : (
+        discussions.map((discussion, index) => {
+          console.log(discussion);
+
+          return <Discussion
+            key={index}
             title={discussion.title}
             author={discussion.author}
-            date={discussion.date}
-            content={discussion.content}
-            description={discussion.description} // Prosleđujemo description
-            comments={discussion.comments}
+            creation_date={discussion.creation_date}
+            text={discussion.text}
+            description={discussion.description}
+            comments={discussion.comments || []}
+            likes_count={discussion.likes_count}
+            dislikes_count={discussion.dislikes_count
+            }
           />
-        </div>
-      ))}
+})
+      )}
     </div>
   );
 }

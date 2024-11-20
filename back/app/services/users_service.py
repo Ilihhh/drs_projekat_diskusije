@@ -87,3 +87,44 @@ class UsersService:
         )
 
         return user, None  # Return updated user and no error
+
+
+    @staticmethod
+    def update_user_data(current_user, data):
+        # Pronalazimo korisnika iz baze
+        user = User.query.get(current_user.id)
+        if not user:
+            return None, "User not found"
+        
+        # Ažuriramo podatke korisnika
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
+        user.email = data.get('email', user.email)
+        user.username = data.get('username', user.username)  # Ovaj deo ažurira korisničko ime
+        user.city = data.get('city', user.city)
+        user.country = data.get('country', user.country)
+        user.phone_number = data.get('phone_number', user.phone_number)
+        user.address = data.get('address', user.address)
+        
+        # Ažuriranje lozinke ako je dostavljena i nije prazan string
+        new_password = data.get('password')
+        if new_password and new_password.strip():
+            user.password = generate_password_hash(new_password)
+
+        # Provera da li korisničko ime već postoji
+        if data.get('username'):
+            existing_user = User.query.filter_by(username=data['username']).first()
+            if existing_user and existing_user.id != user.id:
+                return None, "Username already exists"
+
+        # Čuvanje promena u bazi
+        try:
+            db.session.commit()
+            
+            # Ako se menja korisničko ime, treba generisati novi token
+            token = UsersService.create_jwt_token(user)
+            return user, token
+        
+        except Exception as e:
+            db.session.rollback()
+            return None, str(e)

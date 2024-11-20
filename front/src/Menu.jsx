@@ -1,11 +1,13 @@
 import { useContext } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom"; // Uvezi useNavigate
 import AuthenticationContext from "./auth/AuthenticationContext";
 import Authorized from "./auth/Authorize";
 import Button from "./utils/Button";
 import { logout } from "./auth/handleJWT";
+
 export default function Menu() {
   const { update, claims } = useContext(AuthenticationContext);
+  const navigate = useNavigate(); // Inicijalizuj useNavigate
 
   function getUsername() {
     return claims.filter((x) => x.name === "username")[0]?.value;
@@ -31,11 +33,15 @@ export default function Menu() {
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/mydiscussions">
-                My Discussions
-              </NavLink>
-            </li>
+            <Authorized
+              authorized={
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/mydiscussions">
+                    My Discussions
+                  </NavLink>
+                </li>
+              }
+            />
             <Authorized
               role="admin"
               authorized={
@@ -63,15 +69,16 @@ export default function Menu() {
               authorized={
                 <>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/userProfile">
+                    <NavLink className="nav-link" to="/userinfo">
                       {getUsername()}
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <Button
                       onClick={() => {
-                        logout();
-                        update([]);
+                        logout(); // Poziv na logout
+                        update([]); // Ažuriraj stanje u kontekstu
+                        navigate("/"); // Preusmeri korisnika na početnu stranicu
                       }}
                       className="nav-link btn btn-link"
                     >

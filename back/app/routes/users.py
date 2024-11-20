@@ -80,3 +80,34 @@ def update_registration_status(current_user, user_id):
 
     return jsonify({"message": "User status updated", "user": user.id}), 200
 
+
+
+@users_blueprint.route('/userinfo', methods=['GET'])
+@token_required
+def get_user_info(current_user):
+    """
+    Dohvata informacije o trenutnom korisniku na osnovu JWT tokena.
+    """
+    user_schema = UserSchema()  # Kreiramo instancu šeme za serializaciju
+    return jsonify(user_schema.dump(current_user)), 200
+
+
+@users_blueprint.route('/edituser', methods=['PUT'])
+@token_required
+def edit_user(current_user):
+    """
+    Ažurira korisničke podatke i šalje novi token sa ažuriranim podacima.
+    """
+    data = request.get_json()
+
+    # Proveravamo da li korisnik pokušava da menja svoje podatke
+    if current_user.id != data.get('id'):
+        return jsonify({"error": "You are not authorized to edit this user."}), 403
+
+    # Pozivamo metodu iz UsersService za ažuriranje podataka
+    user, token_or_error = UsersService.update_user_data(current_user, data)
+    
+    if user:
+        return jsonify({"message": "User updated successfully", "token": token_or_error}), 200
+    else:
+        return jsonify({"error": token_or_error}), 400

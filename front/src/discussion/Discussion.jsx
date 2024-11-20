@@ -1,77 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
 import Authorized from "../auth/Authorize";
-import { urlAllDiscussions } from "../utils/endpoints";
 
-export default function DiscussionPage() {
-  const [discussions, setDiscussions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchDiscussions = async () => {
-      try {
-        
-        const response = await axios.get(urlAllDiscussions, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        setDiscussions(response.data);
-      } catch (err) {
-        console.error("Error fetching discussions:", err);
-        setError("Failed to fetch discussions. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDiscussions();
-  }, []);
-
-  if (loading) return <div>Loading discussions...</div>;
-  if (error) return <div className="alert alert-danger">{error}</div>;
-
-  return (
-    <div className="container mt-4">
-      {discussions.length === 0 ? (
-        <div className="alert alert-info">No discussions available.</div>
-      ) : (
-        discussions.map((discussion, index) => (
-          <Discussion
-            key={index}
-            title={discussion.title}
-            author={discussion.author}
-            date={discussion.date}
-            content={discussion.content}
-            description={discussion.description}
-            comments={discussion.comments || []}
-          />
-        ))
-      )}
-    </div>
-  );
-}
-
-function Discussion({
+export default function Discussion({
   title,
   author,
-  date,
-  content,
+  creation_date,
+  text,
   description,
   comments,
+  likes_count,
+  dislikes_count
 }) {
-  const [votes, setVotes] = useState(0);
   const [clicked, setClicked] = useState(false);
+  const [newComment, setNewComment] = useState(""); // Stanje za novi komentar
+  const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
+
 
   const handleVote = (voteType) => {
     if (voteType === "upvote") {
-      setVotes(votes + 1);
       setClicked(true);
     } else if (voteType === "downvote") {
-      setVotes(votes - 1);
       setClicked(true);
     }
+  }
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      setAllComments([...allComments, newComment]);
+      setNewComment(""); // Očisti polje nakon dodavanja komentara
+      // Možete dodati logiku za slanje komentara na server ako je potrebno
+    }
   };
+
 
   return (
     <div className="card shadow-lg rounded mb-4">
@@ -80,7 +40,7 @@ function Discussion({
           <div>
             <h5 className="card-title">{title}</h5>
             <p className="card-subtitle text-muted">
-              Posted by {author} on {date}
+              Posted by {author} on {creation_date ? creation_date.replace("T", " ") : null}
             </p>
           </div>
         </div>
@@ -95,7 +55,7 @@ function Discussion({
           >
             👍
           </button>
-          <div>{votes}</div>
+          <div>{likes_count-dislikes_count}</div>
           <button
             className={`btn ${
               clicked ? "btn-danger" : "btn-outline-danger"
@@ -117,22 +77,33 @@ function Discussion({
 
       {/* Post Content */}
       <div className="card-body bg-light">
-        <p className="card-text">{content}</p>
+        <p className="card-text">{text}</p>
       </div>
 
       {/* Comments */}
       <div className="card-footer">
         <h6>Comments</h6>
-        {comments.map((comment, index) => (
+        {allComments.map((comment, index) => (
           <div key={index} className="card mb-2 shadow-sm">
             <div className="card-body">
               <p className="card-text">{comment}</p>
             </div>
           </div>
         ))}
+
+        {/* Polje za unos novog komentara */}
+        <textarea
+          className="form-control mt-3"
+          rows="3"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Write your comment here..."
+        ></textarea>
+
+        {/* Dugme za dodavanje komentara */}
         <button
           className="btn btn-primary mt-2"
-          onClick={() => alert("Leave a funny comment!")}
+          onClick={handleAddComment} // Poziva funkciju za dodavanje komentara
         >
           Add a Comment
         </button>
