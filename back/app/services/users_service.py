@@ -36,6 +36,7 @@ class UsersService:
             first_name=data['first_name'],
             last_name=data['last_name'],
             email=data['email'],
+            address=data['address'],
             username=data['username'],
             password=generate_password_hash(data['password']),  # Password is hashed before being stored
             city=data.get('city'),
