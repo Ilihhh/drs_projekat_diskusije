@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Discussion from "../discussion/Discussion";
 import { urlAllDiscussions } from "../utils/endpoints";
 import axios from "axios";
+import CreateLink from "../utils/CreateLink";
 
 export default function HomePage() {
   const [discussions, setDiscussions] = useState([]);
@@ -31,6 +32,11 @@ export default function HomePage() {
 
   return (
     <div className="container mt-4">
+      <CreateLink
+        to="/create-discussion"
+      >
+        + Create Discussion
+      </CreateLink>
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
@@ -49,7 +55,7 @@ export default function HomePage() {
             dislikes_count={discussion.dislikes_count
             }
           />
-})
+        })
       )}
     </div>
   );
