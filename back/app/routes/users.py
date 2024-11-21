@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request  # type: ignore
 from ..dtos.user_schema import UserSchema
 from ..models.user import User
 from ..database import db
-# Importujemo socketio iz __init__.py
+from ..services.email_service import EmailService
 
 
 users_blueprint = Blueprint('users', __name__)
@@ -34,7 +34,7 @@ def register():
 
 @users_blueprint.route('/login', methods=['POST'])
 def login():
-    data = request.get_json() 
+    data = request.get_json()
 
     email = data.get("email")
     password = data.get("password")
@@ -43,7 +43,7 @@ def login():
 
     if not user:
         return jsonify({"error": "Invalid credentials"}), 401
-    
+
     if user.status == "pending":
         return jsonify({"error": "Your account is still pending approval."}), 403
 
@@ -51,8 +51,28 @@ def login():
         return jsonify({"error": "Your account has been rejected."}), 403
 
     if UsersService.check_password(user, password):
+        # Provera da li je prva prijava
+        if user.is_first_login:
+            try:
+                # Dobavljanje email-a administratora iz baze
+                admins = User.query.filter_by(role="admin").all()  # Filtriraj sve administratore
+                if admins:
+                    for admin in admins:
+                        # Slanje email obaveštenja svakom administratoru
+                        subject = "First Login Notification"
+                        body = f"User {user.email} has logged in for the first time."
+                        EmailService.send_email(admin.email, subject, body)
+
+                # Ažuriranje polja is_first_login na False
+                user.is_first_login = False
+                db.session.commit()
+            except Exception as e:
+                return jsonify({"error": f"Failed to handle first login notification: {str(e)}"}), 500
+
+        # Generisanje JWT tokena
         token = UsersService.create_jwt_token(user)
         return jsonify({"token": token}), 200
+
     else:
         return jsonify({"error": "Invalid credentials"}), 401
 

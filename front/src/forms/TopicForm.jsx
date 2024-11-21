@@ -63,7 +63,7 @@ function TopicForm() {
           isEditing ? "Topic updated:" : "Topic created:",
           response.data
         );
-        navigate("/"); // Preusmeravamo na početnu stranicu nakon uspešnog unosa
+        navigate("/topicmanagement"); // Preusmeravamo na početnu stranicu nakon uspešnog unosa
       })
       .catch((error) => {
         console.error(
