@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify, request  # type: ignore
 from ..dtos.topic_schema import TopicSchema
 from ..models.topic import Topic
 from ..database import db
+from ..services.topic_service import TopicService
 
 topics_blueprint = Blueprint('topics', __name__)
 
@@ -32,3 +33,50 @@ def get_topic_by_id(user, id):
     topic_data = topic_schema.dump(topic)
     
     return jsonify(topic_data), 200  # Vraća pojedinačan topik u JSON formatu
+
+@topics_blueprint.route('/topic/create-topic', methods=['POST'])
+@token_required
+@role_required('admin')
+def create_topic(current_user):
+
+    data = request.get_json()
+    
+    try:
+        topic = TopicService.create_topic(data)        
+        return jsonify({"message": "Topic created successfully!"}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+@topics_blueprint.route('/topic/edit-topic', methods=['PUT'])
+@token_required
+@role_required('admin')    
+def edit_topic(current_user):
+    data = request.get_json()
+    
+    try:
+        topic = TopicService.edit_topic(data)
+        if topic:  # Check if topic was returned after editing
+            return jsonify({"message": "Topic edited successfully!"}), 200
+        else:
+            return jsonify({"error": "Failed to edit topic."}), 500
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    
+@topics_blueprint.route('/topic/delete-topic', methods=['DELETE'])
+@token_required
+@role_required('admin')
+def delete_topic(current_user):
+    data = request.get_json()
+
+    try:
+        # Pozivanje servisa za brisanje topic-a
+        success = TopicService.delete_topic(data)
+        
+        if success:
+            return jsonify({"message": "Topic deleted successfully!"}), 200
+        else:
+            return jsonify({"error": "Topic not found."}), 404
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "An internal error occurred."}), 500
