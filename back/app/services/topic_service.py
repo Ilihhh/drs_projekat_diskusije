@@ -117,3 +117,9 @@ class TopicService:
             else:
                 raise ValueError(f"An error occurred while deleting topics: {error_message}")
 
+    @staticmethod
+    def get_topic_by_id(topic_id):
+        topic = Topic.query.get(topic_id)
+        if not topic:
+            raise ValueError("Topic not found.")
+        return topic

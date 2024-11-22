@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { urlTopics } from "../utils/endpoints";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { urlCreateDiscussion, urlTopics } from "../utils/endpoints";
 
 function DiscussionForm() {
   const [topics, setTopics] = useState([]); // Držimo listu tema
   const [selectedTopic, setSelectedTopic] = useState(""); // Za čuvanje odabrane teme
   const [selectedTopicDescription, setSelectedTopicDescription] = useState(""); // Opis odabrane teme
   const [discussionText, setDiscussionText] = useState(""); // Tekst diskusije
+  const [discussionTitle, setDiscussionTitle] = useState(""); // Držimo naslov diskusije
+  const navigate = useNavigate(); // Initialize useNavigate for redirection
 
   useEffect(() => {
     // Poziv za preuzimanje tema sa servera
@@ -38,23 +41,31 @@ function DiscussionForm() {
     setDiscussionText(event.target.value);
   };
 
+  const handleDiscussionTitleChange = (event) => {
+    setDiscussionTitle(event.target.value);
+  };
+
   const handleSubmit = () => {
-    if (!selectedTopic || !discussionText) {
-      alert("Please select a topic and enter some discussion text.");
+    if (!selectedTopic || !discussionText || !discussionTitle) {
+      alert(
+        "Please select a topic, enter a discussion title, and provide some discussion text."
+      );
       return;
     }
 
     // Poziv na backend za kreiranje diskusije
     axios
-      .post("/api/discussions", {
-        title: "Discussion Title", // Možeš postaviti dinamički naslov
+      .post(urlCreateDiscussion, {
+        title: discussionTitle, // Dinamički naslov diskusije
         text: discussionText,
         topic_id: selectedTopic,
       })
       .then((response) => {
         console.log("Discussion created:", response.data);
         alert("Discussion successfully created!");
-        // Dodaj logiku za preusmeravanje ili ažuriranje stanja, ako je potrebno
+
+        // Preusmeravamo korisnika na početnu stranicu
+        navigate("/"); // Replace "/" with the path you want the user to be redirected to
       })
       .catch((error) => {
         console.error("Error creating discussion:", error);
@@ -66,18 +77,36 @@ function DiscussionForm() {
     <div>
       <h2>Create a Discussion</h2>
 
-      <select
-        value={selectedTopic}
-        onChange={handleTopicChange}
-        className="form-control"
-      >
-        <option value="">Select a topic</option>
-        {topics.map((topic) => (
-          <option key={topic.id} value={topic.id}>
-            {topic.name}
-          </option>
-        ))}
-      </select>
+      {/* Input for Discussion Title */}
+      <div className="mt-3">
+        <label htmlFor="discussionTitle">Discussion Title:</label>
+        <input
+          id="discussionTitle"
+          className="form-control"
+          type="text"
+          value={discussionTitle}
+          onChange={handleDiscussionTitleChange}
+          placeholder="Enter discussion title"
+        />
+      </div>
+
+      {/* Label for the Topic Selection */}
+      <div className="mt-3">
+        <label htmlFor="topicSelect">Select a Topic:</label>
+        <select
+          id="topicSelect"
+          value={selectedTopic}
+          onChange={handleTopicChange}
+          className="form-control"
+        >
+          <option value="">Select a topic</option>
+          {topics.map((topic) => (
+            <option key={topic.id} value={topic.id}>
+              {topic.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Prikazujemo opis teme kada je odabrana */}
       {selectedTopicDescription && (

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Discussion from "../discussion/Discussion";
 import { urlUserDiscussions } from "../utils/endpoints";
 import axios from "axios";
+import CreateLink from "./../utils/CreateLink";
 
 export default function MyDiscussions() {
   const [discussions, setDiscussions] = useState([]);
@@ -32,6 +33,7 @@ export default function MyDiscussions() {
 
   return (
     <div className="container mt-4">
+      <CreateLink to="/create-discussion">+ Create Discussion</CreateLink>
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
