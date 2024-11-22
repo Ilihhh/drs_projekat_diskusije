@@ -3,25 +3,66 @@ import * as Yup from "yup";
 import TextField from "./TextField";
 import Button from "../utils/Button";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2"; // Import SweetAlert
 
 export default function RegisterEditForm(props) {
   return (
     <Formik
       initialValues={props.model}
-      onSubmit={props.onSubmit}
+      onSubmit={async (values, { setSubmitting }) => {
+        try {
+          // Poziv funkcije za ažuriranje profila
+          await props.onSubmit(values);
+
+          // SweetAlert potvrda o uspehu
+          Swal.fire({
+            icon: "success",
+            title: "Profile Updated",
+            text: "Your profile has been updated successfully!",
+            confirmButtonText: "OK",
+          });
+        } catch (error) {
+          console.error("Error updating profile:", error);
+
+          // SweetAlert za grešku
+          Swal.fire({
+            icon: "error",
+            title: "Update Failed",
+            text: "There was an error updating your profile. Please try again.",
+          });
+        } finally {
+          setSubmitting(false);
+        }
+      }}
       validationSchema={Yup.object({
-        username: Yup.string().required("This field is required"),
-        first_name: Yup.string().required("This field is required"),
-        last_name: Yup.string().required("This field is required"),
-        address: Yup.string().required("This field is required"),
-        city: Yup.string().required("This field is required"),
-        country: Yup.string().required("This field is required"),
+        username: Yup.string()
+          .max(50, "Username must not exceed 50 characters")
+          .required("This field is required"),
+        first_name: Yup.string()
+          .max(50, "First name must not exceed 50 characters")
+          .required("This field is required"),
+        last_name: Yup.string()
+          .max(50, "Last name must not exceed 50 characters")
+          .required("This field is required"),
+        address: Yup.string()
+          .max(255, "Address must not exceed 255 characters")
+          .required("This field is required"),
+        city: Yup.string()
+          .max(50, "City must not exceed 50 characters")
+          .required("This field is required"),
+        country: Yup.string()
+          .max(50, "Country must not exceed 50 characters")
+          .required("This field is required"),
         phone_number: Yup.string()
+          .max(20, "Phone number must not exceed 20 characters")
           .required("This field is required"),
         email: Yup.string()
+          .max(120, "Email must not exceed 120 characters")
           .required("This field is required")
-          .email("You have to insert valid email"),
-        password: props.edit? Yup.string() : Yup.string().required("This field is required"),
+          .email("You have to insert a valid email"),
+        password: props.edit
+          ? Yup.string()
+          : Yup.string().required("This field is required"),
       })}
     >
       {(formikProps) => (

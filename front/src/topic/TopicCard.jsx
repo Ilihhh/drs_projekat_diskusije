@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/TopicStyle.css";
 import Swal from "sweetalert2";
+import axios from "axios";
+import {urlTopicDeleteWithDiscussions} from "../utils/endpoints";
 
 const TopicCard = ({ topic, onDelete, onSelect, selected }) => {
   const navigate = useNavigate();
@@ -12,21 +14,44 @@ const TopicCard = ({ topic, onDelete, onSelect, selected }) => {
 
 
 
-const handleDelete = (e) => {
-  e.stopPropagation();
-  Swal.fire({
-    title: `Are you sure you want to delete "${topic.name}"?`,
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Yes, delete it!",
-    cancelButtonText: "No, cancel",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      onDelete(topic.id);
-      Swal.fire("Deleted!", "The topic has been deleted.", "success");
-    }
-  });
-};
+  const handleDelete = (e) => {
+    e.stopPropagation();
+  
+    Swal.fire({
+      title: `Are you sure you want to delete "${topic.name}"?`,
+      text: "This will also delete all discussions associated with this topic.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete everything!",
+      cancelButtonText: "No, cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(urlTopicDeleteWithDiscussions, {
+            headers: { "Content-Type": "application/json" },
+            data: { id: topic.id, delete_discussions: true },
+          })
+          .then((response) => {
+            Swal.fire("Deleted!", response.data.message, "success");
+            onDelete(topic.id); // Samo obaveštava `TopicList` o brisanju
+          })
+          .catch((error) => {
+            Swal.fire(
+              "Error",
+              error.response?.data?.error || "Failed to delete the topic and discussions.",
+              "error"
+            );
+          });
+      } else {
+        Swal.fire("Cancelled", "The topic was not deleted.", "info");
+      }
+    });
+  };
+  
+  
+  
+  
+  
 
 
   return (

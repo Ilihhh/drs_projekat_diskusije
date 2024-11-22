@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { urlCreateDiscussion, urlTopics } from "../utils/endpoints";
+import Swal from "sweetalert2";
 
 function DiscussionForm() {
   const [topics, setTopics] = useState([]); // Držimo listu tema
@@ -46,13 +47,15 @@ function DiscussionForm() {
   };
 
   const handleSubmit = () => {
-    if (!selectedTopic || !discussionText || !discussionTitle) {
-      alert(
-        "Please select a topic, enter a discussion title, and provide some discussion text."
-      );
+    if (!selectedTopic || !discussionTitle || !discussionText) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Please select a topic, enter a discussion title, and provide some discussion text.",
+      });
       return;
     }
-
+  
     // Poziv na backend za kreiranje diskusije
     axios
       .post(urlCreateDiscussion, {
@@ -62,14 +65,27 @@ function DiscussionForm() {
       })
       .then((response) => {
         console.log("Discussion created:", response.data);
-        alert("Discussion successfully created!");
-
-        // Preusmeravamo korisnika na početnu stranicu
-        navigate("/"); // Replace "/" with the path you want the user to be redirected to
+  
+        // Uspešna poruka
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Discussion successfully created!",
+          confirmButtonText: "Go to Home",
+        }).then(() => {
+          // Preusmeravamo korisnika na početnu stranicu
+          navigate("/"); // Zamenite putanju ako je potrebno
+        });
       })
       .catch((error) => {
         console.error("Error creating discussion:", error);
-        alert("There was an error creating the discussion.");
+  
+        // Poruka o grešci
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "There was an error creating the discussion. Please try again later.",
+        });
       });
   };
 

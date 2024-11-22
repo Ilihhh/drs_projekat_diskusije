@@ -68,19 +68,21 @@ def edit_topic(current_user):
 @token_required
 @role_required('admin')
 def delete_topic(current_user):
+    print("delete_topic endpoint called")
     data = request.get_json()
+    print("Received data in delete_topic:", data)
+
+    if not data or 'id' not in data:
+        return jsonify({"error": "Invalid input. 'id' is required."}), 400
+
     try:
-        # Pozivanje servisa za brisanje topic-a
-        success = TopicService.delete_topic(data)
-        
-        if success:
-            return jsonify({"message": "Topic deleted successfully!"}), 200
-        else:
-            return jsonify({"error": "Topic not found."}), 404
+        TopicService.delete_topic(data)
+        return jsonify({"message": "Topic deleted successfully!"}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "An internal error occurred."}), 500
+
     
 
 @topics_blueprint.route('/topic/delete-selected-topic', methods=['DELETE'])
@@ -108,5 +110,53 @@ def delete_topics(current_user):
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "An internal error occurred."}), 500
+
+
+@topics_blueprint.route('/topic/delete-with-discussions', methods=['DELETE'])
+@token_required
+@role_required('admin')
+def delete_topic_with_discussions(current_user):
+    print("delete_topic_with_discussions endpoint called")
+    data = request.get_json()
+    print("Received data in delete_topic_with_discussions:", data)
+
+    if not data or 'id' not in data or 'delete_discussions' not in data:
+        return jsonify({"error": "Invalid input. 'id' and 'delete_discussions' are required."}), 400
+
+    topic_id = data['id']
+    try:
+        TopicService.delete_topic_and_discussions(topic_id)
+        return jsonify({"message": "Topic and associated discussions deleted successfully!"}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "An internal error occurred."}), 500
+    
+
+
+    
+@topics_blueprint.route('/topic/delete-selected-with-discussions', methods=['DELETE'])
+@token_required
+@role_required('admin')
+def delete_selected_with_discussions(current_user):
+    data = request.get_json()
+    if not data or 'ids' not in data:
+        return jsonify({"error": "Invalid input. 'ids' list is required."}), 400
+
+    ids = data['ids']
+
+    try:
+        for topic_id in ids:
+            TopicService.delete_topic_and_discussions(topic_id)
+
+        return jsonify({"message": "Selected topics and their discussions deleted successfully!"}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "An internal error occurred."}), 500
+
+
+
+
 
 

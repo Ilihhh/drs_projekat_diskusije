@@ -1,4 +1,5 @@
 # services/topic_service.py
+from ..models.discussion import Discussion
 from ..models.topic import Topic
 from ..database import db
 from ..config import Config  # Import Config class
@@ -57,31 +58,31 @@ class TopicService:
         
     @staticmethod
     def delete_topic(data):
-        if not data or 'id' not in data:
-            raise ValueError("Invalid input. 'id' is required.")
+        if not data or 'id' not in data or 'delete_discussions' not in data:
+            raise ValueError("Invalid input. 'id' and 'delete_discussions' are required.")
 
         topic_id = data['id']
+        delete_discussions = data['delete_discussions']
 
-     
         topic = Topic.query.get(topic_id)
         if not topic:
             raise ValueError("Topic not found.")
 
         try:
-           
+            if delete_discussions:
+                # Delete all discussions associated with the topic
+                discussions = Discussion.query.filter_by(topic_id=topic_id).all()
+                for discussion in discussions:
+                    db.session.delete(discussion)
+
             db.session.delete(topic)
             db.session.commit()
-            return True  
+            return True
 
         except Exception as e:
-            db.session.rollback()  # Rollback ako dođe do greške
-            error_message = str(e)
-            
-            # Provera da li greška sadrži poruku o stranim ključevima
-            if "foreign key" in error_message.lower() or "constraint" in error_message.lower():
-                raise ValueError("There are discussions associated with this topic. Please remove or reassign them before deleting the topic.")
-            else:
-                raise ValueError(f"An error occurred while deleting topics: {error_message}")
+            db.session.rollback()
+            raise ValueError(f"An error occurred while deleting the topic: {str(e)}")
+
     
     
 
@@ -116,6 +117,33 @@ class TopicService:
                 raise ValueError("There are discussions associated with this topic. Please remove or reassign them before deleting the topic.")
             else:
                 raise ValueError(f"An error occurred while deleting topics: {error_message}")
+    
+
+    @staticmethod
+    def delete_topic_and_discussions(topic_id):
+        if not topic_id:
+            raise ValueError("Invalid input. 'topic_id' is required.")
+
+        topic = Topic.query.get(topic_id)
+        if not topic:
+            raise ValueError("Topic not found.")
+
+        try:
+            # Delete associated discussions
+            discussions = Discussion.query.filter_by(topic_id=topic_id).all()
+            for discussion in discussions:
+                db.session.delete(discussion)
+
+            # Delete the topic
+            db.session.delete(topic)
+            db.session.commit()
+            return True
+
+        except Exception as e:
+            db.session.rollback()
+            error_message = str(e)
+            raise ValueError(f"An error occurred while deleting the topic and discussions: {error_message}")
+
 
     @staticmethod
     def get_topic_by_id(topic_id):

@@ -57,7 +57,7 @@ def get_user_discussions(current_user):
 
     # Ako nema diskusija za ovog korisnika, vraćamo praznu listu
     if not discussions:
-        return jsonify({"message": "No discussions found for this user."}), 404
+        return jsonify([]), 200
 
     # Izdvajamo jedinstvene topic_id-eve iz diskusija
     unique_topic_ids = {discussion.topic_id for discussion in discussions}
