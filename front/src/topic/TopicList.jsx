@@ -3,6 +3,7 @@ import TopicCard from "./TopicCard";
 import "../styles/TopicStyle.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 import {
   urlTopicDelete,
   urlTopicDeleteSelected,
@@ -77,31 +78,35 @@ const TopicList = () => {
   };
 
   const handleDeleteSelected = () => {
-    console.log("Selected IDs to delete:", selectedTopics); // Debugging: logovanje ID-eva koji se šalju
+    if (selectedTopics.length === 0) return;
 
-    axios
-      .delete(urlTopicDeleteSelected, {
-        data: selectedTopics, // Prosleđivanje samo liste ID-eva
-      })
-      .then((response) => {
-        console.log(response.data.message);
-        // Uklanjanje obrisanih tema iz stanja
-        setTopics(topics.filter((topic) => !selectedTopics.includes(topic.id)));
-        setSelectedTopics([]); // Resetovanje selektovanih tema
-      })
-      .catch((error) => {
-        console.error("Error deleting topics:", error);
-        // Provera greške i prikaz odgovarajuće poruke
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
-        ) {
-          alert(error.response.data.error); // Prikazujemo tačnu grešku korisniku
-        } else {
-          alert("There was an error deleting the topics.");
-        }
-      });
+    Swal.fire({
+      title: `Are you sure you want to delete ${selectedTopics.length} topic(s)?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "No, cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(urlTopicDeleteSelected, {
+            data: selectedTopics,
+          })
+          .then((response) => {
+            Swal.fire("Deleted!", response.data.message, "success");
+            // Ažuriraj listu tema nakon brisanja
+            setTopics(topics.filter((topic) => !selectedTopics.includes(topic.id)));
+            setSelectedTopics([]); // Resetuj selekciju
+          })
+          .catch((error) => {
+            Swal.fire(
+              "Error",
+              error.response?.data?.error || "There was an error deleting the topics.",
+              "error"
+            );
+          });
+      }
+    });
   };
 
   if (loading) {
