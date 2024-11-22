@@ -45,7 +45,7 @@ function TopicForm() {
     const creationDate = new Date().toISOString(); // Automatski dodeljujemo trenutni datum
 
     const topicData = {
-      id:id,
+      id: id,
       name: title, // Šaljemo 'name' na back-end, jer server očekuje 'name', a ne 'title'
       description,
       creation_date: creationDate,
