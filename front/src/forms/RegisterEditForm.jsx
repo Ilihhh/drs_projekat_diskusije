@@ -35,14 +35,29 @@ export default function RegisterEditForm(props) {
         }
       }}
       validationSchema={Yup.object({
-        username: Yup.string().required("This field is required"),
-        first_name: Yup.string().required("This field is required"),
-        last_name: Yup.string().required("This field is required"),
-        address: Yup.string().required("This field is required"),
-        city: Yup.string().required("This field is required"),
-        country: Yup.string().required("This field is required"),
-        phone_number: Yup.string().required("This field is required"),
+        username: Yup.string()
+          .max(50, "Username must not exceed 50 characters")
+          .required("This field is required"),
+        first_name: Yup.string()
+          .max(50, "First name must not exceed 50 characters")
+          .required("This field is required"),
+        last_name: Yup.string()
+          .max(50, "Last name must not exceed 50 characters")
+          .required("This field is required"),
+        address: Yup.string()
+          .max(255, "Address must not exceed 255 characters")
+          .required("This field is required"),
+        city: Yup.string()
+          .max(50, "City must not exceed 50 characters")
+          .required("This field is required"),
+        country: Yup.string()
+          .max(50, "Country must not exceed 50 characters")
+          .required("This field is required"),
+        phone_number: Yup.string()
+          .max(20, "Phone number must not exceed 20 characters")
+          .required("This field is required"),
         email: Yup.string()
+          .max(120, "Email must not exceed 120 characters")
           .required("This field is required")
           .email("You have to insert a valid email"),
         password: props.edit
