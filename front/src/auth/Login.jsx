@@ -1,6 +1,6 @@
 import axios from "axios";
 import LoginForm from "../forms/LoginForm";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom"; // Dodali smo Link
 import { urlLogin } from "../utils/endpoints";
 import { saveToken } from "./handleJWT";
 import { useContext } from "react";
@@ -10,6 +10,8 @@ import { getClaims } from "./handleJWT";
 export default function Login() {
   const { update } = useContext(AuthenticationContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirected = new URLSearchParams(location.search).get("redirected");
 
   async function login(credentials) {
     console.log("Logging in with credentials: ", credentials);
@@ -22,7 +24,6 @@ export default function Login() {
       });
 
       console.log("Login successful. Token: ", response.data.token);
-      // localStorage.setItem("auth_token", response.data.token);                            //ovo treda se izmesti odavde
       saveToken(response.data);
       update(getClaims());
       navigate("/");
@@ -33,6 +34,15 @@ export default function Login() {
 
   return (
     <>
+      {redirected && (
+        <p>
+          You need to log in to access that page.{" "}
+          <span>
+            Don’t have an account?{" "}
+            <Link to="/register">Register</Link>
+          </span>
+        </p>
+      )}
       <h3>Login</h3>
       <LoginForm
         model={{ email: "", password: "" }}

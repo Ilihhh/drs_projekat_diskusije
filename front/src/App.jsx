@@ -5,6 +5,7 @@ import routes from "./route-config";
 import AuthenticationContext from "./auth/AuthenticationContext";
 import { getClaims } from "./auth/handleJWT";
 import configureInterceptor from "./utils/httpinterceptors";
+import ProtectedRoute from "./utils/ProtectedRoute";
 import "../src/App.css";
 
 configureInterceptor();
@@ -16,6 +17,18 @@ function App() {
     setClaims(getClaims());
   }, []);
 
+  function isLoggedIn() {
+    return claims.length > 0; // Proveravamo da li korisnik ima JWT token
+  }
+
+  function isAdmin() {
+    return (
+      claims.findIndex(
+        (claim) => claim.name === "role" && claim.value === "admin"
+      ) > -1
+    );
+  }
+
   return (
     <BrowserRouter>
       <AuthenticationContext.Provider value={{ claims, update: setClaims }}>
@@ -26,7 +39,15 @@ function App() {
               <Route
                 key={route.path}
                 path={route.path}
-                element={<route.element />}
+                element={
+                  <ProtectedRoute
+                    element={route.element}
+                    isAdminRoute={route.isAdmin}
+                    isLoggedInRoute={route.isLoggedIn}
+                    isLoggedIn={isLoggedIn}
+                    isAdmin={isAdmin}
+                  />
+                }
               />
             ))}
           </Routes>
