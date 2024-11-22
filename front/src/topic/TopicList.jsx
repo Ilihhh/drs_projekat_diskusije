@@ -35,29 +35,13 @@ const TopicList = () => {
   };
 
   const handleDelete = (id) => {
-    axios
-      .delete(urlTopicDelete, { data: { id } })
-      .then((response) => {
-        console.log(response.data.message);
-        setTopics(topics.filter((topic) => topic.id !== id));
-        setSelectedTopics(
-          selectedTopics.filter((selectedId) => selectedId !== id)
-        );
-      })
-      .catch((error) => {
-        console.error("Error deleting topics:", error);
-        // Provera greške i prikaz odgovarajuće poruke
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
-        ) {
-          alert(error.response.data.error); // Prikazujemo tačnu grešku korisniku
-        } else {
-          alert("There was an error deleting the topics.");
-        }
-      });
+    setTopics((prevTopics) => prevTopics.filter((topic) => topic.id !== id));
+    setSelectedTopics((prevSelected) =>
+      prevSelected.filter((selectedId) => selectedId !== id)
+    );
   };
+  
+  
 
   const handleSelect = (id) => {
     setSelectedTopics((prevSelected) => {
