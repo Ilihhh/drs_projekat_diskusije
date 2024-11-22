@@ -108,7 +108,7 @@
 .select-all-btn:disabled,
 .delete-selected-btn:disabled,
 .btn-create-topic:disabled {
-  background-color: #e0e0e0; /* Svetla boja kada je dugme onemogućeno */
+  background-color: #333333; /* Svetla boja kada je dugme onemogućeno */
   cursor: not-allowed;
 }
 
