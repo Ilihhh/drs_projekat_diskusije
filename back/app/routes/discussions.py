@@ -6,6 +6,7 @@ from ..models.topic import Topic
 from ..models.discussion import Discussion
 from ..database import db
 from ..services.topic_service import TopicService
+from ..models.comment import Comment
 
 discussions_blueprint = Blueprint('discussions', __name__)
 
@@ -14,26 +15,42 @@ def get_all_discussions():
     discussions = Discussion.query.all()
 
     unique_topic_ids = {discussion.topic_id for discussion in discussions}
+    unique_discussion_ids = {discussion.id for discussion in discussions}
 
+    # Učitaj sve teme povezane sa diskusijama
     topics = Topic.query.filter(Topic.id.in_(unique_topic_ids)).all()
-    
-    # Kreiraj mapu tema po njihovom ID-u za brži pristup
-    topic_map = {topic.id: {"id": topic.id, "name": topic.name, "description": topic.description} for topic in topics}  
-       
+    topic_map = {topic.id: {"id": topic.id, "name": topic.name, "description": topic.description} for topic in topics}
+
+    # Učitaj sve komentare povezane sa diskusijama
+    comments = Comment.query.filter(Comment.discussion_id.in_(unique_discussion_ids)).all()
+    comment_map = {}
+    for comment in comments:
+        if comment.discussion_id not in comment_map:
+            comment_map[comment.discussion_id] = []
+        comment_map[comment.discussion_id].append({
+            "id": comment.id,
+            "author_id": comment.author_id,
+            "text": comment.text,
+            "creation_date": comment.creation_date
+        })
+
     discussion_schema = DiscussionSchema(many=True)
     discussions_data = discussion_schema.dump(discussions)
-    
+
+    # Dodaj temu i komentare za svaku diskusiju
     for discussion in discussions_data:
         topic_id = discussion["topic_id"]
-        discussion["topic"] = topic_map.get(topic_id, None)  # Dodaj temu ili None ako nije pronađena
-    
+        discussion["topic"] = topic_map.get(topic_id, None)
+        
+        discussion_id = discussion["id"]
+        discussion["comments"] = comment_map.get(discussion_id, [])
+    print(discussions_data)
     return jsonify(discussions_data), 200
+
 
 @discussions_blueprint.route('/userdiscussions', methods=['GET'])
 @token_required
 def get_user_discussions(current_user):
-    # Provodi se provera da li je korisnik autorizovan da vidi svoje diskusije
-    # (obično se verifikuje u token_required dekoratoru)
     
     # Filtriramo diskusije prema korisniku koji je trenutno prijavljen
     discussions = Discussion.query.filter_by(author_id=current_user.id).all()

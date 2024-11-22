@@ -13,3 +13,4 @@ export const urlTopicDelete = `${baseURL}/topic/delete-topic`;
 export const urlTopicDeleteSelected = `${baseURL}/topic/delete-selected-topic`;
 export const urlUserInfo = `${baseURL}/userinfo`;
 export const urlUserEdit = `${baseURL}/edituser`;
+export const urlAddComment = `${baseURL}/add-comment`

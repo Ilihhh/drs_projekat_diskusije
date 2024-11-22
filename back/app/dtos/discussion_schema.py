@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields # type: ignore
 from datetime import datetime
 from ..dtos.topic_schema import TopicSchema
-
+from ..dtos.comment_schema import CommentSchema
 class DiscussionSchema(Schema):
     id = fields.Int(dump_only=True)
     title = fields.Str(required=True)
@@ -9,7 +9,7 @@ class DiscussionSchema(Schema):
     creation_date = fields.DateTime(dump_only=True, default=datetime.utcnow)
     author_id = fields.Int(required=True)
     topic_id = fields.Int(required=True)
-    comments = fields.List(fields.Nested('CommentSchema', exclude=('discussion',)))
+    comments = fields.List(fields.Nested(CommentSchema))  # Direktna referenca radi
 
     # Dodavanje povezane teme
     topic = fields.Nested(TopicSchema, dump_only=True)

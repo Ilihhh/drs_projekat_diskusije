@@ -45,6 +45,7 @@ export default function HomePage() {
             <Discussion
               key={index}
               title={discussion.title}
+              discussionId={discussion.id}
               author={discussion.author}
               creation_date={discussion.creation_date}
               text={discussion.text}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Authorized from "../auth/Authorize";
+import CommentInput from "./CommentInput";  // Uvezi komponentu za unos komentara
 
 export default function Discussion({
   title,
@@ -10,12 +11,11 @@ export default function Discussion({
   description,
   comments,
   likes_count,
-  dislikes_count
+  dislikes_count,
+  discussionId  // Dodaj ID diskusije kao prop
 }) {
   const [clicked, setClicked] = useState(false);
-  const [newComment, setNewComment] = useState(""); // Stanje za novi komentar
   const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
-
 
   const handleVote = (voteType) => {
     if (voteType === "upvote") {
@@ -23,15 +23,11 @@ export default function Discussion({
     } else if (voteType === "downvote") {
       setClicked(true);
     }
-  }
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      setAllComments([...allComments, newComment]);
-      setNewComment(""); // Očisti polje nakon dodavanja komentara
-      // Možete dodati logiku za slanje komentara na server ako je potrebno
-    }
   };
 
+  const handleAddComment = (newComment) => {
+    setAllComments([...allComments, { text: newComment }]);  // Dodaj novi komentar u listu
+  };
 
   return (
     <div className="card shadow-lg rounded mb-4">
@@ -55,7 +51,7 @@ export default function Discussion({
           >
             👍
           </button>
-          <div>{likes_count-dislikes_count}</div>
+          <div>{likes_count - dislikes_count}</div>
           <button
             className={`btn ${
               clicked ? "btn-danger" : "btn-outline-danger"
@@ -86,27 +82,13 @@ export default function Discussion({
         {allComments.map((comment, index) => (
           <div key={index} className="card mb-2 shadow-sm">
             <div className="card-body">
-              <p className="card-text">{comment}</p>
+              <p className="card-text">{comment.text}</p>
             </div>
           </div>
         ))}
 
-        {/* Polje za unos novog komentara */}
-        <textarea
-          className="form-control mt-3"
-          rows="3"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Write your comment here..."
-        ></textarea>
-
-        {/* Dugme za dodavanje komentara */}
-        <button
-          className="btn btn-primary mt-2"
-          onClick={handleAddComment} // Poziva funkciju za dodavanje komentara
-        >
-          Add a Comment
-        </button>
+        {/* Dodaj komponentu za unos komentara */}
+        <CommentInput onAddComment={handleAddComment} discussionId={discussionId} />
       </div>
 
       {/* Admin Functionalities */}

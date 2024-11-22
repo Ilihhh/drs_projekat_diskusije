@@ -1,8 +1,8 @@
-"""ikidobarlik
+"""nmg vise majke mi
 
-Revision ID: 8b97cddd9cd2
+Revision ID: 3bf23de5e183
 Revises: 
-Create Date: 2024-11-21 22:15:01.246689
+Create Date: 2024-11-22 20:10:53.517243
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8b97cddd9cd2'
+revision = '3bf23de5e183'
 down_revision = None
 branch_labels = None
 depends_on = None
