@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { urlAllDiscussions } from "../utils/endpoints";
 import Discussion from "../discussion/Discussion";
+import { urlAllDiscussions } from "../utils/endpoints";
+import axios from "axios";
 import CreateLink from "../utils/CreateLink";
 
 export default function HomePage() {
