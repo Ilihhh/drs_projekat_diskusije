@@ -1,40 +1,61 @@
 import React, { useState, useEffect } from "react";
 import TopicCard from "./TopicCard";
-import "../styles/TopicStyle.css"; // Osiguravamo da importujemo CSS
-import { Link, useNavigate } from "react-router-dom"; // Importujemo Link i useNavigate
-import axios from "axios"; // Importujemo axios za slanje HTTP zahteva
-import { urlTopics } from "../utils/endpoints";
+import "../styles/TopicStyle.css";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  urlTopicDelete,
+  urlTopicDeleteSelected,
+  urlTopics,
+} from "../utils/endpoints";
 
 const TopicList = () => {
-  const [topics, setTopics] = useState([]); // Početno stanje sa praznom listom
+  const [topics, setTopics] = useState([]);
   const [selectedTopics, setSelectedTopics] = useState([]);
-  const [loading, setLoading] = useState(true); // Za praćenje statusa učitavanja
-  const [error, setError] = useState(null); // Za praćenje grešaka
-  const navigate = useNavigate(); // Hook za navigaciju
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // Učitaj podatke sa backend-a
   useEffect(() => {
     axios
-      .get(urlTopics) // Poziv na backend za dobijanje svih topika
+      .get(urlTopics)
       .then((response) => {
-        setTopics(response.data); // Postavljamo podatke u stanje
-        setLoading(false); // Učitavanje je završeno
+        setTopics(response.data);
+        setLoading(false);
       })
       .catch((err) => {
-        setError("Failed to load topics"); // Postavljamo grešku u slučaju neuspeha
-        setLoading(false); // Učitavanje je završeno
+        setError("Failed to load topics");
+        setLoading(false);
       });
-  }, []); // Empty dependency array znači da se efekat poziva samo jednom prilikom mount-a komponente
+  }, []);
 
-  // Funkcija koja će se pozvati prilikom klika na "Edit"
   const handleEdit = (id) => {
-    // Preusmeravanje korisnika na stranicu za editovanje teme sa ID-em teme
     navigate(`/edit-topic/${id}`);
   };
 
   const handleDelete = (id) => {
-    setTopics(topics.filter((topic) => topic.id !== id));
-    setSelectedTopics(selectedTopics.filter((selectedId) => selectedId !== id));
+    axios
+      .delete(urlTopicDelete, { data: { id } })
+      .then((response) => {
+        console.log(response.data.message);
+        setTopics(topics.filter((topic) => topic.id !== id));
+        setSelectedTopics(
+          selectedTopics.filter((selectedId) => selectedId !== id)
+        );
+      })
+      .catch((error) => {
+        console.error("Error deleting topics:", error);
+        // Provera greške i prikaz odgovarajuće poruke
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          alert(error.response.data.error); // Prikazujemo tačnu grešku korisniku
+        } else {
+          alert("There was an error deleting the topics.");
+        }
+      });
   };
 
   const handleSelect = (id) => {
@@ -56,25 +77,45 @@ const TopicList = () => {
   };
 
   const handleDeleteSelected = () => {
-    setTopics(topics.filter((topic) => !selectedTopics.includes(topic.id)));
-    setSelectedTopics([]);
+    console.log("Selected IDs to delete:", selectedTopics); // Debugging: logovanje ID-eva koji se šalju
+
+    axios
+      .delete(urlTopicDeleteSelected, {
+        data: selectedTopics, // Prosleđivanje samo liste ID-eva
+      })
+      .then((response) => {
+        console.log(response.data.message);
+        // Uklanjanje obrisanih tema iz stanja
+        setTopics(topics.filter((topic) => !selectedTopics.includes(topic.id)));
+        setSelectedTopics([]); // Resetovanje selektovanih tema
+      })
+      .catch((error) => {
+        console.error("Error deleting topics:", error);
+        // Provera greške i prikaz odgovarajuće poruke
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          alert(error.response.data.error); // Prikazujemo tačnu grešku korisniku
+        } else {
+          alert("There was an error deleting the topics.");
+        }
+      });
   };
 
   if (loading) {
-    return <div>Loading...</div>; // Prikazivanje poruke dok se podaci učitavaju
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>; // Prikazivanje greške u slučaju neuspešnog učitavanja
+    return <div>{error}</div>;
   }
 
   return (
     <div>
       <div className="button-group">
-        <button
-          onClick={handleSelectAll}
-          className="select-all-btn" // Dodali smo klasu za Select All dugme
-        >
+        <button onClick={handleSelectAll} className="select-all-btn">
           {selectedTopics.length === topics.length
             ? "Deselect All"
             : "Select All"}
@@ -82,15 +123,12 @@ const TopicList = () => {
         <button
           onClick={handleDeleteSelected}
           disabled={selectedTopics.length === 0}
-          className="delete-selected-btn" // Dodali smo klasu za Delete Selected dugme
+          className="delete-selected-btn"
         >
           Delete Selected
         </button>
-
-        {/* Dugme za kreiranje nove teme */}
         <Link to="/create-topic">
-          <button className="btn-create-topic">Create Topic</button>{" "}
-          {/* Koristimo novu klasu */}
+          <button className="btn-create-topic">Create Topic</button>
         </Link>
       </div>
 
@@ -99,7 +137,7 @@ const TopicList = () => {
           <TopicCard
             key={topic.id}
             topic={topic}
-            onEdit={handleEdit} // Prosljeđujemo handleEdit funkciju
+            onEdit={handleEdit}
             onDelete={handleDelete}
             onSelect={handleSelect}
             selected={selectedTopics.includes(topic.id)}

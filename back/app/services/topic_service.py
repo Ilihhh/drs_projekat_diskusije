@@ -74,5 +74,46 @@ class TopicService:
             return True  
 
         except Exception as e:
-            db.session.rollback()
-            raise ValueError("An error occurred while deleting the topic.")
+            db.session.rollback()  # Rollback ako dođe do greške
+            error_message = str(e)
+            
+            # Provera da li greška sadrži poruku o stranim ključevima
+            if "foreign key" in error_message.lower() or "constraint" in error_message.lower():
+                raise ValueError("There are discussions associated with this topic. Please remove or reassign them before deleting the topic.")
+            else:
+                raise ValueError(f"An error occurred while deleting topics: {error_message}")
+    
+    
+
+    @staticmethod
+    def delete_topics(data):
+        # Provera da li su prosleđeni podaci i da li sadrže 'ids'
+        if not data or 'ids' not in data or not isinstance(data['ids'], list):
+            raise ValueError("Invalid input. 'ids' list is required.")
+
+        ids = data['ids']
+
+        # Pronađi sve teme koje odgovaraju ID-evima
+        topics = Topic.query.filter(Topic.id.in_(ids)).all()
+
+        if not topics:
+            raise ValueError("No topics found with the provided IDs.")
+
+        try:
+            # Brisanje svih pronađenih tema
+            for topic in topics:
+                db.session.delete(topic)
+            
+            db.session.commit()
+            return True  # Vraćamo True ako su sve teme obrisane
+
+        except Exception as e:
+            db.session.rollback()  # Rollback ako dođe do greške
+            error_message = str(e)
+            
+            # Provera da li greška sadrži poruku o stranim ključevima
+            if "foreign key" in error_message.lower() or "constraint" in error_message.lower():
+                raise ValueError("There are discussions associated with this topic. Please remove or reassign them before deleting the topic.")
+            else:
+                raise ValueError(f"An error occurred while deleting topics: {error_message}")
+

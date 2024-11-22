@@ -22,7 +22,7 @@ const routes = [
   { path: "/create-topic", element: TopicForm },
   { path: "/edit-topic/:id", element: TopicForm },
   { path: "/edituser", element: EditUser },
-  { path: "/userinfo", element: UserInfo}
+  { path: "/userinfo", element: UserInfo },
 ];
 
 export default routes;

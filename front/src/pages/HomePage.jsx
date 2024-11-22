@@ -9,21 +9,23 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDiscussions = async () => {
-      try {
-        const response = await axios.get(urlAllDiscussions, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        setDiscussions(response.data);
-      } catch (err) {
-        console.error("Error fetching discussions:", err);
-        setError("Failed to fetch discussions. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Funkcija za osvežavanje liste diskusija
+  const fetchDiscussions = async () => {
+    try {
+      const response = await axios.get(urlAllDiscussions, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setDiscussions(response.data);
+    } catch (err) {
+      console.error("Error fetching discussions:", err);
+      setError("Failed to fetch discussions. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Poziva fetchDiscussions prilikom učitavanja stranice
+  useEffect(() => {
     fetchDiscussions();
   }, []);
 
@@ -32,29 +34,26 @@ export default function HomePage() {
 
   return (
     <div className="container mt-4">
-      <CreateLink
-        to="/create-discussion"
-      >
-        + Create Discussion
-      </CreateLink>
+      <CreateLink to="/create-discussion">+ Create Discussion</CreateLink>
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
         discussions.map((discussion, index) => {
           console.log(discussion);
 
-          return <Discussion
-            key={index}
-            title={discussion.title}
-            author={discussion.author}
-            creation_date={discussion.creation_date}
-            text={discussion.text}
-            description={discussion.description}
-            comments={discussion.comments || []}
-            likes_count={discussion.likes_count}
-            dislikes_count={discussion.dislikes_count
-            }
-          />
+          return (
+            <Discussion
+              key={index}
+              title={discussion.title}
+              author={discussion.author}
+              creation_date={discussion.creation_date}
+              text={discussion.text}
+              description={discussion.description}
+              comments={discussion.comments || []}
+              likes_count={discussion.likes_count}
+              dislikes_count={discussion.dislikes_count}
+            />
+          );
         })
       )}
     </div>

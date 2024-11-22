@@ -61,13 +61,14 @@ def edit_topic(current_user):
             return jsonify({"error": "Failed to edit topic."}), 500
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "An internal error occurred."}), 500
     
 @topics_blueprint.route('/topic/delete-topic', methods=['DELETE'])
 @token_required
 @role_required('admin')
 def delete_topic(current_user):
     data = request.get_json()
-
     try:
         # Pozivanje servisa za brisanje topic-a
         success = TopicService.delete_topic(data)
@@ -80,3 +81,32 @@ def delete_topic(current_user):
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "An internal error occurred."}), 500
+    
+
+@topics_blueprint.route('/topic/delete-selected-topic', methods=['DELETE'])
+@token_required
+@role_required('admin')
+def delete_topics(current_user):
+    # Dobijamo listu ID-ova iz zahteva
+    data = request.get_json()
+
+    # Proveravamo da li je prosleđena lista direktno, umesto sa "ids" ključem
+    if not isinstance(data, list):  # Očekujemo da je data lista
+        return jsonify({"error": "Invalid input. A list of topic IDs is required."}), 400
+
+    ids = data  # Ako je data lista, direktno dodeljujemo
+
+    try:
+        # Pozivanje servisa za brisanje više tema
+        success = TopicService.delete_topics({'ids': ids})
+
+        if success:
+            return jsonify({"message": "Topics deleted successfully!"}), 200
+        else:
+            return jsonify({"error": "Some topics not found."}), 404
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "An internal error occurred."}), 500
+
+
