@@ -5,8 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import {
-  urlTopicDelete,
-  urlTopicDeleteSelected,
+  //urlTopicDelete,
+  //urlTopicDeleteSelected,
   urlTopics,
 } from "../utils/endpoints";
 
@@ -63,35 +63,40 @@ const TopicList = () => {
 
   const handleDeleteSelected = () => {
     if (selectedTopics.length === 0) return;
-
+  
     Swal.fire({
       title: `Are you sure you want to delete ${selectedTopics.length} topic(s)?`,
+      text: "This will also delete all discussions associated with the selected topics.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete!",
+      confirmButtonText: "Yes, delete all!",
       cancelButtonText: "No, cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(urlTopicDeleteSelected, {
-            data: selectedTopics,
+          .delete("/topic/delete-selected-with-discussions", {
+            headers: { "Content-Type": "application/json" },
+            data: { ids: selectedTopics },
           })
           .then((response) => {
             Swal.fire("Deleted!", response.data.message, "success");
-            // Ažuriraj listu tema nakon brisanja
-            setTopics(topics.filter((topic) => !selectedTopics.includes(topic.id)));
+            // Ažuriraj lokalno stanje nakon brisanja
+            setTopics((prevTopics) =>
+              prevTopics.filter((topic) => !selectedTopics.includes(topic.id))
+            );
             setSelectedTopics([]); // Resetuj selekciju
           })
           .catch((error) => {
             Swal.fire(
               "Error",
-              error.response?.data?.error || "There was an error deleting the topics.",
+              error.response?.data?.error || "Failed to delete the selected topics.",
               "error"
             );
           });
       }
     });
   };
+  
 
   if (loading) {
     return <div>Loading...</div>;

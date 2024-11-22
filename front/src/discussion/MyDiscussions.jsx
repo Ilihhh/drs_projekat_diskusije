@@ -9,22 +9,22 @@ export default function MyDiscussions() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDiscussions = async () => {
-      try {
-        const response = await axios.get(urlUserDiscussions, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        //console.log(response.data);
-        setDiscussions(response.data);
-      } catch (err) {
-        console.error("Error fetching discussions:", err);
-        setError("Failed to fetch discussions. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchDiscussions = async () => {
+    try {
+      const response = await axios.get(urlUserDiscussions, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setDiscussions(response.data);
+    } catch (err) {
+      console.error("Error fetching discussions:", err);
+      setError("Failed to fetch discussions. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Poziva fetchDiscussions prilikom učitavanja stranice
+  useEffect(() => {
     fetchDiscussions();
   }, []);
 
@@ -37,17 +37,23 @@ export default function MyDiscussions() {
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
-        discussions.map((discussion, index) => (
-          <Discussion
-            key={index}
-            title={discussion.title}
-            author={discussion.author}
-            creation_date={discussion.creation_date}
-            text={discussion.text}
-            description={discussion.description}
-            comments={discussion.comments || []}
-          />
-        ))
+        discussions.map((discussion, index) => {
+          console.log(discussion);
+
+          return (
+            <Discussion
+              key={index}
+              title={discussion.title}
+              author={discussion.author}
+              creation_date={discussion.creation_date}
+              text={discussion.text}
+              description={discussion.description}
+              comments={discussion.comments || []}
+              likes_count={discussion.likes_count}
+              dislikes_count={discussion.dislikes_count}
+            />
+          );
+        })
       )}
     </div>
   );
