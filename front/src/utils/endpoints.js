@@ -10,5 +10,6 @@ export const urlTopicCreate = `${baseURL}/topic/create-topic`;
 export const urlTopicEdit = `${baseURL}/topic/edit-topic`;
 export const urlTopicDelete = `${baseURL}/topic/delete-topic`;
 export const urlTopicDeleteSelected = `${baseURL}/topic/delete-selected-topic`;
+export const urlTopicDeleteWithDiscussions = `${baseURL}/topic/delete-with-discussions`;
 export const urlUserInfo = `${baseURL}/userinfo`;
 export const urlUserEdit = `${baseURL}/edituser`;

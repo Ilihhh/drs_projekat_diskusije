@@ -59,3 +59,4 @@ def get_user_discussions(current_user):
         discussion["topic"] = topic_map.get(topic_id, None)  # Dodaj temu ili None ako nije pronađena
     
     return jsonify(discussions_data), 200
+
