@@ -116,21 +116,19 @@ def delete_topics(current_user):
 @token_required
 @role_required('admin')
 def delete_topic_with_discussions(current_user):
-    print("delete_topic_with_discussions endpoint called")
     data = request.get_json()
-    print("Received data in delete_topic_with_discussions:", data)
-
-    if not data or 'id' not in data or 'delete_discussions' not in data:
-        return jsonify({"error": "Invalid input. 'id' and 'delete_discussions' are required."}), 400
+    if not data or 'id' not in data:
+        return jsonify({"error": "Invalid input. 'id' is required."}), 400
 
     topic_id = data['id']
     try:
         TopicService.delete_topic_and_discussions(topic_id)
-        return jsonify({"message": "Topic and associated discussions deleted successfully!"}), 200
+        return jsonify({"message": "Topic, discussions, and comments deleted successfully!"}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "An internal error occurred."}), 500
+
     
 
 
@@ -146,10 +144,8 @@ def delete_selected_with_discussions(current_user):
     ids = data['ids']
 
     try:
-        for topic_id in ids:
-            TopicService.delete_topic_and_discussions(topic_id)
-
-        return jsonify({"message": "Selected topics and their discussions deleted successfully!"}), 200
+        TopicService.delete_topics_and_discussions(ids)
+        return jsonify({"message": "Selected topics, discussions, and comments deleted successfully!"}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:

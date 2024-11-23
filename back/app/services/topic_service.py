@@ -1,5 +1,6 @@
 # services/topic_service.py
 from ..models.discussion import Discussion
+from ..models.comment import Comment
 from ..models.topic import Topic
 from ..database import db
 from ..config import Config  # Import Config class
@@ -129,9 +130,11 @@ class TopicService:
             raise ValueError("Topic not found.")
 
         try:
-            # Delete associated discussions
+            # Delete associated discussions and their comments
             discussions = Discussion.query.filter_by(topic_id=topic_id).all()
             for discussion in discussions:
+                # Delete comments associated with each discussion
+                Comment.query.filter_by(discussion_id=discussion.id).delete()
                 db.session.delete(discussion)
 
             # Delete the topic
@@ -142,7 +145,21 @@ class TopicService:
         except Exception as e:
             db.session.rollback()
             error_message = str(e)
-            raise ValueError(f"An error occurred while deleting the topic and discussions: {error_message}")
+            raise ValueError(f"An error occurred while deleting the topic, discussions, and comments: {error_message}")
+
+    @staticmethod
+    def delete_topics_and_discussions(ids):
+        if not ids or not isinstance(ids, list):
+            raise ValueError("Invalid input. 'ids' list is required.")
+
+        try:
+            for topic_id in ids:
+                TopicService.delete_topic_and_discussions(topic_id)
+            return True
+        except Exception as e:
+            db.session.rollback()
+            error_message = str(e)
+            raise ValueError(f"An error occurred while deleting topics, discussions, and comments: {error_message}")
 
 
     @staticmethod
