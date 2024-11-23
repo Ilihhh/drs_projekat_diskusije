@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Authorized from "../auth/Authorize";
-import CommentInput from "./CommentInput";  // Uvezi komponentu za unos komentara
+import CommentInput from "./CommentInput"; // Uvezi komponentu za unos komentara
 
 export default function Discussion({
   title,
   author,
   creation_date,
   text,
-  description,
   comments,
   likes_count,
   dislikes_count,
-  discussionId  // Dodaj ID diskusije kao prop
+  discussionId, // Dodaj ID diskusije kao prop
+  topic, // topic je objekat koji sadrži name i description
 }) {
   const [clicked, setClicked] = useState(false);
   const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
@@ -26,7 +26,7 @@ export default function Discussion({
   };
 
   const handleAddComment = (newComment) => {
-    setAllComments([...allComments, { text: newComment }]);  // Dodaj novi komentar u listu
+    setAllComments([...allComments, { text: newComment }]); // Dodaj novi komentar u listu
   };
 
   return (
@@ -36,8 +36,20 @@ export default function Discussion({
           <div>
             <h5 className="card-title">{title}</h5>
             <p className="card-subtitle text-muted">
-              Posted by {author} on {creation_date ? creation_date.replace("T", " ") : null}
+              Posted by {author} on{" "}
+              {creation_date
+                ? creation_date.replace("T", " ").split(".")[0]
+                : null}
             </p>
+
+            {/* Topic Title and Description */}
+            {topic && (
+              <div className="mt-3">
+                <h6>
+                  Topic Title: {topic.name} | Description: {topic.description}
+                </h6>
+              </div>
+            )}
           </div>
         </div>
 
@@ -63,14 +75,6 @@ export default function Discussion({
         </div>
       </div>
 
-      {/* Topic Description */}
-      {description && (
-        <div className="card-body bg-light">
-          <h6>Topic Description:</h6>
-          <p>{description}</p>
-        </div>
-      )}
-
       {/* Post Content */}
       <div className="card-body bg-light">
         <p className="card-text">{text}</p>
@@ -88,7 +92,10 @@ export default function Discussion({
         ))}
 
         {/* Dodaj komponentu za unos komentara */}
-        <CommentInput onAddComment={handleAddComment} discussionId={discussionId} />
+        <CommentInput
+          onAddComment={handleAddComment}
+          discussionId={discussionId}
+        />
       </div>
 
       {/* Admin Functionalities */}
