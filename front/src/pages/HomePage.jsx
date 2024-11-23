@@ -8,7 +8,6 @@ export default function HomePage() {
   const [discussions, setDiscussions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Inicijalizuješ navigate
 
   // Funkcija za osvežavanje liste diskusija
   const fetchDiscussions = async () => {
