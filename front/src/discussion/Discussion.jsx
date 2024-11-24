@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Authorized from "../auth/Authorize";
 import CommentInput from "./CommentInput"; // Uvezi komponentu za unos komentara
+import axios from "axios"; // Dodaj axios za API pozive
+import { urlManageReaction } from "../utils/endpoints"; // URL za API endpoint za reakcije
 
 export default function Discussion({
   title,
@@ -14,16 +16,49 @@ export default function Discussion({
   discussionId, // Dodaj ID diskusije kao prop
   topic, // topic je objekat koji sadrži name i description
 }) {
-  const [clicked, setClicked] = useState(false);
   const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
+  const [likes, setLikes] = useState(likes_count); // Stanje za broj lajkova
+  const [dislikes, setDislikes] = useState(dislikes_count); // Stanje za broj dislajkova
+  const [userReaction, setUserReaction] = useState(null); // Stanje za trenutnu reakciju korisnika
 
-  const handleVote = (voteType) => {
-    if (voteType === "upvote") {
-      setClicked(true);
-    } else if (voteType === "downvote") {
-      setClicked(true);
+  const handleVote = async (voteType) => {
+    const reaction = voteType === "upvote" ? "like" : "dislike";
+  
+    // Ako korisnik klikne na istu reakciju, uklanja se reakcija
+    const newReaction = userReaction === reaction ? "none" : reaction;
+  
+    try {
+      const response = await axios.post(
+        urlManageReaction,
+        {
+          discussion_id: discussionId,
+          reaction: newReaction,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        const { likes: updatedLikes, dislikes: updatedDislikes } = response.data;
+  
+        // Ažuriraj broj lajkova i dislajkova
+        setLikes(updatedLikes);
+        setDislikes(updatedDislikes);
+  
+        // Ažuriraj trenutnu reakciju korisnika
+        setUserReaction(newReaction === "none" ? null : newReaction);
+      } else {
+        throw new Error("Failed to update reaction.");
+      }
+    } catch (error) {
+      console.error("Error managing reaction:", error.response || error);
+      alert("Failed to update reaction. Please try again.");
     }
   };
+  
 
   const handleAddComment = (newComment) => {
     setAllComments([...allComments, { text: newComment }]); // Dodaj novi komentar u listu
@@ -57,16 +92,16 @@ export default function Discussion({
         <div className="text-center">
           <button
             className={`btn ${
-              clicked ? "btn-success" : "btn-outline-success"
+              userReaction === "like" ? "btn-success" : "btn-outline-success"
             } btn-sm mb-1`}
             onClick={() => handleVote("upvote")}
           >
             👍
           </button>
-          <div>{likes_count - dislikes_count}</div>
+          <div>{likes - dislikes}</div>
           <button
             className={`btn ${
-              clicked ? "btn-danger" : "btn-outline-danger"
+              userReaction === "dislike" ? "btn-danger" : "btn-outline-danger"
             } btn-sm mt-1`}
             onClick={() => handleVote("downvote")}
           >

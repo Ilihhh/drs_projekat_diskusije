@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Button from "../utils/Button";
+import "../App.css"
 
 export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,7 +43,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="searchcontrainer">
       <div className="d-flex align-items-center gap-3">
         {/* Search Bar */}
         <input

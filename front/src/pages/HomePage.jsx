@@ -3,6 +3,7 @@ import Discussion from "../discussion/Discussion";
 import { urlAllDiscussions } from "../utils/endpoints";
 import axios from "axios";
 import CreateLink from "../utils/CreateLink";
+import SearchBar from "../discussion/SearchBar"
 
 export default function HomePage() {
   const [discussions, setDiscussions] = useState([]);
@@ -35,6 +36,7 @@ export default function HomePage() {
     <div className="container mt-4">
       {/* Dugme za kreiranje diskusije uvek prikazano, koristi CreateLink */}
       <CreateLink to="/create-discussion">+ Create Discussion</CreateLink>
+      <SearchBar/>
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
