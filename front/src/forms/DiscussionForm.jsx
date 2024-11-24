@@ -1,19 +1,26 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { urlCreateDiscussion, urlTopics } from "../utils/endpoints";
+import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
+import {
+  urlCreateDiscussion,
+  urlEditDiscussion,
+  urlTopics,
+} from "../utils/endpoints";
 import Swal from "sweetalert2";
 
 function DiscussionForm() {
-  const [topics, setTopics] = useState([]); // Držimo listu tema
-  const [selectedTopic, setSelectedTopic] = useState(""); // Za čuvanje odabrane teme
-  const [selectedTopicDescription, setSelectedTopicDescription] = useState(""); // Opis odabrane teme
-  const [discussionText, setDiscussionText] = useState(""); // Tekst diskusije
-  const [discussionTitle, setDiscussionTitle] = useState(""); // Držimo naslov diskusije
-  const navigate = useNavigate(); // Initialize useNavigate for redirection
+  const [topics, setTopics] = useState([]); // List of topics
+  const [selectedTopic, setSelectedTopic] = useState(""); // Selected topic
+  const [selectedTopicDescription, setSelectedTopicDescription] = useState(""); // Description of selected topic
+  const [discussionText, setDiscussionText] = useState(""); // Text of the discussion
+  const [discussionTitle, setDiscussionTitle] = useState(""); // Title of the discussion
+  const [isEditMode, setIsEditMode] = useState(false); // Flag to determine if we are editing
+  const [discussionId, setDiscussionId] = useState(null); // Store the discussion ID for editing
+  const navigate = useNavigate(); // For redirection
+  const location = useLocation(); // For accessing passed state in edit mode
 
   useEffect(() => {
-    // Poziv za preuzimanje tema sa servera
+    // Fetch topics for the dropdown
     axios
       .get(urlTopics)
       .then((response) => {
@@ -22,7 +29,18 @@ function DiscussionForm() {
       .catch((error) => {
         console.error("There was an error fetching topics!", error);
       });
-  }, []);
+
+    // If we are in edit mode, set the state with the existing discussion data
+    if (location.state) {
+      const { title, text, topic, discussionId } = location.state;
+      setDiscussionTitle(title);
+      setDiscussionText(text);
+      setSelectedTopic(topic.id);
+      setSelectedTopicDescription(topic.description);
+      setDiscussionId(discussionId); // Store the discussion ID
+      setIsEditMode(true); // Set to edit mode
+    }
+  }, [location.state]);
 
   const handleTopicChange = (event) => {
     const selectedId = event.target.value;
@@ -55,43 +73,51 @@ function DiscussionForm() {
       });
       return;
     }
-  
-    // Poziv na backend za kreiranje diskusije
-    axios
-      .post(urlCreateDiscussion, {
-        title: discussionTitle, // Dinamički naslov diskusije
-        text: discussionText,
-        topic_id: selectedTopic,
-      })
+
+    const discussionData = {
+      id: discussionId, // Include the discussion ID when editing
+      title: discussionTitle,
+      text: discussionText,
+      topic_id: selectedTopic,
+    };
+
+    // Make API call based on whether we're creating or editing
+    const apiCall = isEditMode
+      ? axios.put(`${urlEditDiscussion}`, discussionData) // Edit call
+      : axios.post(urlCreateDiscussion, discussionData); // Create call
+
+    apiCall
       .then((response) => {
-        console.log("Discussion created:", response.data);
-  
-        // Uspešna poruka
+        console.log(
+          isEditMode ? "Discussion updated" : "Discussion created",
+          response.data
+        );
+
         Swal.fire({
           icon: "success",
-          title: "Success!",
-          text: "Discussion successfully created!",
+          title: isEditMode ? "Discussion Updated!" : "Discussion Created!",
+          text: isEditMode
+            ? "Discussion has been successfully updated."
+            : "Discussion has been successfully created.",
           confirmButtonText: "Go to Home",
         }).then(() => {
-          // Preusmeravamo korisnika na početnu stranicu
-          navigate("/"); // Zamenite putanju ako je potrebno
+          navigate("/"); // Redirect after success
         });
       })
       .catch((error) => {
-        console.error("Error creating discussion:", error);
-  
-        // Poruka o grešci
+        console.error("Error:", error);
+
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "There was an error creating the discussion. Please try again later.",
+          text: "There was an error processing your request. Please try again later.",
         });
       });
   };
 
   return (
     <div>
-      <h2>Create a Discussion</h2>
+      <h2>{isEditMode ? "Edit Discussion" : "Create a Discussion"}</h2>
 
       {/* Input for Discussion Title */}
       <div className="mt-3">
@@ -124,7 +150,7 @@ function DiscussionForm() {
         </select>
       </div>
 
-      {/* Prikazujemo opis teme kada je odabrana */}
+      {/* Display description of the selected topic */}
       {selectedTopicDescription && (
         <div className="mt-3">
           <h5>Topic Description:</h5>
@@ -132,7 +158,7 @@ function DiscussionForm() {
         </div>
       )}
 
-      {/* Polje za unos teksta diskusije */}
+      {/* Input for Discussion Text */}
       <div className="mt-3">
         <label htmlFor="discussionText">Discussion Text:</label>
         <textarea
@@ -144,9 +170,9 @@ function DiscussionForm() {
         />
       </div>
 
-      {/* Dugme za kreiranje diskusije */}
+      {/* Submit button */}
       <button className="btn btn-primary mt-3" onClick={handleSubmit}>
-        Create Discussion
+        {isEditMode ? "Update Discussion" : "Create Discussion"}
       </button>
     </div>
   );

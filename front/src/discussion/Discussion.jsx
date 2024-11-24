@@ -4,6 +4,7 @@ import Authorized from "../auth/Authorize";
 import CommentInput from "./CommentInput"; // Uvezi komponentu za unos komentara
 import axios from "axios"; // Dodaj axios za API pozive
 import { urlManageReaction } from "../utils/endpoints"; // URL za API endpoint za reakcije
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 
 export default function Discussion({
   title,
@@ -20,13 +21,14 @@ export default function Discussion({
   const [likes, setLikes] = useState(likes_count); // Stanje za broj lajkova
   const [dislikes, setDislikes] = useState(dislikes_count); // Stanje za broj dislajkova
   const [userReaction, setUserReaction] = useState(null); // Stanje za trenutnu reakciju korisnika
+  const navigate = useNavigate(); // Initialize useNavigate for redirection
 
   const handleVote = async (voteType) => {
     const reaction = voteType === "upvote" ? "like" : "dislike";
-  
+
     // Ako korisnik klikne na istu reakciju, uklanja se reakcija
     const newReaction = userReaction === reaction ? "none" : reaction;
-  
+
     try {
       const response = await axios.post(
         urlManageReaction,
@@ -40,14 +42,15 @@ export default function Discussion({
           },
         }
       );
-  
+
       if (response.status === 200) {
-        const { likes: updatedLikes, dislikes: updatedDislikes } = response.data;
-  
+        const { likes: updatedLikes, dislikes: updatedDislikes } =
+          response.data;
+
         // Ažuriraj broj lajkova i dislajkova
         setLikes(updatedLikes);
         setDislikes(updatedDislikes);
-  
+
         // Ažuriraj trenutnu reakciju korisnika
         setUserReaction(newReaction === "none" ? null : newReaction);
       } else {
@@ -58,10 +61,16 @@ export default function Discussion({
       alert("Failed to update reaction. Please try again.");
     }
   };
-  
 
   const handleAddComment = (newComment) => {
     setAllComments([...allComments, { text: newComment }]); // Dodaj novi komentar u listu
+  };
+
+  const handleEdit = () => {
+    console.log(discussionId);
+    navigate(`/edit-discussion/${discussionId}`, {
+      state: { title, text, topic, discussionId },
+    });
   };
 
   return (
@@ -138,10 +147,7 @@ export default function Discussion({
         role="admin"
         authorized={
           <div className="card-footer text-end">
-            <button
-              className="btn btn-warning me-2"
-              onClick={() => alert("Editing discussion...")}
-            >
+            <button className="btn btn-warning me-2" onClick={handleEdit}>
               Edit Discussion
             </button>
             <button

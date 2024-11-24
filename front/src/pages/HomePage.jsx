@@ -45,7 +45,7 @@ export default function HomePage() {
           return (
             <Discussion
               key={index}
-              title={discussion.title}
+              title={discussion.title} //discussion title
               discussionId={discussion.id}
               text={discussion.text} //discussion text
               author={discussion.author}
