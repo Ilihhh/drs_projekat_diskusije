@@ -7,6 +7,7 @@ from ..models.discussion import Discussion
 from ..models.comment import Comment
 from ..services.discussion_service import DiscussionService
 from ..models.user import User  
+from ..models.discussion_reaction import DiscussionReaction
 
 discussions_blueprint = Blueprint('discussions', __name__)
 
@@ -144,3 +145,35 @@ def edit_discussion(current_user):
     except Exception as e:
         # Catch any other unexpected errors and return a generic server error message
         return jsonify({"error": "An internal error occurred."}), 500
+    
+@discussions_blueprint.route('/search-discussions', methods=['POST'])
+@token_required
+def search_discussions(user):
+    # Get the search data from the request JSON body
+    data = request.get_json()
+
+    # Call the search function to retrieve discussions
+    discussions = DiscussionService.search_discussions(data)
+
+    if not discussions:
+        return jsonify({"message": "No results found for your search."}), 404
+
+    # Serialize the discussions
+    discussion_schema = DiscussionSchema(many=True)
+    
+    return jsonify(discussion_schema.dump(discussions))
+
+
+
+
+@discussions_blueprint.route('/delete-discussion/<int:discussion_id>', methods=['DELETE'])
+@token_required
+@role_required('admin')
+def delete_discussion(current_user, discussion_id):
+    try:
+        DiscussionService.delete_discussion(discussion_id)
+        return jsonify({"message": "Discussion, comments, and reactions deleted successfully"}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "An internal error occurred.", "details": str(e)}), 500

@@ -6,6 +6,8 @@ import axios from "axios"; // Dodaj axios za API pozive
 import { urlDeleteComment, urlManageReaction } from "../utils/endpoints"; // URL za API endpoint za reakcije
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import AuthenticationContext from "../auth/AuthenticationContext";
+import Swal from "sweetalert2";
+import { urlDeleteDiscussion } from "../utils/endpoints"
 
 export default function Discussion({
   title,
@@ -17,6 +19,7 @@ export default function Discussion({
   dislikes_count,
   discussionId, // Dodaj ID diskusije kao prop
   topic, // topic je objekat koji sadrži name i description
+  onDelete,
 }) {
   const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
   const [likes, setLikes] = useState(likes_count); // Stanje za broj lajkova
@@ -75,6 +78,40 @@ export default function Discussion({
       state: { title, text, topic, discussionId },
     });
   };
+
+  const handleDelete = async () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This will delete the discussion along with all its comments and reactions.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(`${urlDeleteDiscussion}/${discussionId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Dodaj token za autorizaciju
+            },
+          });
+  
+          if (response.status === 200) {
+            Swal.fire("Deleted!", response.data.message, "success").then(() => {
+              if (onDelete) {
+                // Ako je `onDelete` definisan, ažuriraj listu diskusija
+                onDelete(discussionId);
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error deleting discussion:", error.response || error);
+          Swal.fire("Error", "Failed to delete discussion. Please try again.", "error");
+        }
+      }
+    });
+  };
+
 
   const handleDeleteComment = async (commentId) => {
     try {
@@ -190,12 +227,10 @@ export default function Discussion({
             <button className="btn btn-warning me-2" onClick={handleEdit}>
               Edit Discussion
             </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => alert("Deleting discussion...")}
-            >
+            <button className="btn btn-danger" onClick={handleDelete}>
               Delete Discussion
             </button>
+
           </div>
         }
       />

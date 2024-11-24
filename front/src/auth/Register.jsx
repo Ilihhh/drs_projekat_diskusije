@@ -3,7 +3,7 @@ import axios from "axios";
 import RegisterEditForm from "../forms/RegisterEditForm";
 import { urlRegister } from "../utils/endpoints";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2"; // Import SweetAlert
+import Swal from "sweetalert2";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -21,22 +21,21 @@ export default function Register() {
       if (response.status === 201) {
         console.log("User registered successfully:", response.data);
 
-        // SweetAlert potvrda
+        // SweetAlert potvrda za uspešnu registraciju
         Swal.fire({
           icon: "success",
           title: "Registration Successful",
           text: "Please wait for admin approval before logging in!",
           confirmButtonText: "Go to Home",
         }).then(() => {
-          // Redirekcija nakon potvrde
-          navigate('/');
+          navigate('/'); // Redirekcija na početnu stranicu
         });
       }
     } catch (error) {
       if (error.response) {
         console.error("Server error:", error.response.data);
 
-        // SweetAlert greška sa porukom sa servera
+        // SweetAlert greška sa servera
         Swal.fire({
           icon: "error",
           title: "Registration Failed",

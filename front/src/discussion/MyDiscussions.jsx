@@ -24,6 +24,17 @@ export default function MyDiscussions() {
     }
   };
 
+  const updateDiscussions = (searchResults) => {
+    setDiscussions(Array.isArray(searchResults) ? searchResults : []);
+  };
+
+
+  // Funkcija za osvežavanje liste nakon brisanja diskusije
+  const handleDeleteDiscussion = async () => {
+    await fetchDiscussions(); // Ponovno preuzimanje svih diskusija
+  };
+
+  
   // Poziva fetchDiscussions prilikom učitavanja stranice
   useEffect(() => {
     fetchDiscussions();
@@ -35,7 +46,7 @@ export default function MyDiscussions() {
   return (
     <div className="container mt-4">
       <CreateLink to="/create-discussion">+ Create Discussion</CreateLink>
-      <SearchBar/>
+      <SearchBar updateDiscussions={updateDiscussions}/>
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
@@ -55,6 +66,7 @@ export default function MyDiscussions() {
               dislikes_count={discussion.dislikes_count}
               topic={discussion.topic} //topic title
               description={discussion.description} //topic text
+              onDelete={handleDeleteDiscussion} // Prosleđuje funkciju za osvežavanje liste
             />
           );
         })

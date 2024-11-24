@@ -11,24 +11,33 @@ export default function RegisterEditForm(props) {
       initialValues={props.model}
       onSubmit={async (values, { setSubmitting }) => {
         try {
-          // Poziv funkcije za ažuriranje profila
+          // Poziv funkcije za registraciju ili ažuriranje profila
           await props.onSubmit(values);
 
           // SweetAlert potvrda o uspehu
-          Swal.fire({
-            icon: "success",
-            title: "Profile Updated",
-            text: "Your profile has been updated successfully!",
-            confirmButtonText: "OK",
-          });
+          if (props.edit) {
+            Swal.fire({
+              icon: "success",
+              title: "Profile Updated",
+              text: "Your profile has been updated successfully!",
+              confirmButtonText: "OK",
+            });
+          } else {
+            Swal.fire({
+              icon: "success",
+              title: "Registration Successful",
+              text: "Please wait for admin approval before logging in!",
+              confirmButtonText: "OK",
+            });
+          }
         } catch (error) {
-          console.error("Error updating profile:", error);
+          console.error("Error during submission:", error);
 
           // SweetAlert za grešku
           Swal.fire({
             icon: "error",
-            title: "Update Failed",
-            text: "There was an error updating your profile. Please try again.",
+            title: props.edit ? "Update Failed" : "Registration Failed",
+            text: "An error occurred. Please try again.",
           });
         } finally {
           setSubmitting(false);
