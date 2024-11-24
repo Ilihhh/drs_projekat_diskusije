@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import Button from "../utils/Button";
-import "../App.css"
+import { urlSearchDiscussions } from "../utils/endpoints";
+import "../App.css";
 
-export default function SearchBar() {
+export default function SearchBar({ updateDiscussions }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [creatorFirstName, setCreatorFirstName] = useState("");
   const [creatorLastName, setCreatorLastName] = useState("");
   const [creatorAddress, setCreatorAddress] = useState("");
   const [creatorEmail, setCreatorEmail] = useState("");
   const [creatorUsername, setCreatorUsername] = useState("");
+
   const handleSearchChange = (event) => {
     const { name, value } = event.target;
     switch (name) {
+      case "creatorUsername":
+        setCreatorUsername(value);
+        break;
       case "creatorFirstName":
         setCreatorFirstName(value);
         break;
@@ -24,28 +29,59 @@ export default function SearchBar() {
       case "creatorEmail":
         setCreatorEmail(value);
         break;
-      case "createUsername":
-        setCreatorUsername(value);
+      case "searchTerm":
+        setSearchTerm(value);
         break;
       default:
-        setSearchTerm(value);
+        break;
     }
   };
 
-  const handleSearch = () => {
-    console.log("Searching with parameters:");
-    console.log("Creator First Name:", creatorFirstName);
-    console.log("Creator Last Name:", creatorLastName);
-    console.log("Creator Address:", creatorAddress);
-    console.log("Creator Email:", creatorEmail);
-    console.log("Search Term:", searchTerm);
-    // Logic to perform search based on these parameters
+  const handleSearch = async () => {
+    const searchData = {
+      username: creatorUsername,
+      first_name: creatorFirstName,
+      last_name: creatorLastName,
+      address: creatorAddress,
+      email: creatorEmail,
+      name: searchTerm,
+    };
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("Token is missing");
+      return;
+    }
+
+    try {
+      const response = await fetch(urlSearchDiscussions, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(searchData),
+      });
+      const data = await response.json();
+      // Prosleđivanje rezultata pretrage u HomePage
+      
+      // Otherwise, update discussions with search results
+      if (data && Array.isArray(data)) {
+        // Update the discussions in HomePage after the search
+        updateDiscussions(data); // Pass the search results to updateDiscussions
+      } else {
+        updateDiscussions([]); // No discussions found, set an empty array
+      }
+    
+    } catch (error) {
+      console.error("Error during search:", error);
+    }
   };
 
   return (
     <div className="searchcontrainer">
       <div className="d-flex align-items-center gap-3">
-        {/* Search Bar */}
         <input
           type="text"
           name="creatorUsername"
@@ -62,7 +98,6 @@ export default function SearchBar() {
           value={creatorFirstName}
           onChange={handleSearchChange}
         />
-
         <input
           type="text"
           name="creatorLastName"
@@ -71,7 +106,6 @@ export default function SearchBar() {
           value={creatorLastName}
           onChange={handleSearchChange}
         />
-
         <input
           type="text"
           name="creatorAddress"
@@ -80,7 +114,6 @@ export default function SearchBar() {
           value={creatorAddress}
           onChange={handleSearchChange}
         />
-
         <input
           type="email"
           name="creatorEmail"
@@ -89,7 +122,6 @@ export default function SearchBar() {
           value={creatorEmail}
           onChange={handleSearchChange}
         />
-
         <input
           type="text"
           name="searchTerm"
@@ -98,7 +130,6 @@ export default function SearchBar() {
           value={searchTerm}
           onChange={handleSearchChange}
         />
-
         <Button onClick={handleSearch}>Search</Button>
       </div>
     </div>

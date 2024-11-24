@@ -24,6 +24,10 @@ export default function MyDiscussions() {
     }
   };
 
+  const updateDiscussions = (searchResults) => {
+    setDiscussions(Array.isArray(searchResults) ? searchResults : []);
+  };
+
   // Poziva fetchDiscussions prilikom učitavanja stranice
   useEffect(() => {
     fetchDiscussions();
@@ -35,7 +39,7 @@ export default function MyDiscussions() {
   return (
     <div className="container mt-4">
       <CreateLink to="/create-discussion">+ Create Discussion</CreateLink>
-      <SearchBar/>
+      <SearchBar updateDiscussions={updateDiscussions}/>
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
