@@ -122,3 +122,19 @@ def edit_discussion(current_user):
     except Exception as e:
         # Catch any other unexpected errors and return a generic server error message
         return jsonify({"error": "An internal error occurred."}), 500
+    
+@discussions_blueprint.route('/search-discussions', methods=['POST'])
+@token_required
+def search_discussions(user):
+    # Get the search data from the request JSON body
+    data = request.get_json()
+
+    # Call the search function to retrieve discussions
+    discussions = DiscussionService.search_discussions(data)
+
+    if not discussions:
+        return jsonify({"message": "No results found for your search."}), 404
+
+    # Serialize the discussions
+    discussion_schema = DiscussionSchema(many=True)
+    return jsonify(discussion_schema.dump(discussions))

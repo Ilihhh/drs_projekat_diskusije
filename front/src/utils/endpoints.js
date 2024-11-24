@@ -7,6 +7,7 @@ export const urlCreateDiscussion = `${baseURL}/create-discussion`;
 export const urlEditDiscussion = `${baseURL}/edit-discussion`;
 export const urlAllDiscussions = `${baseURL}/discussions`;
 export const urlUserDiscussions = `${baseURL}/userdiscussions`;
+export const urlSearchDiscussions = `${baseURL}/search-discussions`;
 export const urlTopics = `${baseURL}/topics`;
 export const urlTopicManagement = `${baseURL}/topicmanagement`;
 export const urlTopicCreate = `${baseURL}/topic/create-topic`;
