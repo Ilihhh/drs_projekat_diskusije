@@ -28,6 +28,10 @@ export default function HomePage() {
   // Funkcija za ažuriranje diskusija prema rezultatima pretrage
   const updateDiscussions = (searchResults) => {
     setDiscussions(Array.isArray(searchResults) ? searchResults : []);
+  }
+  // Funkcija za osvežavanje liste diskusija nakon brisanja
+  const handleDeleteDiscussion = async () => {
+    await fetchDiscussions(); // Ponovno preuzimanje svih diskusija
   };
 
   // Poziva fetchDiscussions prilikom učitavanja stranice
@@ -57,8 +61,9 @@ export default function HomePage() {
               comments={discussion.comments || []}
               likes_count={discussion.likes_count}
               dislikes_count={discussion.dislikes_count}
-              topic={discussion.topic}
-              description={discussion.description}
+              topic={discussion.topic} // topic title
+              description={discussion.description} // topic text
+              onDelete={handleDeleteDiscussion} // Prosleđuje funkciju za brisanje
             />
           );
         })

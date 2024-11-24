@@ -6,6 +6,7 @@ from ..models.topic import Topic
 from ..models.discussion import Discussion
 from ..models.comment import Comment
 from ..services.discussion_service import DiscussionService
+from ..models.discussion_reaction import DiscussionReaction
 
 discussions_blueprint = Blueprint('discussions', __name__)
 
@@ -137,4 +138,20 @@ def search_discussions(user):
 
     # Serialize the discussions
     discussion_schema = DiscussionSchema(many=True)
+    
     return jsonify(discussion_schema.dump(discussions))
+
+
+
+
+@discussions_blueprint.route('/delete-discussion/<int:discussion_id>', methods=['DELETE'])
+@token_required
+@role_required('admin')
+def delete_discussion(current_user, discussion_id):
+    try:
+        DiscussionService.delete_discussion(discussion_id)
+        return jsonify({"message": "Discussion, comments, and reactions deleted successfully"}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": "An internal error occurred.", "details": str(e)}), 500

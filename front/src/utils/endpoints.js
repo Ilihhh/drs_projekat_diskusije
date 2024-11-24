@@ -5,6 +5,7 @@ export const urlRegister = `${baseURL}/register`;
 export const urlDiscussions = `${baseURL}/mydiscussions`;
 export const urlCreateDiscussion = `${baseURL}/create-discussion`;
 export const urlEditDiscussion = `${baseURL}/edit-discussion`;
+export const urlDeleteDiscussion = `${baseURL}/delete-discussion`;
 export const urlAllDiscussions = `${baseURL}/discussions`;
 export const urlUserDiscussions = `${baseURL}/userdiscussions`;
 export const urlSearchDiscussions = `${baseURL}/search-discussions`;

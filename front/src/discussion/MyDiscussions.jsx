@@ -28,6 +28,13 @@ export default function MyDiscussions() {
     setDiscussions(Array.isArray(searchResults) ? searchResults : []);
   };
 
+
+  // Funkcija za osvežavanje liste nakon brisanja diskusije
+  const handleDeleteDiscussion = async () => {
+    await fetchDiscussions(); // Ponovno preuzimanje svih diskusija
+  };
+
+  
   // Poziva fetchDiscussions prilikom učitavanja stranice
   useEffect(() => {
     fetchDiscussions();
@@ -59,6 +66,7 @@ export default function MyDiscussions() {
               dislikes_count={discussion.dislikes_count}
               topic={discussion.topic} //topic title
               description={discussion.description} //topic text
+              onDelete={handleDeleteDiscussion} // Prosleđuje funkciju za osvežavanje liste
             />
           );
         })

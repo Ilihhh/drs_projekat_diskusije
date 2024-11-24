@@ -2,6 +2,10 @@ from ..models.topic import Topic
 from ..models.user import User
 from ..database import db
 from ..models.discussion import Discussion
+from ..models.comment import Comment
+from ..models.discussion_reaction import DiscussionReaction
+from ..database import db
+
 
 class DiscussionService:
     @staticmethod
@@ -110,6 +114,27 @@ class DiscussionService:
         
         discussions = query.all()
 
-        return discussions
+        return discussions 
+    
 
-        
+
+    
+    @staticmethod
+    def delete_discussion(discussion_id):
+        discussion = Discussion.query.get(discussion_id)
+        if not discussion:
+            raise ValueError("Discussion not found.")
+
+        try:
+            # Delete associated reactions
+            DiscussionReaction.query.filter_by(discussion_id=discussion_id).delete()
+
+            # Delete associated comments
+            Comment.query.filter_by(discussion_id=discussion_id).delete()
+
+            # Delete the discussion
+            db.session.delete(discussion)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise ValueError(f"An error occurred while deleting the discussion: {str(e)}")
