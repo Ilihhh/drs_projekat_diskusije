@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Authorized from "../auth/Authorize";
 import CommentInput from "./CommentInput"; // Uvezi komponentu za unos komentara
 import axios from "axios"; // Dodaj axios za API pozive
-import { urlManageReaction } from "../utils/endpoints"; // URL za API endpoint za reakcije
+import { urlDeleteComment, urlManageReaction } from "../utils/endpoints"; // URL za API endpoint za reakcije
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import AuthenticationContext from "../auth/AuthenticationContext";
 
 export default function Discussion({
   title,
@@ -22,6 +23,16 @@ export default function Discussion({
   const [dislikes, setDislikes] = useState(dislikes_count); // Stanje za broj dislajkova
   const [userReaction, setUserReaction] = useState(null); // Stanje za trenutnu reakciju korisnika
   const navigate = useNavigate(); // Initialize useNavigate for redirection
+  const { claims } = useContext(AuthenticationContext);
+
+  function getUsername() {
+    return claims.filter((x) => x.name === "username")[0]?.value;
+  }
+  function getIsAdmin() {
+    return claims.some(
+      (claim) => claim.name === "role" && claim.value === "admin"
+    );
+  }
 
   const handleVote = async (voteType) => {
     const reaction = voteType === "upvote" ? "like" : "dislike";
@@ -30,18 +41,10 @@ export default function Discussion({
     const newReaction = userReaction === reaction ? "none" : reaction;
 
     try {
-      const response = await axios.post(
-        urlManageReaction,
-        {
-          discussion_id: discussionId,
-          reaction: newReaction,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await axios.post(urlManageReaction, {
+        discussion_id: discussionId,
+        reaction: newReaction,
+      });
 
       if (response.status === 200) {
         const { likes: updatedLikes, dislikes: updatedDislikes } =
@@ -62,8 +65,8 @@ export default function Discussion({
     }
   };
 
-  const handleAddComment = (newComment) => {
-    setAllComments([...allComments, { text: newComment }]); // Dodaj novi komentar u listu
+  const handleAddComment = (addedComment) => {
+    setAllComments((prevComments) => [...prevComments, addedComment]); // Dodaj novi komentar u listu
   };
 
   const handleEdit = () => {
@@ -73,6 +76,23 @@ export default function Discussion({
     });
   };
 
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const response = await axios.delete(`${urlDeleteComment}/${commentId}`);
+
+      if (response.status === 200) {
+        setAllComments(
+          allComments.filter((comment) => comment.id !== commentId)
+        );
+      } else {
+        alert("Failed to delete comment.");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error.response || error);
+      alert("Error deleting comment. Please try again.");
+    }
+  };
+
   return (
     <div className="card shadow-lg rounded mb-4">
       <div className="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
@@ -80,7 +100,7 @@ export default function Discussion({
           <div>
             <h5 className="card-title">{title}</h5>
             <p className="card-subtitle text-muted">
-              Posted by {author} on{" "}
+              Posted by {author.username} on{" "}
               {creation_date
                 ? creation_date.replace("T", " ").split(".")[0]
                 : null}
@@ -127,14 +147,34 @@ export default function Discussion({
       {/* Comments */}
       <div className="card-footer">
         <h6>Comments</h6>
-        {allComments.map((comment, index) => (
-          <div key={index} className="card mb-2 shadow-sm">
-            <div className="card-body">
-              <p className="card-text">{comment.text}</p>
-            </div>
-          </div>
-        ))}
+        {allComments.map((comment, index) => {
+          const isCommentAuthor = comment.author.username === getUsername();
+          const isDiscussionAuthor = author.username === getUsername();
+          const isAdmin = getIsAdmin();
 
+          // console.log(comment);
+          return (
+            <div key={index} className="card mb-2 shadow-sm">
+              <div className="card-body">
+                <p className="card-text">{comment.text}</p>
+                <div className="d-flex justify-content-between align-items-center">
+                  <p className="text-muted mb-0">
+                    <span className="fw-bold">{comment.author.username}</span>{" "}
+                    on {comment.creation_date.replace("T", " ").split(".")[0]}
+                  </p>
+                  {(isCommentAuthor || isDiscussionAuthor || isAdmin) && (
+                    <button
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => handleDeleteComment(comment.id)}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
         {/* Dodaj komponentu za unos komentara */}
         <CommentInput
           onAddComment={handleAddComment}

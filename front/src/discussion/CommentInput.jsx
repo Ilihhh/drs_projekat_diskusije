@@ -26,7 +26,7 @@ export default function CommentInput({ onAddComment, discussionId }) {
         mentions: mentions, // Prosledi mentionovane korisnike
         discussionId: discussionId, // Dodaj ID diskusije
       };
-      console.log(commentData)
+  
       try {
         // Poziv backend-a za dodavanje komentara koristeći axios
         const response = await axios.post(urlAddComment, commentData, {
@@ -34,10 +34,12 @@ export default function CommentInput({ onAddComment, discussionId }) {
             "Content-Type": "application/json",
           },
         });
-
+  
         if (response.status === 200) {
-          // Pozovi roditeljsku funkciju za dodavanje komentara ako je backend uspešan
-          onAddComment(newComment);
+          // Backend vraća kompletan objekat komentara (uključujući ID)
+          const addedComment = response.data; 
+          onAddComment(addedComment); // Pozovi roditeljsku funkciju sa podacima iz backend odgovora
+          console.log(addedComment);
           setNewComment(""); // Očisti polje nakon dodavanja komentara
         } else {
           console.error("Failed to add comment.");
@@ -47,6 +49,7 @@ export default function CommentInput({ onAddComment, discussionId }) {
       }
     }
   };
+  
 
   return (
     <div>

@@ -18,3 +18,4 @@ export const urlUserInfo = `${baseURL}/userinfo`;
 export const urlUserEdit = `${baseURL}/edituser`;
 export const urlAddComment = `${baseURL}/add-comment`;
 export const urlManageReaction = `${baseURL}/reaction`;
+export const urlDeleteComment = `${baseURL}/delete-comment`
