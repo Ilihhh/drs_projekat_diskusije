@@ -4,6 +4,7 @@ from ..models.comment import Comment
 from ..models.topic import Topic
 from ..database import db
 from ..config import Config  # Import Config class
+from ..models.discussion_reaction import DiscussionReaction
 
 class TopicService:
 
@@ -121,45 +122,56 @@ class TopicService:
     
 
     @staticmethod
-    def delete_topic_and_discussions(topic_id):
-        if not topic_id:
-            raise ValueError("Invalid input. 'topic_id' is required.")
-
+    def delete_topic_and_discussions_with_reactions(topic_id):
         topic = Topic.query.get(topic_id)
         if not topic:
             raise ValueError("Topic not found.")
 
-        try:
-            # Delete associated discussions and their comments
-            discussions = Discussion.query.filter_by(topic_id=topic_id).all()
-            for discussion in discussions:
-                # Delete comments associated with each discussion
-                Comment.query.filter_by(discussion_id=discussion.id).delete()
-                db.session.delete(discussion)
+        # Pronađi sve diskusije povezane sa topikom
+        discussions = Discussion.query.filter_by(topic_id=topic_id).all()
 
-            # Delete the topic
-            db.session.delete(topic)
-            db.session.commit()
-            return True
+        for discussion in discussions:
+            # Obriši sve reakcije povezane sa diskusijom
+            DiscussionReaction.query.filter_by(discussion_id=discussion.id).delete()
 
-        except Exception as e:
-            db.session.rollback()
-            error_message = str(e)
-            raise ValueError(f"An error occurred while deleting the topic, discussions, and comments: {error_message}")
+            # Obriši sve komentare povezane sa diskusijom
+            Comment.query.filter_by(discussion_id=discussion.id).delete()
+
+            # Obriši diskusiju
+            db.session.delete(discussion)
+
+        # Na kraju obriši i topik
+        db.session.delete(topic)
+
+        # Sačuvaj promene
+        db.session.commit()
 
     @staticmethod
-    def delete_topics_and_discussions(ids):
-        if not ids or not isinstance(ids, list):
-            raise ValueError("Invalid input. 'ids' list is required.")
+    def delete_topics_and_discussions_with_reactions(topic_ids):
+        topics = Topic.query.filter(Topic.id.in_(topic_ids)).all()
 
-        try:
-            for topic_id in ids:
-                TopicService.delete_topic_and_discussions(topic_id)
-            return True
-        except Exception as e:
-            db.session.rollback()
-            error_message = str(e)
-            raise ValueError(f"An error occurred while deleting topics, discussions, and comments: {error_message}")
+        if not topics:
+            raise ValueError("No topics found for the given IDs.")
+
+        for topic in topics:
+            # Pronađi sve diskusije povezane sa topikom
+            discussions = Discussion.query.filter_by(topic_id=topic.id).all()
+
+            for discussion in discussions:
+                # Obriši sve reakcije povezane sa diskusijom
+                DiscussionReaction.query.filter_by(discussion_id=discussion.id).delete()
+
+                # Obriši sve komentare povezane sa diskusijom
+                Comment.query.filter_by(discussion_id=discussion.id).delete()
+
+                # Obriši diskusiju
+                db.session.delete(discussion)
+
+            # Na kraju obriši i topik
+            db.session.delete(topic)
+
+        # Sačuvaj promene
+        db.session.commit()
 
 
     @staticmethod

@@ -122,17 +122,15 @@ def delete_topic_with_discussions(current_user):
 
     topic_id = data['id']
     try:
-        TopicService.delete_topic_and_discussions(topic_id)
-        return jsonify({"message": "Topic, discussions, and comments deleted successfully!"}), 200
+        # Brisanje topika, diskusija, komentara i reakcija
+        TopicService.delete_topic_and_discussions_with_reactions(topic_id)
+        return jsonify({"message": "Topic, discussions, comments, and reactions deleted successfully!"}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "An internal error occurred."}), 500
 
-    
 
-
-    
 @topics_blueprint.route('/topic/delete-selected-with-discussions', methods=['DELETE'])
 @token_required
 @role_required('admin')
@@ -144,12 +142,14 @@ def delete_selected_with_discussions(current_user):
     ids = data['ids']
 
     try:
-        TopicService.delete_topics_and_discussions(ids)
-        return jsonify({"message": "Selected topics, discussions, and comments deleted successfully!"}), 200
+        # Brisanje više topika, diskusija, komentara i reakcija
+        TopicService.delete_topics_and_discussions_with_reactions(ids)
+        return jsonify({"message": "Selected topics, discussions, comments, and reactions deleted successfully!"}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "An internal error occurred."}), 500
+
 
 
 
