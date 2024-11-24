@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Authorized from "../auth/Authorize";
 import CommentInput from "./CommentInput"; // Uvezi komponentu za unos komentara
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 
 export default function Discussion({
   title,
@@ -16,6 +17,7 @@ export default function Discussion({
 }) {
   const [clicked, setClicked] = useState(false);
   const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
+  const navigate = useNavigate(); // Initialize useNavigate for redirection
 
   const handleVote = (voteType) => {
     if (voteType === "upvote") {
@@ -27,6 +29,13 @@ export default function Discussion({
 
   const handleAddComment = (newComment) => {
     setAllComments([...allComments, { text: newComment }]); // Dodaj novi komentar u listu
+  };
+
+  const handleEdit = () => {
+    console.log(discussionId);
+    navigate(`/edit-discussion/${discussionId}`, {
+      state: { title, text, topic, discussionId },
+    });
   };
 
   return (
@@ -103,10 +112,7 @@ export default function Discussion({
         role="admin"
         authorized={
           <div className="card-footer text-end">
-            <button
-              className="btn btn-warning me-2"
-              onClick={() => alert("Editing discussion...")}
-            >
+            <button className="btn btn-warning me-2" onClick={handleEdit}>
               Edit Discussion
             </button>
             <button

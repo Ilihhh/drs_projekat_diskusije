@@ -43,14 +43,16 @@ export default function MyDiscussions() {
           return (
             <Discussion
               key={index}
-              title={discussion.title}
+              title={discussion.title} //discussion title
+              discussionId={discussion.id}
+              text={discussion.text} //discussion text
               author={discussion.author}
               creation_date={discussion.creation_date}
-              text={discussion.text}
-              description={discussion.description}
               comments={discussion.comments || []}
               likes_count={discussion.likes_count}
               dislikes_count={discussion.dislikes_count}
+              topic={discussion.topic} //topic title
+              description={discussion.description} //topic text
             />
           );
         })

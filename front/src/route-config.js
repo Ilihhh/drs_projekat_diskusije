@@ -18,6 +18,7 @@ const routes = [
   { path: "*", element: RedirectToHomePage },
   { path: "/mydiscussions", element: MyDiscussions, isLoggedIn: true },
   { path: "/create-discussion", element: DiscussionForm, isLoggedIn: true },
+  { path: "/edit-discussion/:id", element: DiscussionForm, isLoggedIn: true },
   { path: "/topicmanagement", element: TopicPage, isAdmin: true },
   { path: "/create-topic", element: TopicForm, isAdmin: true },
   { path: "/edit-topic/:id", element: TopicForm, isAdmin: true },
