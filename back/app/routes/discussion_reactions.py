@@ -57,13 +57,23 @@ def manage_reaction(current_user):
         likes = DiscussionReaction.query.filter_by(discussion_id=discussion_id, reaction="like").count()
         dislikes = DiscussionReaction.query.filter_by(discussion_id=discussion_id, reaction="dislike").count()
 
+        # Proverite trenutnu reakciju korisnika nakon ažuriranja
+        user_reaction = (
+            DiscussionReaction.query.filter_by(
+                user_id=current_user.id, discussion_id=discussion_id
+            ).first()
+        )
+        current_reaction = user_reaction.reaction if user_reaction else "none"
+
         return jsonify({
             "message": message,
             "likes": likes,
-            "dislikes": dislikes
+            "dislikes": dislikes,
+            "current_user_reaction": current_reaction
         }), 200
 
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "An error occurred while managing the reaction.", "details": str(e)}), 500
+
 

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Authorized from "../auth/Authorize";
 import CommentInput from "./CommentInput"; // Uvezi komponentu za unos komentara
@@ -28,6 +28,12 @@ export default function Discussion({
   const navigate = useNavigate(); // Initialize useNavigate for redirection
   const { claims } = useContext(AuthenticationContext);
 
+
+  
+
+
+
+
   function getUsername() {
     return claims.filter((x) => x.name === "username")[0]?.value;
   }
@@ -37,10 +43,31 @@ export default function Discussion({
     );
   }
 
+
+
+
+  useEffect(() => {
+    const fetchUserReaction = async () => {
+      try {
+        const response = await axios.get(`${urlManageReaction}/${discussionId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        if (response.status === 200) {
+          setUserReaction(response.data.current_user_reaction);
+        }
+      } catch (error) {
+        console.error("Error fetching user reaction:", error);
+      }
+    };
+
+    fetchUserReaction();
+  }, [discussionId]);
+
+
+
+
   const handleVote = async (voteType) => {
     const reaction = voteType === "upvote" ? "like" : "dislike";
-
-    // Ako korisnik klikne na istu reakciju, uklanja se reakcija
     const newReaction = userReaction === reaction ? "none" : reaction;
 
     try {
@@ -50,23 +77,23 @@ export default function Discussion({
       });
 
       if (response.status === 200) {
-        const { likes: updatedLikes, dislikes: updatedDislikes } =
-          response.data;
+        const {
+          likes: updatedLikes,
+          dislikes: updatedDislikes,
+          current_user_reaction,
+        } = response.data;
 
-        // Ažuriraj broj lajkova i dislajkova
         setLikes(updatedLikes);
         setDislikes(updatedDislikes);
-
-        // Ažuriraj trenutnu reakciju korisnika
-        setUserReaction(newReaction === "none" ? null : newReaction);
-      } else {
-        throw new Error("Failed to update reaction.");
+        setUserReaction(current_user_reaction);
       }
     } catch (error) {
       console.error("Error managing reaction:", error.response || error);
       alert("Failed to update reaction. Please try again.");
     }
   };
+  
+  
 
   const handleAddComment = (addedComment) => {
     setAllComments((prevComments) => [...prevComments, addedComment]); // Dodaj novi komentar u listu
