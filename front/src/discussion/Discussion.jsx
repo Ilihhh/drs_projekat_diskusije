@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Authorized from "../auth/Authorize";
 import CommentInput from "./CommentInput"; // Uvezi komponentu za unos komentara
@@ -46,22 +46,22 @@ export default function Discussion({
 
 
 
-  useEffect(() => {
-    const fetchUserReaction = async () => {
-      try {
-        const response = await axios.get(`${urlManageReaction}/${discussionId}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        if (response.status === 200) {
-          setUserReaction(response.data.current_user_reaction);
-        }
-      } catch (error) {
-        console.error("Error fetching user reaction:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUserReaction = async () => {
+  //     try {
+  //       const response = await axios.get(`${urlManageReaction}/${discussionId}`, {
+  //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  //       });
+  //       if (response.status === 200) {
+  //         setUserReaction(response.data.current_user_reaction);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user reaction:", error);
+  //     }
+  //   };
 
-    fetchUserReaction();
-  }, [discussionId]);
+  //   fetchUserReaction();
+  // }, [discussionId]);
 
 
 
@@ -100,7 +100,7 @@ export default function Discussion({
   };
 
   const handleEdit = () => {
-    console.log(discussionId);
+    // console.log(discussionId);
     navigate(`/edit-discussion/${discussionId}`, {
       state: { title, text, topic, discussionId },
     });
@@ -216,7 +216,7 @@ export default function Discussion({
           const isDiscussionAuthor = author.username === getUsername();
           const isAdmin = getIsAdmin();
 
-          console.log(comment);
+          // console.log(comment);
           return (
             <div key={index} className="card mb-2 shadow-sm">
               <div className="card-body">

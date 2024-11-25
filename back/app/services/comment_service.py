@@ -4,7 +4,7 @@ from ..models.comment import Comment
 from ..models.discussion import Discussion
 from ..models.user import User
 from ..database import db
-
+from ..services.email_service import EmailService
 
 class CommentService:
     @staticmethod
@@ -12,7 +12,7 @@ class CommentService:
         # Extract required fields from the data
         comment_text = data.get("commentText")
         discussion_id = data.get("discussionId")
-        mentions = data.get("mentions", [])  # List of users mentioned in the comment (if any)
+        mentions = data.get("mentions", [])  # List of usernames mentioned in the comment
 
         # Validate the presence of required fields
         if not comment_text or not discussion_id:
@@ -37,6 +37,24 @@ class CommentService:
 
             # Fetch author details
             author = User.query.get(current_user.id)
+
+            # Send email notifications to mentioned users
+            for username in mentions:
+                mentioned_user = User.query.filter_by(username=username).first()
+                if mentioned_user and mentioned_user.email:  # Ensure user exists and has an email
+                    email_body = (
+                        f"Hello {mentioned_user.username},\n\n"
+                        f"You were mentioned in a comment by {author.username}:\n\n"
+                        f"\"{comment_text}\"\n\n"
+                        f"Visit the discussion to reply or read more.\n\n"
+                        "Best regards,\n"
+                        "Your Discussion App"
+                    )
+                    EmailService.send_email(
+                        recipient=mentioned_user.email,
+                        subject="You were mentioned in a comment",
+                        body=email_body
+                    )
 
             # Build the response
             response_data = {

@@ -1,46 +1,60 @@
-import React, { useState } from "react";
-import axios from "axios"; // Importuj axios
-import { urlAddComment } from "../utils/endpoints";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { MentionsInput, Mention } from "react-mentions";
+import { urlAddComment, urlSearchUsers } from "../utils/endpoints";
+import mentionStyles from "./mentionStyles"; // Import stilova
 
-// Funkcija za prepoznavanje mentiona u tekstu
-const findMentions = (text) => {
-  const mentionRegex = /@(\w+)/g; // Traži sve mentione (@korisnik)
-  const matches = [];
-  let match;
-  while ((match = mentionRegex.exec(text)) !== null) {
-    matches.push(match[1]); // Spremi ime korisnika bez '@'
-  }
-  return matches;
-};
-
-// Komponenta za unos komentara
 export default function CommentInput({ onAddComment, discussionId }) {
   const [newComment, setNewComment] = useState("");
+  const [userSuggestions, setUserSuggestions] = useState([]);
 
-  // Funkcija za dodavanje komentara
+  useEffect(() => {
+    const fetchAllUsers = async () => {
+      try {
+        const response = await axios.get(urlSearchUsers);
+        if (response.status === 200) {
+          const allUsers = response.data.map((user) => ({
+            id: user.username,
+            display: `@${user.username}`,
+          }));
+          setUserSuggestions(allUsers);
+        }
+      } catch (error) {
+        console.error("Error fetching user suggestions:", error);
+      }
+    };
+
+    fetchAllUsers();
+  }, []);
+
+  const formatCommentText = (text) => {
+    const cleanedText = text.replace(/^@\[(@.*?)\]/, "[$1]");
+    return cleanedText.replace(/\[@(.*?)\]\((.*?)\)/g, "@$1");
+  };
+
   const handleAddComment = async () => {
     if (newComment.trim()) {
-      const mentions = findMentions(newComment); // Pronađi mentione u tekstu
+      const mentions = userSuggestions
+        .filter((user) => newComment.includes(`@${user.id}`))
+        .map((user) => user.id);
+
       const commentData = {
-        commentText: newComment,
-        mentions: mentions, // Prosledi mentionovane korisnike
-        discussionId: discussionId, // Dodaj ID diskusije
+        commentText: formatCommentText(newComment),
+        mentions,
+        discussionId,
       };
-  
+
       try {
-        // Poziv backend-a za dodavanje komentara koristeći axios
         const response = await axios.post(urlAddComment, commentData, {
           headers: {
             "Content-Type": "application/json",
           },
         });
-  
+
         if (response.status === 200) {
-          // Backend vraća kompletan objekat komentara (uključujući ID)
-          const addedComment = response.data; 
-          onAddComment(addedComment); // Pozovi roditeljsku funkciju sa podacima iz backend odgovora
-          console.log(addedComment);
-          setNewComment(""); // Očisti polje nakon dodavanja komentara
+          const addedComment = response.data;
+          onAddComment(addedComment);
+          setNewComment("");
         } else {
           console.error("Failed to add comment.");
         }
@@ -49,17 +63,23 @@ export default function CommentInput({ onAddComment, discussionId }) {
       }
     }
   };
-  
 
   return (
     <div>
-      <textarea
-        className="form-control mt-3"
-        rows="3"
+      <MentionsInput
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
-        placeholder="Write your comment here..."
-      ></textarea>
+        placeholder="Type your comment here..."
+        className="form-control"
+        style={mentionStyles} // Dodaj stilove
+      >
+        <Mention
+          trigger="@"
+          data={userSuggestions}
+          appendSpaceOnAdd={true}
+          style={mentionStyles.suggestions} // Stil za sugestije
+        />
+      </MentionsInput>
       <button className="btn btn-primary mt-2" onClick={handleAddComment}>
         Add a Comment
       </button>
