@@ -50,6 +50,7 @@ export default function HomePage() {
         <div className="alert alert-info">No discussions available.</div>
       ) : (
         discussions.map((discussion, index) => {
+          console.log(discussion)
           return (
             <Discussion
               key={index}

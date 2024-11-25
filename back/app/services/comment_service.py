@@ -64,8 +64,15 @@ class CommentService:
         if not comment:
             return {"message": "Comment not found."}, 404
 
-        # Check if the current user is the author of the comment
-        if comment.author_id != current_user.id:
+        # Fetch the discussion associated with the comment
+        discussion = Discussion.query.get(comment.discussion_id)
+
+        # Check if the current user is authorized to delete the comment
+        is_author = comment.author_id == current_user.id
+        is_discussion_owner = discussion and discussion.author_id == current_user.id
+        is_admin = current_user.role == 'admin'  # Adjust based on how roles are defined in your app
+
+        if not (is_author or is_discussion_owner or is_admin):
             return {"message": "You are not authorized to delete this comment."}, 403
 
         try:

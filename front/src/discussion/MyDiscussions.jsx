@@ -12,9 +12,7 @@ export default function MyDiscussions() {
 
   const fetchDiscussions = async () => {
     try {
-      const response = await axios.get(urlUserDiscussions, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const response = await axios.get(urlUserDiscussions);
       setDiscussions(response.data);
     } catch (err) {
       console.error("Error fetching discussions:", err);
@@ -46,27 +44,25 @@ export default function MyDiscussions() {
   return (
     <div className="container mt-4">
       <CreateLink to="/create-discussion">+ Create Discussion</CreateLink>
-      <SearchBar updateDiscussions={updateDiscussions}/>
+      <SearchBar updateDiscussions={updateDiscussions} />
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>
       ) : (
         discussions.map((discussion, index) => {
-          console.log(discussion);
-
           return (
             <Discussion
               key={index}
-              title={discussion.title} //discussion title
+              title={discussion.title}
               discussionId={discussion.id}
-              text={discussion.text} //discussion text
+              text={discussion.text}
               author={discussion.author}
               creation_date={discussion.creation_date}
               comments={discussion.comments || []}
               likes_count={discussion.likes_count}
               dislikes_count={discussion.dislikes_count}
-              topic={discussion.topic} //topic title
-              description={discussion.description} //topic text
-              onDelete={handleDeleteDiscussion} // Prosleđuje funkciju za osvežavanje liste
+              topic={discussion.topic} // topic title
+              description={discussion.description} // topic text
+              onDelete={handleDeleteDiscussion} // Prosleđuje funkciju za brisanje
             />
           );
         })

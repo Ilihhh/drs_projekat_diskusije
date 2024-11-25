@@ -189,7 +189,7 @@ export default function Discussion({
           const isDiscussionAuthor = author.username === getUsername();
           const isAdmin = getIsAdmin();
 
-          // console.log(comment);
+          console.log(comment);
           return (
             <div key={index} className="card mb-2 shadow-sm">
               <div className="card-body">

@@ -15,91 +15,29 @@ discussions_blueprint = Blueprint('discussions', __name__)
 def get_all_discussions():
     discussions = Discussion.query.all()
 
-    # Prikupi sve jedinstvene topic_id i author_id iz diskusija
-    unique_topic_ids = {discussion.topic_id for discussion in discussions}
-    unique_author_ids = {discussion.author_id for discussion in discussions}
-
-    # Učitaj sve teme povezane sa diskusijama
-    topics = Topic.query.filter(Topic.id.in_(unique_topic_ids)).all()
-    topic_map = {topic.id: {"id": topic.id, "name": topic.name, "description": topic.description} for topic in topics}
-
-    # Učitaj sve korisnike povezane sa autorima diskusija
-    users = User.query.filter(User.id.in_(unique_author_ids)).all()
-    user_map = {user.id: {"id": user.id, "username": user.username, "email": user.email} for user in users}
-
-    # Prikupi sve jedinstvene discussion_id iz komentara
-    unique_discussion_ids = {discussion.id for discussion in discussions}
-
-    # Učitaj sve komentare povezane sa diskusijama
-    comments = Comment.query.filter(Comment.discussion_id.in_(unique_discussion_ids)).all()
-
-    # Prikupi sve jedinstvene author_id iz komentara (dodajemo ih u mapu korisnika)
-    comment_author_ids = {comment.author_id for comment in comments}
-    additional_users = User.query.filter(User.id.in_(comment_author_ids - unique_author_ids)).all()
-    for user in additional_users:
-        user_map[user.id] = {"id": user.id, "username": user.username, "email": user.email}
-
-    # Dodaj informacije o korisnicima u komentare
-    comment_map = {}
-    for comment in comments:
-        if comment.discussion_id not in comment_map:
-            comment_map[comment.discussion_id] = []
-        comment_map[comment.discussion_id].append({
-            "id": comment.id,
-            "author": user_map.get(comment.author_id, None),  # Dodaj informacije o autoru
-            "text": comment.text,
-            "creation_date": comment.creation_date
-        })
-
+    # Serijalizuj diskusije sa povezanim temama, autorima i komentarima
     discussion_schema = DiscussionSchema(many=True)
     discussions_data = discussion_schema.dump(discussions)
 
-    # Dodaj temu, autora i komentare za svaku diskusiju
-    for discussion in discussions_data:
-        topic_id = discussion["topic_id"]
-        discussion["topic"] = topic_map.get(topic_id, None)
-
-        author_id = discussion["author_id"]
-        discussion["author"] = user_map.get(author_id, None)  # Dodaj autora
-
-        discussion_id = discussion["id"]
-        discussion["comments"] = comment_map.get(discussion_id, [])
-
     return jsonify(discussions_data), 200
-
-
 
 
 @discussions_blueprint.route('/userdiscussions', methods=['GET'])
 @token_required
 def get_user_discussions(current_user):
-    
-    # Filtriramo diskusije prema korisniku koji je trenutno prijavljen
+    # Filtriraj diskusije prema korisniku koji je trenutno prijavljen
     discussions = Discussion.query.filter_by(author_id=current_user.id).all()
 
     # Ako nema diskusija za ovog korisnika, vraćamo praznu listu
     if not discussions:
         return jsonify([]), 200
 
-    # Izdvajamo jedinstvene topic_id-eve iz diskusija
-    unique_topic_ids = {discussion.topic_id for discussion in discussions}
-
-    # Filtriramo teme koje odgovaraju tim topic_id-evima
-    topics = Topic.query.filter(Topic.id.in_(unique_topic_ids)).all()
-
-    # Kreiramo mapu tema po njihovim ID-evima za brži pristup
-    topic_map = {topic.id: {"id": topic.id, "name": topic.name, "description": topic.description} for topic in topics}  
-
-    # Serijalizujemo diskusije
+    # Serijalizuj diskusije sa povezanim temama, autorima i komentarima
     discussion_schema = DiscussionSchema(many=True)
     discussions_data = discussion_schema.dump(discussions)
 
-    # Dodajemo podatke o temi svakoj diskusiji
-    for discussion in discussions_data:
-        topic_id = discussion["topic_id"]
-        discussion["topic"] = topic_map.get(topic_id, None)  # Dodaj temu ili None ako nije pronađena
-    
     return jsonify(discussions_data), 200
+
 
 @discussions_blueprint.route('/create-discussion', methods=['POST'])
 @token_required  # Pretpostavljamo da je korisnik autentifikovan
