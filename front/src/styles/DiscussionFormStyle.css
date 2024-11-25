@@ -1,0 +1,86 @@
+/* General form container */
+.discussion-form-container {
+  max-width: 700px;
+  margin: 25px auto;
+  padding: 30px;
+  background-color: #3c3f47;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  font-family: "Roboto", sans-serif;
+  color: #e0e0e0;
+}
+
+.discussion-form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #e0e0e0;
+}
+
+/* Form input fields */
+.discussion-form-container input[type="text"],
+.discussion-form-container textarea,
+.discussion-form-container select,
+.discussion-form-container button {
+  width: 100%; /* Ensure all elements take full width */
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #555b63;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #484e56;
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* Placeholder color for text input */
+.discussion-form-container input[type="text"]::placeholder {
+  color: #484e56; /* Postavlja boju placeholdera na belo */
+}
+
+/* Resizable textarea */
+.discussion-form-container textarea {
+  resize: vertical; /* Allows vertical resizing */
+  min-height: 100px;
+}
+
+/* Topic description display */
+.topic-description {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #2c3238;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%; /* Match the width of the other elements */
+  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+/* Button styles */
+.discussion-form-container button {
+  background-color: #5d87b0;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.discussion-form-container button:hover {
+  background-color: #4caf50;
+}
+
+/* Secondary button (cancel) */
+.discussion-form-container .btn-secondary {
+  background-color: transparent;
+  color: #5d87b0;
+  border: 2px solid #5d87b0;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.discussion-form-container .btn-secondary:hover {
+  background-color: #f44336;
+  color: white;
+}

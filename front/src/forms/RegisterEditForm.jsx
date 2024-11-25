@@ -1,9 +1,9 @@
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import TextField from "./TextField";
-import Button from "../utils/Button";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2"; // Import SweetAlert
+import Swal from "sweetalert2";
+import "../styles/LoginRegisterStyle.css";
 
 export default function RegisterEditForm(props) {
   return (
@@ -11,10 +11,9 @@ export default function RegisterEditForm(props) {
       initialValues={props.model}
       onSubmit={async (values, { setSubmitting }) => {
         try {
-          // Poziv funkcije za registraciju ili ažuriranje profila
           await props.onSubmit(values);
 
-          // SweetAlert potvrda o uspehu
+          // SweetAlert confirmation
           if (props.edit) {
             Swal.fire({
               icon: "success",
@@ -33,7 +32,7 @@ export default function RegisterEditForm(props) {
         } catch (error) {
           console.error("Error during submission:", error);
 
-          // SweetAlert za grešku
+          // SweetAlert error message
           Swal.fire({
             icon: "error",
             title: props.edit ? "Update Failed" : "Registration Failed",
@@ -44,55 +43,57 @@ export default function RegisterEditForm(props) {
         }
       }}
       validationSchema={Yup.object({
-        username: Yup.string()
-          .max(50, "Username must not exceed 50 characters")
-          .required("This field is required"),
-        first_name: Yup.string()
-          .max(50, "First name must not exceed 50 characters")
-          .required("This field is required"),
-        last_name: Yup.string()
-          .max(50, "Last name must not exceed 50 characters")
-          .required("This field is required"),
-        address: Yup.string()
-          .max(255, "Address must not exceed 255 characters")
-          .required("This field is required"),
-        city: Yup.string()
-          .max(50, "City must not exceed 50 characters")
-          .required("This field is required"),
-        country: Yup.string()
-          .max(50, "Country must not exceed 50 characters")
-          .required("This field is required"),
-        phone_number: Yup.string()
-          .max(20, "Phone number must not exceed 20 characters")
-          .required("This field is required"),
+        username: Yup.string().required("This field is required"),
+        first_name: Yup.string().required("This field is required"),
+        last_name: Yup.string().required("This field is required"),
+        address: Yup.string().required("This field is required"),
+        city: Yup.string().required("This field is required"),
+        country: Yup.string().required("This field is required"),
+        phone_number: Yup.string().required("This field is required"),
         email: Yup.string()
-          .max(120, "Email must not exceed 120 characters")
           .required("This field is required")
-          .email("You have to insert a valid email"),
+          .email("Valid email required"),
         password: props.edit
           ? Yup.string()
           : Yup.string().required("This field is required"),
       })}
     >
       {(formikProps) => (
-        <Form>
-          <TextField displayName="Username" field="username" type="text" />
-          <TextField displayName="First Name" field="first_name" type="text" />
-          <TextField displayName="Last Name" field="last_name" type="text" />
-          <TextField displayName="Address" field="address" type="text" />
-          <TextField displayName="City" field="city" type="text" />
-          <TextField displayName="Country" field="country" type="text" />
-          <TextField displayName="Phone Number" field="phone_number" type="tel" />
-          <TextField displayName="Email" field="email" type="text" />
-          <TextField displayName="Password" field="password" type="password" />
+        <div className="register-edit-form-container">
+          <h2>{props.edit ? "Update Your Profile" : "Register"}</h2>
+          <Form>
+            <TextField displayName="Username" field="username" type="text" />
+            <TextField
+              displayName="First Name"
+              field="first_name"
+              type="text"
+            />
+            <TextField displayName="Last Name" field="last_name" type="text" />
+            <TextField displayName="Address" field="address" type="text" />
+            <TextField displayName="City" field="city" type="text" />
+            <TextField displayName="Country" field="country" type="text" />
+            <TextField
+              displayName="Phone Number"
+              field="phone_number"
+              type="tel"
+            />
+            <TextField displayName="Email" field="email" type="text" />
+            <TextField
+              displayName="Password"
+              field="password"
+              type="password"
+            />
 
-          <Button disabled={formikProps.isSubmitting} type="submit">
-            Confirm
-          </Button>
-          <Link className="btn btn-secondary" to="/">
-            Cancel
-          </Link>
-        </Form>
+            <div className="form-buttons">
+              <button disabled={formikProps.isSubmitting} type="submit">
+                Confirm
+              </button>
+              <Link className="btn-secondary" to="/">
+                Cancel
+              </Link>
+            </div>
+          </Form>
+        </div>
       )}
     </Formik>
   );

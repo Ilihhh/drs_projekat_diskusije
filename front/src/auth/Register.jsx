@@ -28,7 +28,7 @@ export default function Register() {
           text: "Please wait for admin approval before logging in!",
           confirmButtonText: "Go to Home",
         }).then(() => {
-          navigate('/'); // Redirekcija na početnu stranicu
+          navigate("/"); // Redirekcija na početnu stranicu
         });
       }
     } catch (error) {
@@ -56,7 +56,6 @@ export default function Register() {
 
   return (
     <>
-      <h3>Register</h3>
       <RegisterEditForm
         edit={false}
         model={{

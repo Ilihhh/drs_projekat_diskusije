@@ -50,7 +50,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f0f0f0; /* Možete postaviti bilo koju boju pozadine */
-  background-image: url("../pexels.jpg"); /* Ako želite sliku kao pozadinu */
+  background-image: url("../arcane.jpg"); /* Ako želite sliku kao pozadinu */
   background-size: cover; /* Ovaj parametar omogućava da pozadina uvek pokriva celo telo ekrana */
   background-position: center center; /* Pozicija pozadine, možete promeniti po potrebi */
   background-attachment: fixed; /* Ako želite da pozadina ostane fiksna pri skrolovanju */

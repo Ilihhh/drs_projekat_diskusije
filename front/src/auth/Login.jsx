@@ -58,15 +58,13 @@ export default function Login() {
     <>
       {redirected && (
         <p style={{ fontSize: "18px", lineHeight: "1.6" }}>
-        You need to log in to access that page.
-        <br /> {/* Novi red */}
-        <span>
-          Don’t have an account? <Link to="/register">Register</Link>
-        </span>
-      </p>
-      
+          You need to log in to access that page.
+          <br /> {/* Novi red */}
+          <span>
+            Don’t have an account? <Link to="/register">Register</Link>
+          </span>
+        </p>
       )}
-      <h3>Login</h3>
       <LoginForm
         model={{ email: "", password: "" }}
         onSubmit={async (values) => await login(values)}
