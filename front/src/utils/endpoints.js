@@ -22,3 +22,4 @@ export const urlAddComment = `${baseURL}/add-comment`;
 export const urlManageReaction = `${baseURL}/reaction`;
 export const urlDeleteComment = `${baseURL}/delete-comment`
 export const urlSearchUsers = `${baseURL}/users`
+export const urlUserReactions = `${baseURL}/user-reactions`

@@ -1,19 +1,45 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Discussion from "../discussion/Discussion";
-import { urlUserDiscussions } from "../utils/endpoints";
+import { urlUserDiscussions, urlUserReactions } from "../utils/endpoints";
 import axios from "axios";
 import CreateLink from "./../utils/CreateLink";
 import SearchBar from "./SearchBar";
+import AuthenticationContext from "../auth/AuthenticationContext"; // Import context for authentication
 
 export default function MyDiscussions() {
   const [discussions, setDiscussions] = useState([]);
+  const [reactions, setReactions] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { claims } = useContext(AuthenticationContext); // Get authentication context
 
+  // Check if the user is logged in
+  const isLoggedIn = () => {
+    // Check if there's a "username" claim
+    return claims.some((claim) => claim.name === "username");
+  };
+
+  // Function to fetch reactions for discussions
+  const fetchReactions = async (discussionIds) => {
+    try {
+      const response = await axios.post(urlUserReactions, { discussion_ids: discussionIds });
+      setReactions(response.data); // Assuming server returns { discussionId: reactionData }
+    } catch (err) {
+      console.error("Error fetching reactions:", err);
+    }
+  };
+
+  // Function to fetch discussions for the logged-in user
   const fetchDiscussions = async () => {
     try {
-      const response = await axios.get(urlUserDiscussions);
+      const response = await axios.get(urlUserDiscussions); // Fetch discussions related to the logged-in user
       setDiscussions(response.data);
+
+      // If the user is logged in, fetch reactions for each discussion
+      const discussionIds = response.data.map((discussion) => discussion.id);
+      if (discussionIds.length > 0 && isLoggedIn()) {
+        await fetchReactions(discussionIds);
+      }
     } catch (err) {
       console.error("Error fetching discussions:", err);
       setError("Failed to fetch discussions. Please try again later.");
@@ -22,18 +48,17 @@ export default function MyDiscussions() {
     }
   };
 
+  // Update discussions based on search results
   const updateDiscussions = (searchResults) => {
     setDiscussions(Array.isArray(searchResults) ? searchResults : []);
   };
 
-
-  // Funkcija za osvežavanje liste nakon brisanja diskusije
+  // Refresh the discussion list after deleting a discussion
   const handleDeleteDiscussion = async () => {
-    await fetchDiscussions(); // Ponovno preuzimanje svih diskusija
+    await fetchDiscussions(); // Re-fetch discussions
   };
 
-  
-  // Poziva fetchDiscussions prilikom učitavanja stranice
+  // Fetch discussions when the component mounts
   useEffect(() => {
     fetchDiscussions();
   }, []);
@@ -49,6 +74,7 @@ export default function MyDiscussions() {
         <div className="alert alert-info">No discussions available.</div>
       ) : (
         discussions.map((discussion, index) => {
+          const reaction = reactions[discussion.id]; // Get reaction for this discussion
           return (
             <Discussion
               key={index}
@@ -62,7 +88,8 @@ export default function MyDiscussions() {
               dislikes_count={discussion.dislikes_count}
               topic={discussion.topic} // topic title
               description={discussion.description} // topic text
-              onDelete={handleDeleteDiscussion} // Prosleđuje funkciju za brisanje
+              reaction={reaction} // Pass user reaction
+              onDelete={handleDeleteDiscussion} // Pass delete handler
             />
           );
         })

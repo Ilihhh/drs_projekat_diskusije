@@ -77,3 +77,33 @@ def manage_reaction(current_user):
         return jsonify({"error": "An error occurred while managing the reaction.", "details": str(e)}), 500
 
 
+@reaction_blueprint.route('/user-reactions', methods=['POST'])
+@token_required
+def get_user_reactions(current_user):
+    data = request.get_json()
+
+    if not data or "discussion_ids" not in data:
+        return jsonify({"error": "Missing 'discussion_ids' in request data."}), 400
+
+    discussion_ids = data.get("discussion_ids")
+
+    if not isinstance(discussion_ids, list) or not all(isinstance(d_id, int) for d_id in discussion_ids):
+        return jsonify({"error": "Invalid 'discussion_ids'. It should be a list of integers."}), 400
+
+    try:
+        # Dobavljanje reakcija za korisnika i prosleđene diskusije
+        reactions = DiscussionReaction.query.filter(
+            DiscussionReaction.user_id == current_user.id,
+            DiscussionReaction.discussion_id.in_(discussion_ids)
+        ).all()
+
+        # Mapiranje rezultata u {discussion_id: reaction}
+        user_reactions = {reaction.discussion_id: reaction.reaction for reaction in reactions}
+
+        # Vraća reakcije za sve diskusije, ako nema reakcije postavlja 'none'
+        response = {d_id: user_reactions.get(d_id, "none") for d_id in discussion_ids}
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": "An error occurred while fetching reactions.", "details": str(e)}), 500

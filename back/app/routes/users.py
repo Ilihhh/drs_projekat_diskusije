@@ -11,8 +11,8 @@ users_blueprint = Blueprint('users', __name__)
 
                                              
 @users_blueprint.route('/users', methods=['GET'])
-@token_required                                                         #mora da stoji ispod blueprinta :)                                                 
-def get_users(current_user):                                            #mora da se stavi current_user zbog funkcije token_reqired koja prosledjuje ovo (iako nam ne treba)
+                                                                         #mora da stoji ispod blueprinta :)                                                 
+def get_users():                                                         #mora da se stavi current_user zbog funkcije token_reqired koja prosledjuje ovo (iako nam ne treba)
     users = User.query.all()  # Fetch all users
     users_schema = UserSchema(many=True)  # many=True means we map multiple users
     return jsonify(users_schema.dump(users))  # Return serialized data

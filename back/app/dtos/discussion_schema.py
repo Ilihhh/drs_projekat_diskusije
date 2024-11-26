@@ -23,8 +23,6 @@ class DiscussionSchema(Schema):
     likes_count = fields.Method("get_likes_count", dump_only=True)
     dislikes_count = fields.Method("get_dislikes_count", dump_only=True)
 
-    # Dodatne informacije (broj komentara)
-    comments_count = fields.Method("get_comments_count", dump_only=True)
 
     def get_likes_count(self, obj):
         """Broj lajkova za diskusiju."""
@@ -33,7 +31,3 @@ class DiscussionSchema(Schema):
     def get_dislikes_count(self, obj):
         """Broj dislajkova za diskusiju."""
         return obj.get_dislikes_count() if hasattr(obj, "get_dislikes_count") else 0
-
-    def get_comments_count(self, obj):
-        """Broj komentara za diskusiju."""
-        return len(obj.comments) if obj.comments else 0

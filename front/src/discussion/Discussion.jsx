@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Authorized from "../auth/Authorize";
 import CommentInput from "./CommentInput"; // Uvezi komponentu za unos komentara
@@ -7,7 +7,7 @@ import { urlDeleteComment, urlManageReaction } from "../utils/endpoints"; // URL
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import AuthenticationContext from "../auth/AuthenticationContext";
 import Swal from "sweetalert2";
-import { urlDeleteDiscussion } from "../utils/endpoints"
+import { urlDeleteDiscussion } from "../utils/endpoints";
 
 export default function Discussion({
   title,
@@ -20,60 +20,41 @@ export default function Discussion({
   discussionId, // Dodaj ID diskusije kao prop
   topic, // topic je objekat koji sadrži name i description
   onDelete,
+  reaction, // Dodaj trenutnu reakciju iz props-a
 }) {
   const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
   const [likes, setLikes] = useState(likes_count); // Stanje za broj lajkova
   const [dislikes, setDislikes] = useState(dislikes_count); // Stanje za broj dislajkova
-  const [userReaction, setUserReaction] = useState(null); // Stanje za trenutnu reakciju korisnika
+  const [userReaction, setUserReaction] = useState(reaction); // Inicijalizuj reakciju iz props-a
   const navigate = useNavigate(); // Initialize useNavigate for redirection
   const { claims } = useContext(AuthenticationContext);
 
-
-  
-
-
-
+  useEffect(() => {
+    // console.log(reaction);
+    // U slučaju promene reakcije iz props-a
+    if (reaction) {
+      setUserReaction(reaction);
+    }
+  }, [reaction]);
 
   function getUsername() {
     return claims.filter((x) => x.name === "username")[0]?.value;
   }
+
   function getIsAdmin() {
     return claims.some(
       (claim) => claim.name === "role" && claim.value === "admin"
     );
   }
 
-
-
-
-  // useEffect(() => {
-  //   const fetchUserReaction = async () => {
-  //     try {
-  //       const response = await axios.get(`${urlManageReaction}/${discussionId}`, {
-  //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  //       });
-  //       if (response.status === 200) {
-  //         setUserReaction(response.data.current_user_reaction);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching user reaction:", error);
-  //     }
-  //   };
-
-  //   fetchUserReaction();
-  // }, [discussionId]);
-
-
-
-
   const handleVote = async (voteType) => {
-    const reaction = voteType === "upvote" ? "like" : "dislike";
-    const newReaction = userReaction === reaction ? "none" : reaction;
+    const newReaction = voteType === "upvote" ? "like" : "dislike";
+    const updatedReaction = userReaction === newReaction ? "none" : newReaction;
 
     try {
       const response = await axios.post(urlManageReaction, {
         discussion_id: discussionId,
-        reaction: newReaction,
+        reaction: updatedReaction,
       });
 
       if (response.status === 200) {
@@ -92,15 +73,12 @@ export default function Discussion({
       alert("Failed to update reaction. Please try again.");
     }
   };
-  
-  
 
   const handleAddComment = (addedComment) => {
     setAllComments((prevComments) => [...prevComments, addedComment]); // Dodaj novi komentar u listu
   };
 
   const handleEdit = () => {
-    // console.log(discussionId);
     navigate(`/edit-discussion/${discussionId}`, {
       state: { title, text, topic, discussionId },
     });
@@ -117,28 +95,33 @@ export default function Discussion({
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`${urlDeleteDiscussion}/${discussionId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // Dodaj token za autorizaciju
-            },
-          });
-  
+          const response = await axios.delete(
+            `${urlDeleteDiscussion}/${discussionId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+
           if (response.status === 200) {
             Swal.fire("Deleted!", response.data.message, "success").then(() => {
               if (onDelete) {
-                // Ako je `onDelete` definisan, ažuriraj listu diskusija
                 onDelete(discussionId);
               }
             });
           }
         } catch (error) {
           console.error("Error deleting discussion:", error.response || error);
-          Swal.fire("Error", "Failed to delete discussion. Please try again.", "error");
+          Swal.fire(
+            "Error",
+            "Failed to delete discussion. Please try again.",
+            "error"
+          );
         }
       }
     });
   };
-
 
   const handleDeleteComment = async (commentId) => {
     try {
@@ -182,25 +165,50 @@ export default function Discussion({
         </div>
 
         {/* Voting */}
-        <div className="text-center">
-          <button
-            className={`btn ${
-              userReaction === "like" ? "btn-success" : "btn-outline-success"
-            } btn-sm mb-1`}
-            onClick={() => handleVote("upvote")}
-          >
-            👍
-          </button>
-          <div>{likes - dislikes}</div>
-          <button
-            className={`btn ${
-              userReaction === "dislike" ? "btn-danger" : "btn-outline-danger"
-            } btn-sm mt-1`}
-            onClick={() => handleVote("downvote")}
-          >
-            👎
-          </button>
-        </div>
+        <Authorized
+          authorized={
+            <div className="text-center">
+              <button
+                className={`btn ${
+                  userReaction === "like"
+                    ? "btn-success"
+                    : "btn-outline-success"
+                } btn-sm mb-1`}
+                onClick={() => handleVote("upvote")}
+              >
+                ⬆️
+              </button>
+              <div>{likes - dislikes}</div>
+              <button
+                className={`btn ${
+                  userReaction === "dislike"
+                    ? "btn-danger"
+                    : "btn-outline-danger"
+                } btn-sm mt-1`}
+                onClick={() => handleVote("downvote")}
+              >
+                ⬇️
+              </button>
+            </div>
+          }
+          notAuthorized={
+            <div className="text-center">
+              <button
+                className={`btn btn-outline-success btn-sm mb-1`}
+                onClick={() => navigate("/login?redirected=true")}
+              >
+                ⬆️
+              </button>
+              <div>{likes - dislikes}</div>
+              <button
+                className={`btn btn-outline-danger btn-sm mt-1`}
+                onClick={() => navigate("/login?redirected=true")}
+              >
+                ⬇️
+              </button>
+            </div>
+          }
+        />
       </div>
 
       {/* Post Content */}
@@ -216,7 +224,6 @@ export default function Discussion({
           const isDiscussionAuthor = author.username === getUsername();
           const isAdmin = getIsAdmin();
 
-          // console.log(comment);
           return (
             <div key={index} className="card mb-2 shadow-sm">
               <div className="card-body">
@@ -257,7 +264,6 @@ export default function Discussion({
             <button className="btn btn-danger" onClick={handleDelete}>
               Delete Discussion
             </button>
-
           </div>
         }
       />
