@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { MentionsInput, Mention } from "react-mentions";
-import { urlAddComment, urlSearchUsers } from "../utils/endpoints";
-import mentionStyles from "./mentionStyles"; // Import stilova
+import { urlAddComment, urlSearchUsers } from "../../utils/endpoints";
+import mentionStyles from "../mentionStyles"; // Import stilova
 
 export default function CommentInput({ onAddComment, discussionId }) {
   const [newComment, setNewComment] = useState("");
   const [userSuggestions, setUserSuggestions] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Stanje za praćenje slanja komentara
 
   useEffect(() => {
     const fetchAllUsers = async () => {
@@ -34,6 +35,8 @@ export default function CommentInput({ onAddComment, discussionId }) {
 
   const handleAddComment = async () => {
     if (newComment.trim()) {
+      setIsSubmitting(true); // Postavljanje statusa da je slanje u toku
+
       const mentions = userSuggestions
         .filter((user) => newComment.includes(`@${user.id}`))
         .map((user) => user.id);
@@ -60,6 +63,8 @@ export default function CommentInput({ onAddComment, discussionId }) {
         }
       } catch (error) {
         console.error("Error submitting comment:", error);
+      } finally {
+        setIsSubmitting(false); // Vraćanje statusa na "nije u toku"
       }
     }
   };
@@ -80,8 +85,12 @@ export default function CommentInput({ onAddComment, discussionId }) {
           style={mentionStyles.suggestions} // Stil za sugestije
         />
       </MentionsInput>
-      <button className="btn btn-primary mt-2" onClick={handleAddComment}>
-        Add a Comment
+      <button
+        className="btn btn-primary mt-2"
+        onClick={handleAddComment}
+        disabled={isSubmitting} // Onemogućavanje dugmeta dok se komentar šalje
+      >
+        {isSubmitting ? "Posting..." : "Add a Comment"}
       </button>
     </div>
   );

@@ -61,6 +61,7 @@ export default function MyDiscussions() {
   // Fetch discussions when the component mounts
   useEffect(() => {
     fetchDiscussions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return <div>Loading discussions...</div>;

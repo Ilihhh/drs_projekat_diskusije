@@ -5,8 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import {
-  //urlTopicDelete,
-  //urlTopicDeleteSelected,
   urlTopics,
 } from "../utils/endpoints";
 
@@ -107,7 +105,7 @@ const TopicList = () => {
   }
 
   return (
-    <div>
+    <div className="App" style={{padding: "20px"}}>
       <div className="button-group">
         <button onClick={handleSelectAll} className="select-all-btn">
           {selectedTopics.length === topics.length

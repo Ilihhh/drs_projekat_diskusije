@@ -10,10 +10,3 @@ class CommentSchema(Schema):
     
     # Dodavanje autora komentara
     author = fields.Nested(UserSchema, dump_only=True)  # Povezivanje sa korisnikom
-
-
-    
-
-    # Ako želiš da uključiš povezane objekte, možeš dodati 'author' i 'discussion' ako to zahtevaš
-    # author = fields.Nested('UserSchema', exclude=('comments',))  # Ako imaš UserSchema
-    # discussion = fields.Nested('DiscussionSchema', exclude=('comments',))  # Ako imaš DiscussionSchema
