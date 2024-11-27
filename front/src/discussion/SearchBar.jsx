@@ -47,19 +47,12 @@ export default function SearchBar({ updateDiscussions }) {
       name: searchTerm,
     };
 
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.error("Token is missing");
-      return;
-    }
 
     try {
       const response = await fetch(urlSearchDiscussions, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(searchData),
       });
@@ -78,6 +71,44 @@ export default function SearchBar({ updateDiscussions }) {
       console.error("Error during search:", error);
     }
   };
+  const handleReset = async () => {
+    // Reset all search fields
+    setSearchTerm("");
+    setCreatorFirstName("");
+    setCreatorLastName("");
+    setCreatorAddress("");
+    setCreatorEmail("");
+    setCreatorUsername("");
+  
+    try {
+      // Fetch discussions without filters
+      const response = await fetch(urlSearchDiscussions, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "",
+          first_name: "",
+          last_name: "",
+          address: "",
+          email: "",
+          name: "",
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data && Array.isArray(data)) {
+        updateDiscussions(data); // Update discussions with reset results
+      } else {
+        updateDiscussions([]); // No discussions found
+      }
+    } catch (error) {
+      console.error("Error during reset:", error);
+    }
+  };
+  
 
   return (
     <div className="searchcontrainer">
@@ -131,7 +162,11 @@ export default function SearchBar({ updateDiscussions }) {
           onChange={handleSearchChange}
         />
         <Button onClick={handleSearch}>Search</Button>
+        <Button onClick={handleReset} className="btn btn-secondary">
+          Reset
+        </Button>
       </div>
     </div>
   );
+  
 }

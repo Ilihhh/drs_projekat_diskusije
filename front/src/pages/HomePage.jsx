@@ -47,9 +47,17 @@ export default function HomePage() {
   };
 
   // Funkcija za ažuriranje diskusija prema rezultatima pretrage
-  const updateDiscussions = (searchResults) => {
-    setDiscussions(Array.isArray(searchResults) ? searchResults : []);
-  };
+const updateDiscussions = async (searchResults) => {
+  const results = Array.isArray(searchResults) ? searchResults : [];
+  setDiscussions(results);
+
+  // Nakon ažuriranja diskusija, dobavi reakcije ako ima diskusija i korisnik je prijavljen
+  if (results.length > 0 && isLoggedIn()) {
+    const discussionIds = results.map((discussion) => discussion.id);
+    await fetchReactions(discussionIds);
+  }
+};
+
 
   // Funkcija za osvežavanje liste diskusija nakon brisanja
   const handleDeleteDiscussion = async () => {
@@ -74,6 +82,7 @@ export default function HomePage() {
       ) : (
         discussions.map((discussion, index) => {
           const reaction = reactions[discussion.id]; // Dobij reakciju za ovu diskusiju
+          console.log(discussion);
           return (
             <Discussion
               key={index}

@@ -130,33 +130,3 @@ def edit_user(current_user):
         return jsonify({"message": "User updated successfully", "token": token_or_error}), 200
     else:
         return jsonify({"error": token_or_error}), 400
-
-
-# @users_blueprint.route('/search', methods=['GET'])
-# @token_required
-# def search_users(current_user):
-#     """
-#     Vraća listu potvrđenih korisnika sa opcionalnim filtriranjem po imenu ili email-u.
-#     """
-#     # Dohvati query parametre
-#     name_query = request.args.get('name', '').strip().lower()
-#     email_query = request.args.get('email', '').strip().lower()
-
-#     # Početni upit: samo potvrđeni korisnici
-#     query = User.query.filter_by(status="approved")
-
-#     # Filtriranje po imenu
-#     if name_query:
-#         query = query.filter(User.name.ilike(f"%{name_query}%"))
-
-#     # Filtriranje po email-u
-#     if email_query:
-#         query = query.filter(User.email.ilike(f"%{email_query}%"))
-
-#     # Izvrši upit
-#     users = query.all()
-
-#     # Serijalizuj rezultate
-#     users_schema = UserSchema(many=True)
-#     return jsonify(users_schema.dump(users)), 200
-

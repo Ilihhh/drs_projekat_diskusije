@@ -30,10 +30,11 @@ export default function Discussion({
   const { claims } = useContext(AuthenticationContext);
 
   useEffect(() => {
-    if (reaction) {
-      setUserReaction(reaction);
-    }
-  }, [reaction]);
+    setUserReaction(reaction);
+    setLikes(likes_count);
+    setDislikes(dislikes_count);
+  }, [reaction, likes_count, dislikes_count]);
+  
 
   function getUsername() {
     return claims.filter((x) => x.name === "username")[0]?.value;

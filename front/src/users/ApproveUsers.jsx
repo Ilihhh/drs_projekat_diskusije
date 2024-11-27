@@ -1,67 +1,73 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { io } from "socket.io-client"; // Importuj socket.io-client
+import { io } from "socket.io-client";
 import Loading from "../utils/Loading";
 
 export default function ApproveUsers() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingUserId, setLoadingUserId] = useState(null); // Držanje ID-a korisnika za kojeg je akcija u toku
 
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await axios.get("/registration-requests"); // Dobavljanje korisnika sa statusom "pending"
+        const response = await axios.get("/registration-requests");
         setUsers(response.data);
       } catch (err) {
         setError("Failed to fetch users");
       } finally {
-        setLoading(false); // Isključujemo loading kada se završi
+        setLoading(false);
       }
     }
 
     fetchUsers();
 
     // WebSocket konekcija
-    const socket = io("http://localhost:5000"); 
+    const socket = io("http://localhost:5000");
 
     socket.on("user-status-changed", (updatedUser) => {
-      // Kada server pošalje događaj o promeni statusa korisnika
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === updatedUser.id ? { ...user, status: updatedUser.status } : user
+          user.id === updatedUser.id
+            ? { ...user, status: updatedUser.status }
+            : user
         )
       );
     });
 
     return () => {
-      socket.disconnect(); // Očistiti konekciju prilikom uklanjanja komponente
+      socket.disconnect();
     };
   }, []);
 
   const handleAccept = async (userId) => {
+    setLoadingUserId(userId); // Postavi korisnika za kog je akcija u toku
     try {
       await axios.put(`/update-registration/${userId}`, {
-        status: "approved", // Slanje statusa kao 'approved'
+        status: "approved",
       });
-      // Nakon što je korisnik prihvaćen, filtriramo ga iz liste korisnika
-      setUsers(users.filter(user => user.id !== userId));
+      setUsers(users.filter((user) => user.id !== userId));
       console.log(`User ${userId} accepted`);
     } catch (err) {
       setError("Failed to accept user");
+    } finally {
+      setLoadingUserId(null); // Resetuj loading stanje
     }
   };
 
   const handleReject = async (userId) => {
+    setLoadingUserId(userId); // Postavi korisnika za kog je akcija u toku
     try {
       await axios.put(`/update-registration/${userId}`, {
-        status: "rejected", // Slanje statusa kao 'rejected'
+        status: "rejected",
       });
-      // Nakon što je korisnik odbijen, filtriramo ga iz liste korisnika
-      setUsers(users.filter(user => user.id !== userId));
+      setUsers(users.filter((user) => user.id !== userId));
       console.log(`User ${userId} rejected`);
     } catch (err) {
       setError("Failed to reject user");
+    } finally {
+      setLoadingUserId(null); // Resetuj loading stanje
     }
   };
 
@@ -91,12 +97,14 @@ export default function ApproveUsers() {
                   <button
                     className="btn btn-success me-2"
                     onClick={() => handleAccept(user.id)}
+                    disabled={loadingUserId === user.id} // Onemogući dugme dok se akcija izvršava
                   >
                     Accept
                   </button>
                   <button
                     className="btn btn-danger"
                     onClick={() => handleReject(user.id)}
+                    disabled={loadingUserId === user.id} // Onemogući dugme dok se akcija izvršava
                   >
                     Reject
                   </button>

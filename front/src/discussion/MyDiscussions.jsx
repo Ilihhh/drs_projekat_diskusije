@@ -49,8 +49,15 @@ export default function MyDiscussions() {
   };
 
   // Update discussions based on search results
-  const updateDiscussions = (searchResults) => {
-    setDiscussions(Array.isArray(searchResults) ? searchResults : []);
+  const updateDiscussions = async (searchResults) => {
+    const results = Array.isArray(searchResults) ? searchResults : [];
+    setDiscussions(results);
+  
+    // Nakon ažuriranja diskusija, dobavi reakcije ako ima diskusija i korisnik je prijavljen
+    if (results.length > 0 && isLoggedIn()) {
+      const discussionIds = results.map((discussion) => discussion.id);
+      await fetchReactions(discussionIds);
+    }
   };
 
   // Refresh the discussion list after deleting a discussion

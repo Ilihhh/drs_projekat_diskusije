@@ -1,6 +1,6 @@
 export default function Button(props) {
   const {
-    className = "btn btn-primary me-2",
+    className = "btn btn-primary me-1",
     onClick,
     type = "button",
     disabled,

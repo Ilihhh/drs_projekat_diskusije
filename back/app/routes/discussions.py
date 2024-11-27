@@ -85,8 +85,7 @@ def edit_discussion(current_user):
         return jsonify({"error": "An internal error occurred."}), 500
     
 @discussions_blueprint.route('/search-discussions', methods=['POST'])
-@token_required
-def search_discussions(user):
+def search_discussions():
     # Get the search data from the request JSON body
     data = request.get_json()
 
