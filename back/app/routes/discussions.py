@@ -1,13 +1,9 @@
 from ..auth.auth import token_required, role_required
-##from ..services.users_service import DiscussionService
 from flask import Blueprint, jsonify, request  # type: ignore
 from ..dtos.discussion_schema import DiscussionSchema
-from ..models.topic import Topic
 from ..models.discussion import Discussion
-from ..models.comment import Comment
 from ..services.discussion_service import DiscussionService
-from ..models.user import User  
-from ..models.discussion_reaction import DiscussionReaction
+
 
 discussions_blueprint = Blueprint('discussions', __name__)
 

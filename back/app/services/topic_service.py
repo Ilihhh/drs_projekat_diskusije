@@ -1,4 +1,5 @@
 # services/topic_service.py
+from ..dtos.topic_schema import TopicSchema
 from ..models.discussion import Discussion
 from ..models.comment import Comment
 from ..models.topic import Topic
@@ -180,3 +181,24 @@ class TopicService:
         if not topic:
             raise ValueError("Topic not found.")
         return topic
+
+    @staticmethod
+    def get_all_topics():
+        # Dobijanje svih topika iz baze
+        topics = Topic.query.all()
+
+        # Serializacija podataka pomoću TopicSchema
+        topic_schema = TopicSchema(many=True)
+        return topic_schema.dump(topics)
+
+    @staticmethod
+    def get_topic_by_id(topic_id):
+        # Pronalaženje topika sa određenim ID-jem
+        topic = Topic.query.get(topic_id)
+
+        if topic is None:
+            return None
+
+        # Serializacija podataka pomoću TopicSchema
+        topic_schema = TopicSchema()
+        return topic_schema.dump(topic)

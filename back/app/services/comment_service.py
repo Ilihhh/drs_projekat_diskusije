@@ -1,5 +1,3 @@
-from datetime import datetime
-from flask import jsonify # type: ignore
 from ..models.comment import Comment
 from ..models.discussion import Discussion
 from ..models.user import User

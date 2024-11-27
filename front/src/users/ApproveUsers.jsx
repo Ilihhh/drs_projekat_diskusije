@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import Loading from "../utils/Loading";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 export default function ApproveUsers() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loadingUserId, setLoadingUserId] = useState(null); // Držanje ID-a korisnika za kojeg je akcija u toku
+  const [loadingUserId, setLoadingUserId] = useState(null);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -23,7 +24,6 @@ export default function ApproveUsers() {
 
     fetchUsers();
 
-    // WebSocket konekcija
     const socket = io("http://localhost:5000");
 
     socket.on("user-status-changed", (updatedUser) => {
@@ -42,32 +42,48 @@ export default function ApproveUsers() {
   }, []);
 
   const handleAccept = async (userId) => {
-    setLoadingUserId(userId); // Postavi korisnika za kog je akcija u toku
+    setLoadingUserId(userId);
     try {
       await axios.put(`/update-registration/${userId}`, {
         status: "approved",
       });
       setUsers(users.filter((user) => user.id !== userId));
-      console.log(`User ${userId} accepted`);
+      Swal.fire({
+        icon: "success",
+        title: "User Accepted",
+        text: `The user has been successfully accepted.`,
+      });
     } catch (err) {
-      setError("Failed to accept user");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to accept user.",
+      });
     } finally {
-      setLoadingUserId(null); // Resetuj loading stanje
+      setLoadingUserId(null);
     }
   };
 
   const handleReject = async (userId) => {
-    setLoadingUserId(userId); // Postavi korisnika za kog je akcija u toku
+    setLoadingUserId(userId);
     try {
       await axios.put(`/update-registration/${userId}`, {
         status: "rejected",
       });
       setUsers(users.filter((user) => user.id !== userId));
-      console.log(`User ${userId} rejected`);
+      Swal.fire({
+        icon: "success",
+        title: "User Rejected",
+        text: `The user has been successfully rejected.`,
+      });
     } catch (err) {
-      setError("Failed to reject user");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to reject user.",
+      });
     } finally {
-      setLoadingUserId(null); // Resetuj loading stanje
+      setLoadingUserId(null);
     }
   };
 
@@ -97,14 +113,14 @@ export default function ApproveUsers() {
                   <button
                     className="btn btn-success me-2"
                     onClick={() => handleAccept(user.id)}
-                    disabled={loadingUserId === user.id} // Onemogući dugme dok se akcija izvršava
+                    disabled={loadingUserId === user.id}
                   >
                     Accept
                   </button>
                   <button
                     className="btn btn-danger"
                     onClick={() => handleReject(user.id)}
-                    disabled={loadingUserId === user.id} // Onemogući dugme dok se akcija izvršava
+                    disabled={loadingUserId === user.id}
                   >
                     Reject
                   </button>

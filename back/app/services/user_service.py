@@ -9,7 +9,7 @@ import jwt  # type: ignore
 from .email_service import EmailService
 from ..socketio import socketio  # type: ignore # Instanciran u fajlu ..socketio.py
 
-class UsersService:
+class UserService:
 
     # Function to create a JWT token
     @staticmethod
@@ -25,7 +25,7 @@ class UsersService:
     @staticmethod
     def create_user(data):
         # Data validation
-        if not UsersService.valid_email(data['email']):
+        if not UserService.valid_email(data['email']):
             raise ValueError("Invalid email")
         
         # if not UsersService.valid_phone_number(data.get('phone_number', '')):
@@ -48,6 +48,50 @@ class UsersService:
         db.session.add(user)
         db.session.commit()
         return user
+
+    @staticmethod
+    def notify_admins_of_first_login(user):
+        try:
+            admins = User.query.filter_by(role="admin").all()
+            for admin in admins:
+                EmailService.send_email(
+                    admin.email,
+                    "First Login Notification",
+                    f"User {user.email} has logged in for the first time."
+                )
+            user.is_first_login = False
+            db.session.commit()
+        except Exception as e:
+            raise Exception(f"Failed to handle first login notification: {str(e)}")
+
+
+    @staticmethod
+    def login_user(data):
+        email = data.get("email")
+        password = data.get("password")
+
+        # Pronađi korisnika
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            raise ValueError("Invalid credentials")
+
+        if user.status == "pending":
+            raise PermissionError("Your account is still pending approval.")
+
+        if user.status == "rejected":
+            raise PermissionError("Your account has been rejected.")
+
+        # Provera lozinke
+        if not UserService.check_password(user, password):
+            raise ValueError("Invalid credentials")
+
+        # Obrada prve prijave
+        if user.is_first_login:
+            UserService.notify_admins_of_first_login(user)
+
+        # Generiši i vrati JWT token
+        return UserService.create_jwt_token(user)
 
     @staticmethod
     def valid_email(email):
@@ -123,7 +167,7 @@ class UsersService:
             db.session.commit()
             
             # Ako se menja korisničko ime, treba generisati novi token
-            token = UsersService.create_jwt_token(user)
+            token = UserService.create_jwt_token(user)
             return user, token
         
         except Exception as e:
