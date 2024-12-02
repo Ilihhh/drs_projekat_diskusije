@@ -1,0 +1,45 @@
+services:
+  flask-backend:
+    build:
+      context: ./back
+    ports:
+      - "5000:5000"  # Mapiranje porta
+    env_file:
+      - ./back/.env  # Učitaj varijable okruženja iz .env fajla
+    depends_on:
+      - postgres  # Flask backend zavisi od PostgreSQL servisa
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: majmunimatrilica
+      POSTGRES_DB: DiskusijeAPI
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"     # Mapiranje PostgreSQL porta
+
+  react-frontend:
+    build:
+      context: ./front
+    ports:
+      - "3000:3000"  # Mapiranje React development server porta
+    stdin_open: true
+    tty: true
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"  # pgAdmin web UI na portu 5050
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres  # pgAdmin zavisi od PostgreSQL servisa
+
+volumes:
+  postgres_data:
+  pgadmin_data:

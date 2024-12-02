@@ -32,6 +32,8 @@ export default function HomePage() {
     try {
       const response = await axios.get(urlAllDiscussions);
       setDiscussions(response.data);
+      console.log(response.data);
+      console.log(urlAllDiscussions);
 
       // Nakon dobavljanja diskusija, dobavi reakcije
       const discussionIds = response.data.map((discussion) => discussion.id);
