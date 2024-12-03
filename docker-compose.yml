@@ -13,7 +13,7 @@ services:
     image: postgres:15
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: majmunimatrilica
+      POSTGRES_PASSWORD: 123
       POSTGRES_DB: DiskusijeAPI
     volumes:
       - postgres_data:/var/lib/postgresql/data
