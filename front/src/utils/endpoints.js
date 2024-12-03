@@ -23,3 +23,5 @@ export const urlManageReaction = `${baseURL}/reaction`;
 export const urlDeleteComment = `${baseURL}/delete-comment`
 export const urlSearchUsers = `${baseURL}/users`
 export const urlUserReactions = `${baseURL}/user-reactions`
+export const urlRegistrationRequests = `${baseURL}/registration-requests`
+export const urlUpdateRegistration = `${baseURL}/update-registration`

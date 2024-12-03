@@ -3,6 +3,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import Loading from "../utils/Loading";
 import Swal from "sweetalert2"; // Import SweetAlert2
+import { urlRegistrationRequests, urlUpdateRegistration } from "../utils/endpoints";
 
 export default function ApproveUsers() {
   const [users, setUsers] = useState([]);
@@ -13,7 +14,7 @@ export default function ApproveUsers() {
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await axios.get("/registration-requests");
+        const response = await axios.get(urlRegistrationRequests);
         setUsers(response.data);
       } catch (err) {
         setError("Failed to fetch users");
@@ -24,7 +25,7 @@ export default function ApproveUsers() {
 
     fetchUsers();
 
-    const socket = io("http://localhost:5000");
+    const socket = io("http://host.docker.internal:5000");
 
     socket.on("user-status-changed", (updatedUser) => {
       setUsers((prevUsers) =>
@@ -44,7 +45,7 @@ export default function ApproveUsers() {
   const handleAccept = async (userId) => {
     setLoadingUserId(userId);
     try {
-      await axios.put(`/update-registration/${userId}`, {
+      await axios.put(`${urlUpdateRegistration}/${userId}`, {
         status: "approved",
       });
       setUsers(users.filter((user) => user.id !== userId));
@@ -67,7 +68,7 @@ export default function ApproveUsers() {
   const handleReject = async (userId) => {
     setLoadingUserId(userId);
     try {
-      await axios.put(`/update-registration/${userId}`, {
+      await axios.put(`${urlUpdateRegistration}/${userId}`, {
         status: "rejected",
       });
       setUsers(users.filter((user) => user.id !== userId));
