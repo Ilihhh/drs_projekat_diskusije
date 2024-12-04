@@ -25,7 +25,7 @@ export default function ApproveUsers() {
 
     fetchUsers();
 
-    const socket = io("http://host.docker.internal:5000");
+    const socket = io("https://drs-projekat-diskusije.onrender.com");
 
     socket.on("user-status-changed", (updatedUser) => {
       setUsers((prevUsers) =>
