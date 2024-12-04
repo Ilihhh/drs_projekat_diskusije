@@ -1,67 +1,90 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { io } from "socket.io-client"; // Importuj socket.io-client
+import { io } from "socket.io-client";
 import Loading from "../utils/Loading";
+import Swal from "sweetalert2"; // Import SweetAlert2
+import { urlRegistrationRequests, urlUpdateRegistration } from "../utils/endpoints";
 
 export default function ApproveUsers() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingUserId, setLoadingUserId] = useState(null);
 
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await axios.get("/registration-requests"); // Dobavljanje korisnika sa statusom "pending"
+        const response = await axios.get(urlRegistrationRequests);
         setUsers(response.data);
       } catch (err) {
         setError("Failed to fetch users");
       } finally {
-        setLoading(false); // Isključujemo loading kada se završi
+        setLoading(false);
       }
     }
 
     fetchUsers();
 
-    // WebSocket konekcija
-    const socket = io("http://localhost:5000"); 
+    const socket = io("http://host.docker.internal:5000");
 
     socket.on("user-status-changed", (updatedUser) => {
-      // Kada server pošalje događaj o promeni statusa korisnika
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === updatedUser.id ? { ...user, status: updatedUser.status } : user
+          user.id === updatedUser.id
+            ? { ...user, status: updatedUser.status }
+            : user
         )
       );
     });
 
     return () => {
-      socket.disconnect(); // Očistiti konekciju prilikom uklanjanja komponente
+      socket.disconnect();
     };
   }, []);
 
   const handleAccept = async (userId) => {
+    setLoadingUserId(userId);
     try {
-      await axios.put(`/update-registration/${userId}`, {
-        status: "approved", // Slanje statusa kao 'approved'
+      await axios.put(`${urlUpdateRegistration}/${userId}`, {
+        status: "approved",
       });
-      // Nakon što je korisnik prihvaćen, filtriramo ga iz liste korisnika
-      setUsers(users.filter(user => user.id !== userId));
-      console.log(`User ${userId} accepted`);
+      setUsers(users.filter((user) => user.id !== userId));
+      Swal.fire({
+        icon: "success",
+        title: "User Accepted",
+        text: `The user has been successfully accepted.`,
+      });
     } catch (err) {
-      setError("Failed to accept user");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to accept user.",
+      });
+    } finally {
+      setLoadingUserId(null);
     }
   };
 
   const handleReject = async (userId) => {
+    setLoadingUserId(userId);
     try {
-      await axios.put(`/update-registration/${userId}`, {
-        status: "rejected", // Slanje statusa kao 'rejected'
+      await axios.put(`${urlUpdateRegistration}/${userId}`, {
+        status: "rejected",
       });
-      // Nakon što je korisnik odbijen, filtriramo ga iz liste korisnika
-      setUsers(users.filter(user => user.id !== userId));
-      console.log(`User ${userId} rejected`);
+      setUsers(users.filter((user) => user.id !== userId));
+      Swal.fire({
+        icon: "success",
+        title: "User Rejected",
+        text: `The user has been successfully rejected.`,
+      });
     } catch (err) {
-      setError("Failed to reject user");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to reject user.",
+      });
+    } finally {
+      setLoadingUserId(null);
     }
   };
 
@@ -91,12 +114,14 @@ export default function ApproveUsers() {
                   <button
                     className="btn btn-success me-2"
                     onClick={() => handleAccept(user.id)}
+                    disabled={loadingUserId === user.id}
                   >
                     Accept
                   </button>
                   <button
                     className="btn btn-danger"
                     onClick={() => handleReject(user.id)}
+                    disabled={loadingUserId === user.id}
                   >
                     Reject
                   </button>

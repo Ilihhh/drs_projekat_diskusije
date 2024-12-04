@@ -17,7 +17,10 @@ class User(db.Model):
 
     # Column to store role
     role = db.Column(db.String(50), nullable=False, default="user")  # Example: 'admin', 'user', etc.
-    
+
+    # New column for tracking first login
+    is_first_login = db.Column(db.Boolean, default=True, nullable=False)  # True by default
+
     # Relationships
     discussions = db.relationship('Discussion', backref='author', lazy=True)
     comments = db.relationship('Comment', backref='author', lazy=True)

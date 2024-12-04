@@ -1,19 +1,15 @@
 from ..auth.auth import token_required, role_required
-from ..services.users_service import UsersService
+from ..services.user_service import UserService
 from flask import Blueprint, jsonify, request  # type: ignore
 from ..dtos.user_schema import UserSchema
 from ..models.user import User
-from ..database import db
-# Importujemo socketio iz __init__.py
-
 
 users_blueprint = Blueprint('users', __name__)
 
                                              
 @users_blueprint.route('/users', methods=['GET'])
-@token_required                                                         #mora da stoji ispod blueprinta :)
-@role_required('admin')                                                 
-def get_users(current_user):                                            #mora da se stavi current_user zbog funkcije token_reqired koja prosledjuje ovo (iako nam ne treba)
+                                                                         #mora da stoji ispod blueprinta :)                                                 
+def get_users():                                                         #mora da se stavi current_user zbog funkcije token_reqired koja prosledjuje ovo (iako nam ne treba)
     users = User.query.all()  # Fetch all users
     users_schema = UserSchema(many=True)  # many=True means we map multiple users
     return jsonify(users_schema.dump(users))  # Return serialized data
@@ -24,7 +20,7 @@ def register():
     data = request.get_json()
     
     try:
-        user = UsersService.create_user(data)
+        user = UserService.create_user(data)
         
         # Ne generišemo token, samo vraćamo potvrdu o primljenom zahtevu
         return jsonify({"message": "Registration request received. Awaiting approval."}), 201
@@ -34,27 +30,22 @@ def register():
 
 @users_blueprint.route('/login', methods=['POST'])
 def login():
-    data = request.get_json() 
+    data = request.get_json()
 
-    email = data.get("email")
-    password = data.get("password")
-
-    user = User.query.filter_by(email=email).first()
-
-    if not user:
-        return jsonify({"error": "Invalid credentials"}), 401
-    
-    if user.status == "pending":
-        return jsonify({"error": "Your account is still pending approval."}), 403
-
-    if user.status == "rejected":
-        return jsonify({"error": "Your account has been rejected."}), 403
-
-    if UsersService.check_password(user, password):
-        token = UsersService.create_jwt_token(user)
+    try:
+        # Metod servisa vraća token ili baca grešku
+        token = UserService.login_user(data)
         return jsonify({"token": token}), 200
-    else:
-        return jsonify({"error": "Invalid credentials"}), 401
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401  # Npr. za "Invalid credentials"
+
+    except PermissionError as e:
+        return jsonify({"error": str(e)}), 403  # Npr. za "Account is pending/rejected"
+
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
 
     
 @users_blueprint.route('/registration-requests', methods=['GET'])                   # dobavljanje korisnika koji imaju status pending
@@ -73,7 +64,7 @@ def update_registration_status(current_user, user_id):
     data = request.get_json()
     new_status = data.get("status")  # approved or rejected
 
-    user, error = UsersService.update_user_status(user_id, new_status)
+    user, error = UserService.update_user_status(user_id, new_status)
 
     if error:
         return jsonify({"error": error}), 400
@@ -105,7 +96,7 @@ def edit_user(current_user):
         return jsonify({"error": "You are not authorized to edit this user."}), 403
 
     # Pozivamo metodu iz UsersService za ažuriranje podataka
-    user, token_or_error = UsersService.update_user_data(current_user, data)
+    user, token_or_error = UserService.update_user_data(current_user, data)
     
     if user:
         return jsonify({"message": "User updated successfully", "token": token_or_error}), 200

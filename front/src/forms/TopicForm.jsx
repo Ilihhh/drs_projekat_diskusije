@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import { urlTopicCreate, urlTopicEdit } from "../utils/endpoints";
 
 function TopicForm() {
   const [title, setTitle] = useState(""); // Polje za unos naziva teme
@@ -44,6 +45,7 @@ function TopicForm() {
     const creationDate = new Date().toISOString(); // Automatski dodeljujemo trenutni datum
 
     const topicData = {
+      id: id,
       name: title, // Šaljemo 'name' na back-end, jer server očekuje 'name', a ne 'title'
       description,
       creation_date: creationDate,
@@ -52,8 +54,8 @@ function TopicForm() {
 
     // Ako uređujemo postojeću temu, šaljemo PUT zahtev
     const apiCall = isEditing
-      ? axios.put(`/api/topics/${id}`, topicData) // PUT zahtev za update
-      : axios.post("/api/topics", topicData); // POST zahtev za kreiranje nove teme
+      ? axios.put(urlTopicEdit, topicData) // PUT zahtev za update
+      : axios.post(urlTopicCreate, topicData); // POST zahtev za kreiranje nove teme
 
     apiCall
       .then((response) => {
@@ -61,7 +63,7 @@ function TopicForm() {
           isEditing ? "Topic updated:" : "Topic created:",
           response.data
         );
-        navigate("/"); // Preusmeravamo na početnu stranicu nakon uspešnog unosa
+        navigate("/topicmanagement"); // Preusmeravamo na početnu stranicu nakon uspešnog unosa
       })
       .catch((error) => {
         console.error(

@@ -1,5 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
+import { urlDeleteComment, urlManageReaction } from "../utils/endpoints";
+import { useNavigate } from "react-router-dom";
+import AuthenticationContext from "../auth/AuthenticationContext";
+import CommentSection from "./discussion_compoenents/Comment";
+import AdminActions from "./discussion_compoenents/AdminActions";
+import DiscussionHeader from "./discussion_compoenents/DiscussionHeader";
 import Authorized from "../auth/Authorize";
 
 export default function Discussion({
@@ -7,73 +14,99 @@ export default function Discussion({
   author,
   creation_date,
   text,
-  description,
   comments,
   likes_count,
-  dislikes_count
+  dislikes_count,
+  discussionId,
+  topic,
+  onDelete,
+  reaction,
 }) {
-  const [clicked, setClicked] = useState(false);
-  const [newComment, setNewComment] = useState(""); // Stanje za novi komentar
-  const [allComments, setAllComments] = useState(comments); // Stanje za sve komentare
+  const [allComments, setAllComments] = useState(comments);
+  const [likes, setLikes] = useState(likes_count);
+  const [dislikes, setDislikes] = useState(dislikes_count);
+  const [userReaction, setUserReaction] = useState(reaction);
+  const navigate = useNavigate();
+  const { claims } = useContext(AuthenticationContext);
 
+  useEffect(() => {
+    setUserReaction(reaction);
+    setLikes(likes_count);
+    setDislikes(dislikes_count);
+  }, [reaction, likes_count, dislikes_count]);
+  
 
-  const handleVote = (voteType) => {
-    if (voteType === "upvote") {
-      setClicked(true);
-    } else if (voteType === "downvote") {
-      setClicked(true);
-    }
+  function getUsername() {
+    return claims.filter((x) => x.name === "username")[0]?.value;
   }
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      setAllComments([...allComments, newComment]);
-      setNewComment(""); // Očisti polje nakon dodavanja komentara
-      // Možete dodati logiku za slanje komentara na server ako je potrebno
+
+  function getIsAdmin() {
+    return claims.some(
+      (claim) => claim.name === "role" && claim.value === "admin"
+    );
+  }
+
+  const handleVote = async (voteType) => {
+    const newReaction = voteType === "upvote" ? "like" : "dislike";
+    const updatedReaction = userReaction === newReaction ? "none" : newReaction;
+
+    try {
+      const response = await axios.post(urlManageReaction, {
+        discussion_id: discussionId,
+        reaction: updatedReaction,
+      });
+
+      if (response.status === 200) {
+        const {
+          likes: updatedLikes,
+          dislikes: updatedDislikes,
+          current_user_reaction,
+        } = response.data;
+
+        setLikes(updatedLikes);
+        setDislikes(updatedDislikes);
+        setUserReaction(current_user_reaction);
+      }
+    } catch (error) {
+      console.error("Error managing reaction:", error.response || error);
+      alert("Failed to update reaction. Please try again.");
     }
   };
 
+  const handleAddComment = (addedComment) => {
+    setAllComments((prevComments) => [...prevComments, addedComment]);
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const response = await axios.delete(`${urlDeleteComment}/${commentId}`);
+
+      if (response.status === 200) {
+        setAllComments(
+          allComments.filter((comment) => comment.id !== commentId)
+        );
+      } else {
+        alert("Failed to delete comment.");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error.response || error);
+      alert("Error deleting comment. Please try again.");
+    }
+  };
 
   return (
     <div className="card shadow-lg rounded mb-4">
-      <div className="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-        <div className="d-flex">
-          <div>
-            <h5 className="card-title">{title}</h5>
-            <p className="card-subtitle text-muted">
-              Posted by {author} on {creation_date ? creation_date.replace("T", " ") : null}
-            </p>
-          </div>
-        </div>
-
-        {/* Voting */}
-        <div className="text-center">
-          <button
-            className={`btn ${
-              clicked ? "btn-success" : "btn-outline-success"
-            } btn-sm mb-1`}
-            onClick={() => handleVote("upvote")}
-          >
-            👍
-          </button>
-          <div>{likes_count-dislikes_count}</div>
-          <button
-            className={`btn ${
-              clicked ? "btn-danger" : "btn-outline-danger"
-            } btn-sm mt-1`}
-            onClick={() => handleVote("downvote")}
-          >
-            👎
-          </button>
-        </div>
-      </div>
-
-      {/* Topic Description */}
-      {description && (
-        <div className="card-body bg-light">
-          <h6>Topic Description:</h6>
-          <p>{description}</p>
-        </div>
-      )}
+      <DiscussionHeader
+        title={title}
+        author={author}
+        creation_date={creation_date}
+        topic={topic}
+        likes={likes}
+        dislikes={dislikes}
+        userReaction={userReaction}
+        handleVote={handleVote}
+        navigate={navigate}
+      />
 
       {/* Post Content */}
       <div className="card-body bg-light">
@@ -81,52 +114,27 @@ export default function Discussion({
       </div>
 
       {/* Comments */}
-      <div className="card-footer">
-        <h6>Comments</h6>
-        {allComments.map((comment, index) => (
-          <div key={index} className="card mb-2 shadow-sm">
-            <div className="card-body">
-              <p className="card-text">{comment}</p>
-            </div>
-          </div>
-        ))}
-
-        {/* Polje za unos novog komentara */}
-        <textarea
-          className="form-control mt-3"
-          rows="3"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Write your comment here..."
-        ></textarea>
-
-        {/* Dugme za dodavanje komentara */}
-        <button
-          className="btn btn-primary mt-2"
-          onClick={handleAddComment} // Poziva funkciju za dodavanje komentara
-        >
-          Add a Comment
-        </button>
-      </div>
+      <CommentSection
+        comments={allComments}
+        discussionId={discussionId}
+        onAddComment={handleAddComment}
+        onDeleteComment={handleDeleteComment}
+        getUsername={getUsername}
+        isAdmin={getIsAdmin()}
+        authorUsername={author.username}
+      />
 
       {/* Admin Functionalities */}
       <Authorized
         role="admin"
         authorized={
-          <div className="card-footer text-end">
-            <button
-              className="btn btn-warning me-2"
-              onClick={() => alert("Editing discussion...")}
-            >
-              Edit Discussion
-            </button>
-            <button
-              className="btn btn-danger"
-              onClick={() => alert("Deleting discussion...")}
-            >
-              Delete Discussion
-            </button>
-          </div>
+          <AdminActions
+            discussionId={discussionId}
+            title={title}
+            text={text}
+            topic={topic}
+            onDelete={onDelete}
+          />
         }
       />
     </div>
