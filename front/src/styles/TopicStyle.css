@@ -15,8 +15,8 @@
 
 /* Promena boje kada je kartica selektovana */
 .topic-card.selected {
-  background-color: #d4edda; /* svetlo zelena */
-  border: 2px solid #28a745; /* zelena ivica */
+  background-color: #5d87b0; /* svetlo zelena */
+  border: 2px solid #262626; /* zelena ivica */
 }
 
 /* Stilizacija naslova */

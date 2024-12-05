@@ -1,65 +1,126 @@
 /* .search-container */
 .search-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
   position: relative;
+  margin-bottom: 20px; /* Dodaje razmak ispod celog search bloka */
 }
 
-/* .search-button */
+/* Horizontal layout for top row */
+.search-top {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  position: relative; /* Dodato da bi dugme lupa bilo relativno unutar ovog kontejnera */
+}
+
+/* Dugme lupa */
 .search-button {
   background-color: #5d87b0;
   color: white;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  border-radius: 30%;
+  width: 50px; /* Manje dugme */
+  height: 50px; /* Manje dugme */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 18px; /* Smanjen font */
   cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #555c61;
 }
 
 /* .search-form */
 .search-form {
-  margin-top: 15px;
   width: 100%;
+  margin-top: 15px;
+  display: none;
 }
 
-/* Flex for search form fields */
+.search-form.active {
+  display: block;
+}
+
+/* Polja za unos */
 .search-form .row {
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
   justify-content: space-between;
 }
 
-.search-form .col-12 {
-  flex: 1;
-  margin-bottom: 10px;
+.search-form .col-12,
+.search-form .col-md-2 {
+  flex: 1 0 calc(16% - 10px); /* Omogućava više polja u jednom redu */
+  min-width: 120px; /* Manja širina */
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .search-form .col-12 {
-    flex: 100%; /* Make fields stack on mobile */
-  }
-
-  .search-form .col-md-2 {
-    flex: 1 0 100%;
-  }
-}
-
-/* Buttons */
+/* Dugmad u search-form */
 .search-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center; /* Centralizuje dugmadi */
   gap: 10px;
+  margin-top: 10px; /* Razmak između input polja i dugmadi */
+  margin-bottom: 20px; /* Razmak ispod dugmadi */
 }
 
+/* Dugmad Search i Reset */
 .search-buttons .btn-primary,
 .search-buttons .btn-secondary {
+  width: 95%; /* Dugmadi zauzimaju 95% širine */
   padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-buttons .btn-primary {
+  background-color: #5d87b0;
+  color: #fff;
+  border: none;
+}
+
+.search-buttons .btn-primary:hover {
+  background-color: #555c61; /* Nova hover boja za primarno dugme */
+  border: 2px solid #5d87b0; /* Zelena boja okvira (lime green) */
+}
+
+.search-buttons .btn-secondary {
+  background-color: transparent;
+  color: #5d87b0;
+  border: 2px solid #5d87b0;
+}
+
+.search-buttons .btn-secondary:hover {
+  background-color: #a72c39; /* Nova hover boja za sekundarno dugme */
+  color: #fff;
+}
+/* Polja za unos */
+.search-form input {
+  background-color: #262626; /* Svetlo siva boja pozadine */
+  color: #ffffff; /* Tamno siva boja teksta */
+  border: 1px solid #262626 !important; /* Svetlosivi okvir */
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%; /* Širina 100% kako bi ispunili prostor */
+}
+
+.search-form input::placeholder {
+  color: #999; /* Svetlo siva boja za placeholder */
+}
+
+/* Preventing inversion on focus */
+.search-form input:focus {
+  background-color: #262626 !important; /* Keep the same background color */
+  color: #ffffff !important; /* Ensure text color remains the same */
+  border: 1px solid #262626 !important; /* Keep the same border color */
+  outline: none; /* Remove the default focus outline */
 }

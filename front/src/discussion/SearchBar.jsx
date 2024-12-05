@@ -63,24 +63,26 @@ export default function SearchBar({ updateDiscussions }) {
 
   return (
     <div className="search-container">
-      <CreateLink to="/create-discussion" className="create-discussion-link">
-        + Create Discussion
-      </CreateLink>
-      <Button onClick={toggleSearch}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 50 50"
-          fill="#fff"
-        >
-          <path d="M21,3C11.62,3,4,10.62,4,20c0,9.38,7.62,17,17,17c3.71,0,7.14-1.19,9.94-3.22l13.16,13.13l2.81-2.81l-13-13.03C36.46,28.09,38,24.22,38,20C38,10.62,30.38,3,21,3z M21,5c8.3,0,15,6.7,15,15c0,8.3-6.7,15-15,15c-8.3,0-15-6.7-15-15C6,11.7,12.7,5,21,5z" />
-        </svg>
-      </Button>
+      <div className="search-top">
+        <CreateLink to="/create-discussion" className="create-discussion-link">
+          + Create Discussion
+        </CreateLink>
+        <Button onClick={toggleSearch} className="search-button">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 50 50"
+            fill="#fff"
+          >
+            <path d="M21,3C11.62,3,4,10.62,4,20c0,9.38,7.62,17,17,17c3.71,0,7.14-1.19,9.94-3.22l13.16,13.13l2.81-2.81l-13-13.03C36.46,28.09,38,24.22,38,20C38,10.62,30.38,3,21,3z M21,5c8.3,0,15,6.7,15,15c0,8.3-6.7,15-15,15c-8.3,0-15-6.7-15-15C6,11.7,12.7,5,21,5z" />
+          </svg>
+        </Button>
+      </div>
       {showSearch && (
-        <div className="search-form mt-3">
+        <div className={`search-form ${showSearch ? "active" : ""}`}>
           <div className="row">
-            <div className="col-12 col-md-2 mb-2">
+            <div className="col-12 col-md-2">
               <input
                 type="text"
                 name="creatorUsername"
@@ -90,7 +92,7 @@ export default function SearchBar({ updateDiscussions }) {
                 onChange={handleSearchChange}
               />
             </div>
-            <div className="col-12 col-md-2 mb-2">
+            <div className="col-12 col-md-2">
               <input
                 type="text"
                 name="creatorFirstName"
@@ -100,7 +102,7 @@ export default function SearchBar({ updateDiscussions }) {
                 onChange={handleSearchChange}
               />
             </div>
-            <div className="col-12 col-md-2 mb-2">
+            <div className="col-12 col-md-2">
               <input
                 type="text"
                 name="creatorLastName"
@@ -110,7 +112,7 @@ export default function SearchBar({ updateDiscussions }) {
                 onChange={handleSearchChange}
               />
             </div>
-            <div className="col-12 col-md-2 mb-2">
+            <div className="col-12 col-md-2">
               <input
                 type="text"
                 name="creatorAddress"
@@ -120,7 +122,7 @@ export default function SearchBar({ updateDiscussions }) {
                 onChange={handleSearchChange}
               />
             </div>
-            <div className="col-12 col-md-2 mb-2">
+            <div className="col-12 col-md-2">
               <input
                 type="email"
                 name="creatorEmail"
@@ -130,7 +132,7 @@ export default function SearchBar({ updateDiscussions }) {
                 onChange={handleSearchChange}
               />
             </div>
-            <div className="col-12 col-md-2 mb-2">
+            <div className="col-12 col-md-2">
               <input
                 type="text"
                 name="searchTerm"
@@ -140,34 +142,14 @@ export default function SearchBar({ updateDiscussions }) {
                 onChange={handleSearchChange}
               />
             </div>
-
-            <div className="col-12 d-flex justify-content-end gap-3">
-              {" "}
-              {/* Poravnajte dugmadi desno */}
-              <Button
-                onClick={handleSearch}
-                className="btn-primary"
-                style={{
-                  backgroundColor: "#87CEFA",
-                  color: "#fff",
-                  padding: "10px 30px",
-                }} // Svetlo plavo i šire
-              >
-                Search
-              </Button>
-              <Button
-                onClick={handleReset}
-                className="btn-secondary"
-                style={{
-                  color: "#5d87b0",
-                  backgroundColor: "transparent",
-                  border: "2px solid #5d87b0",
-                  padding: "10px 30px", // Šire dugme
-                }}
-              >
-                Reset
-              </Button>
-            </div>
+          </div>
+          <div className="search-buttons">
+            <Button onClick={handleSearch} className="btn-primary">
+              Search
+            </Button>
+            <Button onClick={handleReset} className="btn-secondary">
+              Reset
+            </Button>
           </div>
         </div>
       )}
