@@ -1,0 +1,65 @@
+/* .search-container */
+.search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+/* .search-button */
+.search-button {
+  background-color: #5d87b0;
+  color: white;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* .search-form */
+.search-form {
+  margin-top: 15px;
+  width: 100%;
+}
+
+/* Flex for search form fields */
+.search-form .row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.search-form .col-12 {
+  flex: 1;
+  margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-form .col-12 {
+    flex: 100%; /* Make fields stack on mobile */
+  }
+
+  .search-form .col-md-2 {
+    flex: 1 0 100%;
+  }
+}
+
+/* Buttons */
+.search-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.search-buttons .btn-primary,
+.search-buttons .btn-secondary {
+  padding: 10px 20px;
+}

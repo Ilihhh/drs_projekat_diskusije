@@ -1,0 +1,88 @@
+/* Glavni kontejner */
+.register-edit-form-container {
+  max-width: 600px; /* Širina forme */
+  margin: 25px auto; /* Centriranje horizontalno i razmak od vrha */
+  padding: 30px; /* Unutrašnji razmak */
+  background-color: #3c3f47; /* Tamnosiva pozadina */
+  border-radius: 12px; /* Zaobljeni uglovi */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Blaga senka */
+  font-family: "Roboto", sans-serif;
+  color: #e0e0e0; /* Boja teksta */
+}
+
+/* Naslov */
+.register-edit-form-container h2 {
+  text-align: center;
+  color: #e0e0e0;
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+/* Polja za unos */
+.register-edit-form input[type="text"],
+.register-edit-form input[type="email"],
+.register-edit-form input[type="password"],
+.register-edit-form input[type="tel"] {
+  width: calc(100% - 48px); /* Polja su centrirana sa margine */
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #555b63; /* Tamni okvir */
+  border-radius: 8px; /* Zaobljeni okvir */
+  background-color: #484e56; /* Pozadina polja */
+  color: #e0e0e0;
+  margin: 12px auto; /* Vertikalni razmak i horizontalno centriranje */
+  display: block;
+}
+
+/* Dugmad */
+.form-buttons {
+  display: flex;
+  justify-content: space-between; /* Razmak između dugmadi */
+  margin: 20px 0; /* Razmak od polja iznad */
+}
+
+/* Custom button styles */
+button[type="submit"],
+.btn-secondary {
+  display: inline-block;
+  padding: 12px 22px !important;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  width: calc(50% - 20px); /* Same width as the primary button */
+  margin: 0 10px; /* Space between buttons */
+}
+
+button[type="submit"] {
+  background-color: #5d87b0; /* Plava boja */
+  color: #fff;
+  border: none;
+}
+
+button[type="submit"]:hover {
+  background-color: #4caf50; /* Zeleno na hover */
+}
+
+.btn-secondary {
+  color: #5d87b0; /* Plavi tekst */
+  background-color: transparent;
+  border: 2px solid #5d87b0; /* Plavi okvir */
+}
+
+.btn-secondary:hover {
+  background-color: #f44336; /* Crvena na hover */
+  color: #fff; /* Beli tekst */
+}
+
+/* Error message styles */
+.register-edit-form .error {
+  color: #f44336; /* Crvena boja za greške */
+  font-size: 14px;
+  margin-top: 4px;
+  display: block;
+  margin-bottom: 12px; /* Razmak između greške i sledećeg polja */
+}

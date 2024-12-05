@@ -38,7 +38,7 @@
 .topic-card button {
   width: 100px;
   height: 35px;
-  background-color: #007bff;
+  background-color: #5d87b0;
   color: white;
   border: none;
   border-radius: 5px;
@@ -78,7 +78,7 @@
 .delete-selected-btn,
 .btn-create-topic {
   padding: 10px 20px;
-  background-color: #007bff; /* Plava boja */
+  background-color: #5d87b0; /* Plava boja */
   color: white;
   border: none;
   border-radius: 5px;

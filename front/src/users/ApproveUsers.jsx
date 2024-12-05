@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import Loading from "../utils/Loading";
-import Swal from "sweetalert2"; // Import SweetAlert2
-import { urlRegistrationRequests, urlUpdateRegistration } from "../utils/endpoints";
+import Swal from "sweetalert2";
+import {
+  urlRegistrationRequests,
+  urlUpdateRegistration,
+} from "../utils/endpoints";
 
 export default function ApproveUsers() {
   const [users, setUsers] = useState([]);
@@ -93,23 +96,23 @@ export default function ApproveUsers() {
 
   return (
     <div>
-      <h3>Users to Approve</h3>
+      <h3 style={{ color: "white" }}>Users to Approve</h3>
       {users.length > 0 ? (
         <table className="table">
           <thead>
             <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>Actions</th>
+              <th style={{ color: "white" }}>First Name</th>
+              <th style={{ color: "white" }}>Last Name</th>
+              <th style={{ color: "white" }}>Email</th>
+              <th style={{ color: "white" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td>{user.first_name}</td>
-                <td>{user.last_name}</td>
-                <td>{user.email}</td>
+                <td style={{ color: "white" }}>{user.first_name}</td>
+                <td style={{ color: "white" }}>{user.last_name}</td>
+                <td style={{ color: "white" }}>{user.email}</td>
                 <td>
                   <button
                     className="btn btn-success me-2"
@@ -131,7 +134,7 @@ export default function ApproveUsers() {
           </tbody>
         </table>
       ) : (
-        <p>No users to display</p>
+        <p style={{ color: "white" }}>No users to display</p>
       )}
     </div>
   );

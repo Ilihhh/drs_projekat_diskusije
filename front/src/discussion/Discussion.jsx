@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { urlDeleteComment, urlManageReaction } from "../utils/endpoints";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +33,6 @@ export default function Discussion({
     setLikes(likes_count);
     setDislikes(dislikes_count);
   }, [reaction, likes_count, dislikes_count]);
-  
 
   function getUsername() {
     return claims.filter((x) => x.name === "username")[0]?.value;

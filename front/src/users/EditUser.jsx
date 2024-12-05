@@ -35,7 +35,6 @@ export default function EditUser() {
     <>
       {userModel && (
         <>
-          <h3>Edit Profile</h3>
           <RegisterEditForm
             edit={true}
             model={userModel} // Popunjavamo formu sa korisničkim podacima
