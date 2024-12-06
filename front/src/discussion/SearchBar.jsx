@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Button from "../utils/Button";
 import CreateLink from "../utils/CreateLink";
+import { urlSearchDiscussions } from "../utils/endpoints";
 import "../styles/SearchBarStyle.css";
 
 export default function SearchBar({ updateDiscussions }) {
@@ -42,23 +43,67 @@ export default function SearchBar({ updateDiscussions }) {
 
   const handleSearch = async () => {
     const searchData = {
-      creatorUsername,
-      creatorFirstName,
-      creatorLastName,
-      creatorAddress,
-      creatorEmail,
-      searchTerm,
+      username: creatorUsername,
+      first_name: creatorFirstName,
+      last_name: creatorLastName,
+      address: creatorAddress,
+      email: creatorEmail,
+      name: searchTerm,
     };
-    console.log("Pretraga sa podacima:", searchData);
+
+    try {
+      const response = await fetch(urlSearchDiscussions, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(searchData),
+      });
+      const data = await response.json();
+      if (data && Array.isArray(data)) {
+        updateDiscussions(data);
+      } else {
+        updateDiscussions([]);
+      }
+    } catch (error) {
+      console.error("Error during search:", error);
+    }
   };
 
   const handleReset = async () => {
-    setCreatorUsername("");
+    setSearchTerm("");
     setCreatorFirstName("");
     setCreatorLastName("");
     setCreatorAddress("");
     setCreatorEmail("");
-    setSearchTerm("");
+    setCreatorUsername("");
+
+    try {
+      const response = await fetch(urlSearchDiscussions, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "",
+          first_name: "",
+          last_name: "",
+          address: "",
+          email: "",
+          name: "",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data && Array.isArray(data)) {
+        updateDiscussions(data);
+      } else {
+        updateDiscussions([]);
+      }
+    } catch (error) {
+      console.error("Error during reset:", error);
+    }
   };
 
   return (
