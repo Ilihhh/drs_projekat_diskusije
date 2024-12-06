@@ -157,6 +157,16 @@ body {
   color: white;
 }
 
+.form-control__suggestions__item {
+  background-color: #2d2d2d !important; /* Tamnosiva pozadina */
+  color: white !important; /* Bela boja teksta */
+}
+
+.form-control__suggestions__item--focused {
+  background-color: #444444 !important; /* Svetlija siva za fokus */
+  color: white !important;
+}
+
 /* Za mobilne uređaje */
 @media (max-width: 767px) {
   .card-header {

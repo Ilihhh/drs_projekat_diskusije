@@ -1,54 +1,56 @@
 const mentionStyles = {
+  control: {
+    backgroundColor: "#fff !important",
+    fontSize: "14px !important",
+    fontWeight: "normal !important",
+  },
+
+  "&multiLine": {
     control: {
-      backgroundColor: '#fff',
-      fontSize: 14,
-      fontWeight: 'normal',
+      fontFamily: "monospace !important",
+      minHeight: "63px !important",
     },
-  
-    '&multiLine': {
-      control: {
-        fontFamily: 'monospace',
-        minHeight: 63,
-      },
-      highlighter: {
-        padding: 9,
-        border: '1px solid transparent',
-      },
-      input: {
-        padding: 9,
-        border: '1px solid silver',
-      },
+    highlighter: {
+      padding: "9px !important",
+      border: "1px solid transparent !important",
     },
-  
-    '&singleLine': {
-      display: 'inline-block',
-      width: 180,
-  
-      highlighter: {
-        padding: 1,
-        border: '2px inset transparent',
-      },
-      input: {
-        padding: 1,
-        border: '2px inset',
-      },
+    input: {
+      padding: "9px !important",
+      border: "1px solid silver !important",
     },
-  
-    suggestions: {
-      list: {
-        backgroundColor: 'white',
-        border: '1px solid rgba(0,0,0,0.15)',
-        fontSize: 14,
-      },
-      item: {
-        padding: '5px 15px',
-        borderBottom: '1px solid rgba(0,0,0,0.15)',
-        '&focused': {
-          backgroundColor: '#cee4e5',
-        },
+  },
+
+  "&singleLine": {
+    display: "inline-block !important",
+    width: "180px !important",
+
+    highlighter: {
+      padding: "1px !important",
+      border: "2px inset transparent !important",
+    },
+    input: {
+      padding: "1px !important",
+      border: "2px inset !important",
+    },
+  },
+
+  suggestions: {
+    list: {
+      backgroundColor: "#2d2d2d !important", // Tamnosiva pozadina
+      border: "1px solid rgba(255,255,255,0.15) !important",
+      fontSize: "14px !important",
+      color: "white !important", // Bela slova
+    },
+    item: {
+      padding: "5px 15px !important",
+      borderBottom: "1px solid rgba(255,255,255,0.15) !important",
+      color: "white !important", // Bela slova za stavke
+      "&focused": {
+        backgroundColor: "#444444 !important", // Svetlija tamnosiva kad je fokusirano
+        color: "white !important",
       },
     },
-  };
-  
-  export default mentionStyles;
-  
+  },
+};
+
+export default mentionStyles;
