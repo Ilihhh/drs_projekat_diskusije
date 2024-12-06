@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { io } from "socket.io-client";
-import Loading from "../utils/Loading";
 import Swal from "sweetalert2"; // Import SweetAlert2
+import Loading from "../utils/Loading";
 import { urlRegistrationRequests, urlUpdateRegistration } from "../utils/endpoints";
+import socket from "../utils/websocket";
 
 export default function ApproveUsers() {
   const [users, setUsers] = useState([]);
@@ -25,22 +25,16 @@ export default function ApproveUsers() {
 
     fetchUsers();
 
-    const socket = io("http://host.docker.internal:5000");
-
-    socket.on("user-status-changed", (updatedUser) => {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === updatedUser.id
-            ? { ...user, status: updatedUser.status }
-            : user
-        )
-      );
+    socket.on("new-user-registered", (data) => {
+      console.log("New user registered:", data);
+      setUsers((prevUsers) => [...prevUsers, data]);
     });
 
     return () => {
-      socket.disconnect();
+      socket.off("new-user-registered");
     };
   }, []);
+  
 
   const handleAccept = async (userId) => {
     setLoadingUserId(userId);
