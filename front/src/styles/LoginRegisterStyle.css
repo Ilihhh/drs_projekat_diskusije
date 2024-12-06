@@ -26,12 +26,17 @@
   width: calc(100% - 48px); /* Polja su centrirana sa margine */
   padding: 14px;
   font-size: 16px;
-  border: 1px solid #555b63; /* Tamni okvir */
+  border: 1px solid #555b63 !important; /* Tamni okvir */
   border-radius: 8px; /* Zaobljeni okvir */
-  background-color: #484e56; /* Pozadina polja */
-  color: #e0e0e0;
+  background-color: #262626 !important; /* Tamna pozadina */
+  color: #ffffff !important; /* Bela boja teksta */
   margin: 12px auto; /* Vertikalni razmak i horizontalno centriranje */
   display: block;
+}
+
+/* Placeholder stilovi */
+.register-edit-form input::placeholder {
+  color: #ffffff; /* Bela boja za placeholder tekst */
 }
 
 /* Dugmad */
@@ -53,8 +58,8 @@ button[type="submit"],
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
-  width: calc(50% - 20px); /* Same width as the primary button */
-  margin: 0 10px; /* Space between buttons */
+  width: 100%; /* Postavljamo širinu na 100% da budu iste */
+  margin: 10px 0; /* Razmak između dugmadi */
 }
 
 button[type="submit"] {
@@ -85,4 +90,25 @@ button[type="submit"]:hover {
   margin-top: 4px;
   display: block;
   margin-bottom: 12px; /* Razmak između greške i sledećeg polja */
+}
+
+/* Za TextField komponente */
+.form-control {
+  background-color: #262626 !important; /* Pozadina tamnosiva */
+  color: #ffffff !important; /* Tekst beli */
+  border: 1px solid #555b63 !important; /* Tamni okvir */
+}
+
+.form-control::placeholder {
+  color: #999999; /* Placeholder svetlosiv */
+}
+
+/* Mobilna i desktop prilagodba */
+@media screen and (max-width: 768px) {
+  /* Dugmadi ostaju iste širine i na mobilnim uređajima */
+  button[type="submit"],
+  .btn-secondary {
+    width: 100%; /* Dugmadi na mobilnim uređajima takođe zauzimaju celu širinu */
+    margin: 10px 0; /* Manji razmak između dugmadi */
+  }
 }

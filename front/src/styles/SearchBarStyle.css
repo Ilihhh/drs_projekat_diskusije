@@ -67,16 +67,20 @@
 .search-buttons {
   display: flex;
   justify-content: center; /* Centralizuje dugmadi */
-  gap: 10px;
+  gap: 30px; /* Razmak između dugmadi */
+  padding-left: 10px !important;
   margin-top: 10px; /* Razmak između input polja i dugmadi */
   margin-bottom: 20px; /* Razmak ispod dugmadi */
+}
+
+.search-buttons button {
+  width: 150px; /* Postavljanje iste širine za oba dugmeta */
 }
 
 /* Dugmad Search i Reset */
 .search-buttons .btn-primary,
 .search-buttons .btn-secondary {
-  width: 95%; /* Dugmadi zauzimaju 95% širine */
-  padding: 10px 20px;
+  width: 95%;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;

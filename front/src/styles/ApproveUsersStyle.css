@@ -1,0 +1,92 @@
+/* Glavni kontejner */
+.approve-users-container {
+  background-color: #262626 !important; /* Tamnosiva pozadina */
+  color: white; /* Bela boja teksta */
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  max-width: 1200px;
+  margin: 25px auto;
+}
+
+/* Stilizacija tabele */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #1f2021; /* Tamna pozadina tabele */
+}
+
+th,
+td {
+  padding: 12px 20px;
+  text-align: left;
+  color: white; /* Bela boja za tekst */
+}
+
+th {
+  background-color: #5d87b0; /* Plavo za zaglavlja */
+  border-bottom: 2px solid #555b63;
+}
+
+tr:nth-child(even) {
+  background-color: #2c2f36; /* Mračniji ton za parne redove */
+}
+
+tr:hover {
+  background-color: #444c55;
+}
+
+/* Dugmadi */
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 600;
+}
+
+button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+.btn-success {
+  background-color: #28a745; /* Zelena boja */
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-danger {
+  background-color: #dc3545; /* Crvena boja */
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Media queries za mobilne uređaje */
+@media screen and (max-width: 768px) {
+  .approve-users-container {
+    padding: 20px;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  th,
+  td {
+    padding: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

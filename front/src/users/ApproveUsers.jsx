@@ -95,24 +95,24 @@ export default function ApproveUsers() {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h3 style={{ color: "white" }}>Users to Approve</h3>
+    <div className="approve-users-container">
+      <h3>Users to Approve</h3>
       {users.length > 0 ? (
         <table className="table">
           <thead>
             <tr>
-              <th style={{ color: "white" }}>First Name</th>
-              <th style={{ color: "white" }}>Last Name</th>
-              <th style={{ color: "white" }}>Email</th>
-              <th style={{ color: "white" }}>Actions</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td style={{ color: "white" }}>{user.first_name}</td>
-                <td style={{ color: "white" }}>{user.last_name}</td>
-                <td style={{ color: "white" }}>{user.email}</td>
+                <td>{user.first_name}</td>
+                <td>{user.last_name}</td>
+                <td>{user.email}</td>
                 <td>
                   <button
                     className="btn btn-success me-2"
@@ -134,7 +134,7 @@ export default function ApproveUsers() {
           </tbody>
         </table>
       ) : (
-        <p style={{ color: "white" }}>No users to display</p>
+        <p>No users to display</p>
       )}
     </div>
   );

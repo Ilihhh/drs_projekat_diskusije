@@ -33,10 +33,24 @@ body {
   color: white !important;
 }
 
-textarea.form-control__input {
-  background-color: #121212 !important; /* Set the background to dark */
-  color: white !important; /* Set the text color to white */
-  border: 1px solid #555; /* Optionally adjust the border color */
+.form-control {
+  border: none !important; /* Uklanja okvir oko glavnog kontejnera */
+}
+
+.form-control__control {
+  border: none !important; /* Uklanja okvir unutar kontrole */
+  background-color: #262626 !important; /* Postavlja transparentnu pozadinu */
+}
+
+.form-control__input {
+  border: 1px solid #0b0b0b !important; /* Uklanja border oko textarea */
+  outline: none !important; /* Uklanja outline na fokus */
+  background-color: #262626 !important; /* Postavlja transparentnu pozadinu */
+  color: #fff; /* Boja teksta (npr. bela za tamnu pozadinu) */
+}
+
+.form-control__highlighter {
+  border: none !important; /* Osigurava da i highlighter nema bordera */
 }
 
 .text-muted {

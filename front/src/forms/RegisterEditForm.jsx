@@ -77,7 +77,7 @@ export default function RegisterEditForm(props) {
     >
       {(formikProps) => (
         <Form className="register-edit-form-container">
-          <h3>Register</h3>
+          <h3>{props.edit ? "Edit User" : "Register"}</h3>
           <TextField displayName="Username" field="username" type="text" />
           <TextField displayName="First Name" field="first_name" type="text" />
           <TextField displayName="Last Name" field="last_name" type="text" />

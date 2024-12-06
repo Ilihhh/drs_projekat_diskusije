@@ -1,0 +1,44 @@
+/* Pregaziti Bootstrap stilove za tekst */
+body,
+h2,
+label,
+p,
+select,
+textarea,
+input,
+button {
+  color: #ffffff !important; /* Tekst bele boje */
+}
+
+/* Stil za input polja i textarea */
+input.form-control,
+textarea.form-control,
+select.form-control {
+  background-color: #262626 !important; /* Tamna pozadina */
+  color: #ffffff !important; /* Tekst bele boje */
+  border: 1px solid #555b63 !important; /* Tamnosiva ivica */
+  border-radius: 6px; /* Zaobljeni uglovi */
+  padding: 10px;
+}
+
+/* Placeholder boja */
+input::placeholder,
+textarea::placeholder {
+  color: #b3b3b3 !important; /* Svetlija siva za placeholder */
+}
+
+/* Stil za dugmad */
+button.btn-primary {
+  background-color: #5d87b0 !important; /* Plava pozadina */
+  color: #ffffff !important; /* Beli tekst */
+  border: none;
+}
+
+button.btn-primary:hover {
+  background-color: #4caf50 !important; /* Zelena pozadina na hover */
+}
+
+/* Prepisivanje Bootstrap margina za prilagodbu */
+.mt-3 {
+  margin-top: 1rem !important;
+}
