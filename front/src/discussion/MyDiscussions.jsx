@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import Discussion from "../discussion/Discussion";
 import { urlUserDiscussions, urlUserReactions } from "../utils/endpoints";
 import axios from "axios";
-import CreateLink from "./../utils/CreateLink";
 import SearchBar from "./SearchBar";
 import AuthenticationContext from "../auth/AuthenticationContext"; // Import context for authentication
 
@@ -22,7 +21,9 @@ export default function MyDiscussions() {
   // Function to fetch reactions for discussions
   const fetchReactions = async (discussionIds) => {
     try {
-      const response = await axios.post(urlUserReactions, { discussion_ids: discussionIds });
+      const response = await axios.post(urlUserReactions, {
+        discussion_ids: discussionIds,
+      });
       setReactions(response.data); // Assuming server returns { discussionId: reactionData }
     } catch (err) {
       console.error("Error fetching reactions:", err);
@@ -52,7 +53,7 @@ export default function MyDiscussions() {
   const updateDiscussions = async (searchResults) => {
     const results = Array.isArray(searchResults) ? searchResults : [];
     setDiscussions(results);
-  
+
     // Nakon ažuriranja diskusija, dobavi reakcije ako ima diskusija i korisnik je prijavljen
     if (results.length > 0 && isLoggedIn()) {
       const discussionIds = results.map((discussion) => discussion.id);
@@ -68,7 +69,7 @@ export default function MyDiscussions() {
   // Fetch discussions when the component mounts
   useEffect(() => {
     fetchDiscussions();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return <div>Loading discussions...</div>;
@@ -76,7 +77,6 @@ export default function MyDiscussions() {
 
   return (
     <div className="container mt-4">
-      <CreateLink to="/create-discussion">+ Create Discussion</CreateLink>
       <SearchBar updateDiscussions={updateDiscussions} />
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>

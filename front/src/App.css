@@ -1,57 +1,174 @@
-.App {
-  text-align: center;
+/* Generalna podešavanja */
+body {
+  background-color: #121212;
+  font-family: "Arial", sans-serif;
+  margin-top: 70px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Kartica sa zaobljenim ivicama i sivom pozadinom */
+.card {
+  border-radius: 20px; /* Povećali smo zaobljenost na 20px */
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  background-color: #262626; /* Topla siva pozadina za karticu */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Card Header - Zaglavlje kartice sa svetlom sivom pozadinom */
+.card-header {
+  color: #d0cfcf; /* Bela boja teksta za dobar kontrast */
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 20px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+/* Ponavljanje bg-primary ali sa željenom bojom */
+.card-header.bg-primary {
+  background-color: #2a1278 !important;
+}
+
+/* Card Body - Siva pozadina u telu kartice */
+.card-body {
+  padding: 20px;
+  background-color: #1f2021 !important;
+  color: white !important;
+}
+
+.form-control {
+  border: none !important; /* Uklanja okvir oko glavnog kontejnera */
+}
+
+.form-control__control {
+  border: none !important; /* Uklanja okvir unutar kontrole */
+  background-color: #262626 !important; /* Postavlja transparentnu pozadinu */
+}
+
+.form-control__input {
+  border: 1px solid #0b0b0b !important; /* Uklanja border oko textarea */
+  outline: none !important; /* Uklanja outline na fokus */
+  background-color: #262626 !important; /* Postavlja transparentnu pozadinu */
+  color: #fff; /* Boja teksta (npr. bela za tamnu pozadinu) */
+}
+
+.form-control__highlighter {
+  border: none !important; /* Osigurava da i highlighter nema bordera */
+}
+
+.text-muted {
+  color: #828283 !important; /* Change text color to #5d87b0 */
+}
+
+/* Dugmadi sa hover efektima */
+.btn {
+  font-size: 14px; /* Smanjena veličina fonta */
+  padding: 6px 14px; /* Smanjen padding */
+  border-radius: 6px; /* Manje zaobljenje ivice */
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.btn-primary {
+  background-color: #5d87b0;
+  border-color: #6c757d;
+}
+
+.btn-primary:hover {
+  background-color: #5a6268;
+}
+
+.btn-danger-vote {
+  background-color: #b52d3b !important;
+}
+
+.btn-danger {
+  background-color: #5d87b0;
+  border-color: #b52d3b !important;
+  border: none !important;
+}
+
+.btn-danger:hover {
+  background-color: #b52d3b;
+}
+
+.btn-warning {
+  background-color: #5d87b0;
+  border-color: #5d87b0 !important;
+  color: white !important;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+
+/* Input polja */
+.form-control {
+  border-radius: 10px; /* Manje zaobljene ivice */
+  padding: 10px; /* Manje unutrašnje margine */
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* Suptilnija senka */
+  margin-bottom: 10px;
+  font-size: 14px; /* Smanjena veličina fonta */
+  background-color: #fff;
+}
+
+.MentionsInput {
+  font-size: 13px; /* Manja veličina fonta */
+  padding: 8px; /* Manje unutrašnje margine */
+  border-radius: 10px; /* Manje zaobljene ivice */
+}
+
+.MentionsInput input {
+  width: 100%;
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 13px;
+  background-color: #fff;
+}
+
+/* Input sa spiskom korisnika */
+.MentionsInput--focused {
+  border: 2px solid #6c757d;
+}
+
+.suggestions {
+  background-color: #f1f1f1;
+  padding: 5px;
+}
+
+.suggestions ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.suggestions li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestions li:hover {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.card-footer {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Za mobilne uređaje */
+@media (max-width: 767px) {
+  .card-header {
+    font-size: 1rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
   }
-}
 
-.container {
-  min-height: 100vh;
-  padding: 0px;
-}
-
-.searchcontrainer {
-  padding: 15px;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #f0f0f0; /* Možete postaviti bilo koju boju pozadine */
-  background-image: url("../pexels.jpg"); /* Ako želite sliku kao pozadinu */
-  background-size: cover; /* Ovaj parametar omogućava da pozadina uvek pokriva celo telo ekrana */
-  background-position: center center; /* Pozicija pozadine, možete promeniti po potrebi */
-  background-attachment: fixed; /* Ako želite da pozadina ostane fiksna pri skrolovanju */
+  .form-control {
+    width: 100%;
+  }
 }

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { MentionsInput, Mention } from "react-mentions";
 import { urlAddComment, urlSearchUsers } from "../../utils/endpoints";
-import mentionStyles from "../mentionStyles"; // Import stilova
+import mentionStyles from "../mentionStyles";
 
 export default function CommentInput({ onAddComment, discussionId }) {
   const [newComment, setNewComment] = useState("");
   const [userSuggestions, setUserSuggestions] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Stanje za praćenje slanja komentara
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchAllUsers = async () => {
@@ -35,7 +35,7 @@ export default function CommentInput({ onAddComment, discussionId }) {
 
   const handleAddComment = async () => {
     if (newComment.trim()) {
-      setIsSubmitting(true); // Postavljanje statusa da je slanje u toku
+      setIsSubmitting(true);
 
       const mentions = userSuggestions
         .filter((user) => newComment.includes(`@${user.id}`))
@@ -64,7 +64,7 @@ export default function CommentInput({ onAddComment, discussionId }) {
       } catch (error) {
         console.error("Error submitting comment:", error);
       } finally {
-        setIsSubmitting(false); // Vraćanje statusa na "nije u toku"
+        setIsSubmitting(false);
       }
     }
   };
@@ -76,19 +76,19 @@ export default function CommentInput({ onAddComment, discussionId }) {
         onChange={(e) => setNewComment(e.target.value)}
         placeholder="Type your comment here..."
         className="form-control"
-        style={mentionStyles} // Dodaj stilove
+        style={mentionStyles}
       >
         <Mention
           trigger="@"
           data={userSuggestions}
           appendSpaceOnAdd={true}
-          style={mentionStyles.suggestions} // Stil za sugestije
+          style={mentionStyles.suggestions}
         />
       </MentionsInput>
       <button
         className="btn btn-primary mt-2"
         onClick={handleAddComment}
-        disabled={isSubmitting} // Onemogućavanje dugmeta dok se komentar šalje
+        disabled={isSubmitting}
       >
         {isSubmitting ? "Posting..." : "Add a Comment"}
       </button>

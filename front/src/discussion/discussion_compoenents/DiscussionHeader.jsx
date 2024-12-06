@@ -13,11 +13,11 @@ export default function DiscussionHeader({
   navigate,
 }) {
   return (
-    <div className="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+    <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
       <div className="d-flex">
         <div>
           <h5 className="card-title">{title}</h5>
-          <p className="card-subtitle text-muted">
+          <p className="card-subtitle text-light">
             Posted by {author.username} on{" "}
             {creation_date
               ? creation_date.replace("T", " ").split(".")[0]

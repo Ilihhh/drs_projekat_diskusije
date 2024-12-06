@@ -1,6 +1,6 @@
 import axios from "axios";
 import LoginForm from "../forms/LoginForm";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { urlLogin } from "../utils/endpoints";
 import { saveToken } from "./handleJWT";
 import { useContext } from "react";
@@ -11,8 +11,6 @@ import Swal from "sweetalert2"; // Import SweetAlert
 export default function Login() {
   const { update } = useContext(AuthenticationContext);
   const navigate = useNavigate();
-  const location = useLocation();
-  const redirected = new URLSearchParams(location.search).get("redirected");
 
   async function login(credentials) {
     console.log("Logging in with credentials: ", credentials);
@@ -56,17 +54,6 @@ export default function Login() {
 
   return (
     <>
-      {redirected && (
-        <p style={{ fontSize: "18px", lineHeight: "1.6" }}>
-        You need to log in to access that page.
-        <br /> {/* Novi red */}
-        <span>
-          Don’t have an account? <Link to="/register">Register</Link>
-        </span>
-      </p>
-      
-      )}
-      <h3>Login</h3>
       <LoginForm
         model={{ email: "", password: "" }}
         onSubmit={async (values) => await login(values)}

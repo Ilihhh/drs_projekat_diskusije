@@ -7,6 +7,7 @@ import {
   urlTopics,
 } from "../utils/endpoints";
 import Swal from "sweetalert2";
+import "../styles/DiscussionStyle.css";
 
 function DiscussionForm() {
   const [topics, setTopics] = useState([]); // List of topics

@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 import Loading from "../utils/Loading";
-import { urlRegistrationRequests, urlUpdateRegistration } from "../utils/endpoints";
+import {
+  urlRegistrationRequests,
+  urlUpdateRegistration,
+} from "../utils/endpoints";
+import "../styles/ApproveUsersStyle.css";
 import socket from "../utils/websocket";
 
 export default function ApproveUsers() {
@@ -86,7 +90,7 @@ export default function ApproveUsers() {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="approve-users-container">
       <h3>Users to Approve</h3>
       {users.length > 0 ? (
         <table className="table">
@@ -113,7 +117,7 @@ export default function ApproveUsers() {
                     Accept
                   </button>
                   <button
-                    className="btn btn-danger"
+                    className="btn btn-danger-vote"
                     onClick={() => handleReject(user.id)}
                     disabled={loadingUserId === user.id}
                   >

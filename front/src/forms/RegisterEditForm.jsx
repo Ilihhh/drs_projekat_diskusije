@@ -3,7 +3,8 @@ import * as Yup from "yup";
 import TextField from "./TextField";
 import Button from "../utils/Button";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2"; // Import SweetAlert
+import Swal from "sweetalert2";
+import "../styles/LoginRegisterStyle.css";
 
 export default function RegisterEditForm(props) {
   return (
@@ -75,14 +76,19 @@ export default function RegisterEditForm(props) {
       })}
     >
       {(formikProps) => (
-        <Form>
+        <Form className="register-edit-form-container">
+          <h3>{props.edit ? "Edit User" : "Register"}</h3>
           <TextField displayName="Username" field="username" type="text" />
           <TextField displayName="First Name" field="first_name" type="text" />
           <TextField displayName="Last Name" field="last_name" type="text" />
           <TextField displayName="Address" field="address" type="text" />
           <TextField displayName="City" field="city" type="text" />
           <TextField displayName="Country" field="country" type="text" />
-          <TextField displayName="Phone Number" field="phone_number" type="tel" />
+          <TextField
+            displayName="Phone Number"
+            field="phone_number"
+            type="tel"
+          />
           <TextField displayName="Email" field="email" type="text" />
           <TextField displayName="Password" field="password" type="password" />
 
@@ -92,6 +98,18 @@ export default function RegisterEditForm(props) {
           <Link className="btn btn-secondary" to="/">
             Cancel
           </Link>
+
+          {/* Ovaj tekst se prikazuje samo kada je registracija u pitanju */}
+          {!props.edit && (
+            <div style={{ marginTop: "15px", textAlign: "center" }}>
+              <p style={{ color: "white" }}>
+                Already have an account?{" "}
+                <Link to="/login" style={{ color: "#5d87b0" }}>
+                  Login here
+                </Link>
+              </p>
+            </div>
+          )}
         </Form>
       )}
     </Formik>

@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import Discussion from "../discussion/Discussion";
 import { urlAllDiscussions, urlUserReactions } from "../utils/endpoints"; // Dodati url za reakcije
 import axios from "axios";
-import CreateLink from "../utils/CreateLink";
 import SearchBar from "../discussion/SearchBar";
 import AuthenticationContext from "../auth/AuthenticationContext";
 
@@ -11,7 +10,7 @@ export default function HomePage() {
   const [reactions, setReactions] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const {claims} = useContext(AuthenticationContext);
+  const { claims } = useContext(AuthenticationContext);
 
   const isLoggedIn = () => {
     // Proverava da li postoji claim sa imenom "username"
@@ -20,7 +19,9 @@ export default function HomePage() {
   // Funkcija za dobavljanje reakcija za sve diskusije
   const fetchReactions = async (discussionIds) => {
     try {
-      const response = await axios.post(urlUserReactions, { discussion_ids: discussionIds, });
+      const response = await axios.post(urlUserReactions, {
+        discussion_ids: discussionIds,
+      });
       setReactions(response.data); // Pretpostavljamo da server vraća objekat { discussionId: reactionData }
     } catch (err) {
       console.error("Error fetching reactions:", err);
@@ -49,17 +50,16 @@ export default function HomePage() {
   };
 
   // Funkcija za ažuriranje diskusija prema rezultatima pretrage
-const updateDiscussions = async (searchResults) => {
-  const results = Array.isArray(searchResults) ? searchResults : [];
-  setDiscussions(results);
+  const updateDiscussions = async (searchResults) => {
+    const results = Array.isArray(searchResults) ? searchResults : [];
+    setDiscussions(results);
 
-  // Nakon ažuriranja diskusija, dobavi reakcije ako ima diskusija i korisnik je prijavljen
-  if (results.length > 0 && isLoggedIn()) {
-    const discussionIds = results.map((discussion) => discussion.id);
-    await fetchReactions(discussionIds);
-  }
-};
-
+    // Nakon ažuriranja diskusija, dobavi reakcije ako ima diskusija i korisnik je prijavljen
+    if (results.length > 0 && isLoggedIn()) {
+      const discussionIds = results.map((discussion) => discussion.id);
+      await fetchReactions(discussionIds);
+    }
+  };
 
   // Funkcija za osvežavanje liste diskusija nakon brisanja
   const handleDeleteDiscussion = async () => {
@@ -69,7 +69,7 @@ const updateDiscussions = async (searchResults) => {
   // Poziva fetchDiscussions prilikom učitavanja stranice
   useEffect(() => {
     fetchDiscussions();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return <div>Loading discussions...</div>;
@@ -77,7 +77,6 @@ const updateDiscussions = async (searchResults) => {
 
   return (
     <div className="container mt-4">
-      <CreateLink to="/create-discussion">+ Create Discussion</CreateLink>
       <SearchBar updateDiscussions={updateDiscussions} />
       {discussions.length === 0 ? (
         <div className="alert alert-info">No discussions available.</div>

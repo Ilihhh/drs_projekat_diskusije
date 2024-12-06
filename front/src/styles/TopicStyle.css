@@ -1,44 +1,45 @@
 /* Stilizacija kartica */
 .topic-card {
-  width: 300px; /* Povećali smo širinu kartica */
-  height: 400px; /* Povećali smo visinu kartica */
-  background-color: #f0f0f0;
+  width: 300px;
+  height: 400px;
+  background-color: #2f2f2f; /* Tamno siva boja */
+  color: #ffffff; /* Belo slovo */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin: 20px;
   padding: 20px;
   display: flex;
-  flex-direction: column; /* Vertikalna orijentacija */
+  flex-direction: column;
   justify-content: space-between;
   transition: all 0.3s ease-in-out;
 }
 
 /* Promena boje kada je kartica selektovana */
 .topic-card.selected {
-  background-color: #d4edda; /* svetlo zelena */
-  border: 2px solid #28a745; /* zelena ivica */
+  background-color: #2a1278; /* Tamno ljubičasta boja */
+  border: 2px solid #ffffff; /* Belo obrubljivanje */
 }
 
 /* Stilizacija naslova */
 .topic-card h3 {
-  font-size: 1.6rem; /* Veći font za ime */
+  font-size: 1.6rem;
   font-weight: bold;
-  color: #333;
+  color: #ffffff; /* Belo slovo */
   margin-bottom: 15px;
 }
 
 /* Stilizacija opisa */
 .topic-card p {
   font-size: 1rem;
-  color: #555;
-  flex-grow: 1; /* Da opis zauzima prostor */
+  color: #ffffff; /* Belo slovo */
+  flex-grow: 1;
 }
 
 /* Stilizacija dugmadi unutar kartica */
 .topic-card button {
   width: 100px;
   height: 35px;
-  background-color: #007bff;
+  background-color: #5d87b0; /* Plava boja - prethodna boja dugmadi */
   color: white;
   border: none;
   border-radius: 5px;
@@ -48,14 +49,9 @@
   margin-right: 10px;
 }
 
-/* Edit dugme - hover efekat žute boje */
-.topic-card .edit-btn:hover {
-  background-color: #ffc107; /* Žuta boja pri hoveru */
-}
-
-/* Delete dugme - hover efekat crvene boje */
-.topic-card .delete-btn:hover {
-  background-color: #dc3545; /* Crvena boja pri hoveru */
+/* Hover efekat - tamnija plava boja pri hoveru */
+.topic-card button:hover {
+  background-color: #3b6a8a; /* Tamnija plava pri hoveru */
 }
 
 /* Stilizacija liste kartica */
@@ -78,7 +74,7 @@
 .delete-selected-btn,
 .btn-create-topic {
   padding: 10px 20px;
-  background-color: #007bff; /* Plava boja */
+  background-color: #5d87b0; /* Plava boja */
   color: white;
   border: none;
   border-radius: 5px;
@@ -110,11 +106,4 @@
 .btn-create-topic:disabled {
   background-color: #333333; /* Svetla boja kada je dugme onemogućeno */
   cursor: not-allowed;
-}
-
-/* Stilizacija liste kartica */
-.topic-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
 }

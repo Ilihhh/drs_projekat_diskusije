@@ -18,16 +18,18 @@ export default function VoteSection({
             } btn-sm mb-1`}
             onClick={() => handleVote("upvote")}
           >
-            ⬆️
+            ↑
           </button>
           <div>{likes - dislikes}</div>
           <button
             className={`btn ${
-              userReaction === "dislike" ? "btn-danger" : "btn-outline-danger"
+              userReaction === "dislike"
+                ? "btn-danger-vote"
+                : "btn-outline-danger"
             } btn-sm mt-1`}
             onClick={() => handleVote("downvote")}
           >
-            ⬇️
+            ↓
           </button>
         </div>
       }
@@ -37,14 +39,14 @@ export default function VoteSection({
             className="btn btn-outline-success btn-sm mb-1"
             onClick={() => navigate("/login?redirected=true")}
           >
-            ⬆️
+            ↑
           </button>
           <div>{likes - dislikes}</div>
           <button
             className="btn btn-outline-danger btn-sm mt-1"
             onClick={() => navigate("/login?redirected=true")}
           >
-            ⬇️
+            ↓
           </button>
         </div>
       }

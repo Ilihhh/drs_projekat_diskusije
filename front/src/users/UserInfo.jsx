@@ -2,19 +2,21 @@ import Loading from "../utils/Loading";
 import Button from "../utils/Button";
 import { useNavigate } from "react-router-dom";
 import useUserInfo from "./useUserInfo";
+import "../styles/UserInfoStyle.css"; // Importuj CSS fajl
 
 export default function UserInfo() {
   const { userModel, error, loading } = useUserInfo();
   const navigate = useNavigate();
+
   if (loading) return <Loading />;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
+    <div className="user-info-container">
       <h1>User Information</h1>
       {userModel ? (
         <div>
-          <ul style={{ listStyle: "none", padding: 0 }}>
+          <ul>
             <li>
               <strong>Username:</strong> {userModel.username}
             </li>

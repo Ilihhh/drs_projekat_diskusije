@@ -16,13 +16,15 @@ export default function CreateLink(props) {
           to={props.to}
           style={{
             textDecoration: "none",
-            color: "black",
+            color: "white",
             fontWeight: "bold",
             cursor: "pointer",
             transition: "color 0.3s ease",
+            padding: "5px 10px",
+            backgroundClip: "text",
           }}
-          onMouseEnter={(e) => (e.target.style.color = "white")}
-          onMouseLeave={(e) => (e.target.style.color = "black")}
+          onMouseEnter={(e) => (e.target.style.color = "#5d87b0")}
+          onMouseLeave={(e) => (e.target.style.color = "white")}
         >
           {props.children}
         </Link>
