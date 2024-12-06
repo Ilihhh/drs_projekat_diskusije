@@ -1,30 +1,29 @@
-from flask import Flask # type: ignore
+import eventlet  # type: ignore
+eventlet.monkey_patch()
+
+from flask import Flask  # type: ignore
 from .config import Config
 from .database import db, migrate
 from .routes import initialize_routes
-from flask_cors import CORS # type: ignore
-from .services import mail
-
-# Importujemo socketio iz novog fajla
-from .socketio import socketio
-
+from flask_cors import CORS  # type: ignore
+from .services import mail  # Import Flask-Mail instance
+from .socketio import socketio  # Import Flask-SocketIO instance
+from . import events  # Ensure events are registered
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)  # Učitajte sve postavke iz Config klase
+    app.config.from_object(Config)  # Load settings from Config class
 
-    # Inicijalizacija ekstenzija
+    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
-    mail.init_app(app)  # Inicijalizujte Flask-Mail
+    mail.init_app(app)  # Initialize Flask-Mail
+    CORS(app)  # Add CORS support to all routes
 
-    # Dodavanje CORS-a za svaku rutu u aplikaciji
-    CORS(app)
-
-    # SocketIO povezujemo sa Flask aplikacijom
+    # Initialize SocketIO with Flask app
     socketio.init_app(app)
 
-    # Registracija ruta
+    # Register application routes
     initialize_routes(app)
 
     return app

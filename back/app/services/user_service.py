@@ -7,7 +7,8 @@ import re
 from datetime import datetime, timedelta
 import jwt  # type: ignore
 from .email_service import EmailService
-from ..socketio import socketio  # type: ignore # Instanciran u fajlu ..socketio.py
+from ..socketio import socketio
+from ..dtos.user_schema import UserSchema
 
 class UserService:
 
@@ -21,33 +22,38 @@ class UserService:
         }
         token = jwt.encode(payload, Config.SECRET_KEY, algorithm="HS256")
         return token
-    
     @staticmethod
     def create_user(data):
-        # Data validation
-        if not UserService.valid_email(data['email']):
-            raise ValueError("Invalid email")
-        
-        # if not UsersService.valid_phone_number(data.get('phone_number', '')):
-        #     raise ValueError("Invalid phone number")
-
-        # Creating a user
+        # Validacija i kreiranje korisnika (već implementirano)
         user = User(
             first_name=data['first_name'],
             last_name=data['last_name'],
             email=data['email'],
             address=data['address'],
             username=data['username'],
-            password=generate_password_hash(data['password']),  # Password is hashed before being stored
+            password=generate_password_hash(data['password']),
             city=data.get('city'),
             country=data.get('country'),
-            phone_number=data.get('phone_number')
+            phone_number=data.get('phone_number'),
+            status='pending'  # Pretpostavka da je inicijalni status 'pending'
         )
         
-        # Saving the user to the database
+        # Sačuvaj korisnika u bazi
         db.session.add(user)
         db.session.commit()
+
+        # Serijalizacija podataka korisnika pomoću šeme
+        user_schema = UserSchema()
+        serialized_user = user_schema.dump(user)
+
+        # Emituj događaj za novog korisnika
+        try:
+            socketio.emit('new-user-registered', serialized_user)
+        except Exception as e:
+            print(f"SocketIO emit failed: {e}")
+
         return user
+
 
     @staticmethod
     def notify_admins_of_first_login(user):
@@ -114,22 +120,35 @@ class UserService:
         if not user:
             return None, "User not found"
 
-        if new_status not in ["approved", "rejected"]:
+        VALID_STATUSES = ["approved", "rejected"]
+        if new_status not in VALID_STATUSES:
             return None, "Invalid status"
 
         # Update user status
         user.status = new_status
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return None, f"Database commit failed: {e}"
 
         # Emit event via WebSocket
-        socketio.emit("registration_update", {"user_id": user.id, "status": user.status})
+        try:
+                socketio.emit("registration_update", {"user_id": user.id, "status": user.status})
+        except Exception as e:
+            print(f"SocketIO emit failed: {e}")
+        
 
         # Send email to the user about the status update
-        EmailService.send_email(
-            recipient=user.email,
-            subject=f"Your registration has been {new_status}",
-            body=f"Dear {user.first_name},\n\nYour registration status has been updated to {new_status}.\n\nBest regards,\nYour team"
-        )
+        try:
+            EmailService.send_email(
+                recipient=user.email,
+                subject=f"Your registration has been {new_status}",
+                body=f"Dear {user.first_name},\n\nYour registration status has been updated to {new_status}.\n\nBest regards,\nYour team"
+            )
+        except Exception as e:
+            print(f"Email sending failed: {e}")
 
         return user, None  # Return updated user and no error
 
