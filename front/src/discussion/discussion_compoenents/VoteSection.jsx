@@ -23,7 +23,9 @@ export default function VoteSection({
           <div>{likes - dislikes}</div>
           <button
             className={`btn ${
-              userReaction === "dislike" ? "btn-danger" : "btn-outline-danger"
+              userReaction === "dislike"
+                ? "btn-danger-vote"
+                : "btn-outline-danger"
             } btn-sm mt-1`}
             onClick={() => handleVote("downvote")}
           >

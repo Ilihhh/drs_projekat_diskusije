@@ -79,9 +79,14 @@ body {
   background-color: #5a6268;
 }
 
+.btn-danger-vote {
+  background-color: #b52d3b !important;
+}
+
 .btn-danger {
   background-color: #5d87b0;
-  border-color: #5d87b0 !important;
+  border-color: #b52d3b !important;
+  border: none !important;
 }
 
 .btn-danger:hover {
@@ -146,6 +151,10 @@ body {
 .suggestions li:hover {
   background-color: #6c757d;
   color: #fff;
+}
+
+.card-footer {
+  color: white;
 }
 
 /* Za mobilne uređaje */

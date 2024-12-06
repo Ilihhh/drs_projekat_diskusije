@@ -98,6 +98,18 @@ export default function RegisterEditForm(props) {
           <Link className="btn btn-secondary" to="/">
             Cancel
           </Link>
+
+          {/* Ovaj tekst se prikazuje samo kada je registracija u pitanju */}
+          {!props.edit && (
+            <div style={{ marginTop: "15px", textAlign: "center" }}>
+              <p style={{ color: "white" }}>
+                Already have an account?{" "}
+                <Link to="/login" style={{ color: "#5d87b0" }}>
+                  Login here
+                </Link>
+              </p>
+            </div>
+          )}
         </Form>
       )}
     </Formik>

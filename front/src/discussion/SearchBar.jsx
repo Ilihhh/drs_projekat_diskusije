@@ -144,10 +144,16 @@ export default function SearchBar({ updateDiscussions }) {
             </div>
           </div>
           <div className="search-buttons">
-            <Button onClick={handleSearch} className="btn-primary">
+            <Button
+              onClick={handleSearch}
+              className="custom-button custom-button-primary"
+            >
               Search
             </Button>
-            <Button onClick={handleReset} className="btn-secondary">
+            <Button
+              onClick={handleReset}
+              className="custom-button custom-button-secondary"
+            >
               Reset
             </Button>
           </div>

@@ -29,6 +29,16 @@ export default function LoginForm(props) {
           <Link className="btn btn-secondary" to="/">
             Cancel
           </Link>
+
+          {/* Dodajemo tekst ispod dugmadi sa razmakom */}
+          <div style={{ marginTop: "15px", textAlign: "center" }}>
+            <p style={{ color: "white" }}>
+              Don't have an account?{" "}
+              <Link to="/register" style={{ color: "#5d87b0" }}>
+                Register here
+              </Link>
+            </p>
+          </div>
         </Form>
       )}
     </Formik>

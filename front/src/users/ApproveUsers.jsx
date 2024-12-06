@@ -7,6 +7,7 @@ import {
   urlRegistrationRequests,
   urlUpdateRegistration,
 } from "../utils/endpoints";
+import "../styles/ApproveUsersStyle.css";
 
 export default function ApproveUsers() {
   const [users, setUsers] = useState([]);
@@ -122,7 +123,7 @@ export default function ApproveUsers() {
                     Accept
                   </button>
                   <button
-                    className="btn btn-danger"
+                    className="btn btn-danger-vote"
                     onClick={() => handleReject(user.id)}
                     disabled={loadingUserId === user.id}
                   >
