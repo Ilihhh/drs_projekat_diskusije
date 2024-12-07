@@ -1,5 +1,5 @@
-import eventlet  # type: ignore
-eventlet.monkey_patch()
+# import eventlet  # type: ignore
+# eventlet.monkey_patch()
 
 from flask import Flask  # type: ignore
 from .config import Config
