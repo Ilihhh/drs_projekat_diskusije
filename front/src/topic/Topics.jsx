@@ -3,7 +3,7 @@ import TopicCard from "./TopicCard";
 import "../styles/TopicStyle.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Swal from "sweetalert2";
+import BlackSwal from "../utils/BlackSwal";
 import {
   urlTopics,
 } from "../utils/endpoints";
@@ -62,7 +62,7 @@ const TopicList = () => {
   const handleDeleteSelected = () => {
     if (selectedTopics.length === 0) return;
   
-    Swal.fire({
+    BlackSwal.fire({
       title: `Are you sure you want to delete ${selectedTopics.length} topic(s)?`,
       text: "This will also delete all discussions associated with the selected topics.",
       icon: "warning",
@@ -77,7 +77,7 @@ const TopicList = () => {
             data: { ids: selectedTopics },
           })
           .then((response) => {
-            Swal.fire("Deleted!", response.data.message, "success");
+            BlackSwal.fire("Deleted!", response.data.message, "success");
             // Ažuriraj lokalno stanje nakon brisanja
             setTopics((prevTopics) =>
               prevTopics.filter((topic) => !selectedTopics.includes(topic.id))
@@ -85,7 +85,7 @@ const TopicList = () => {
             setSelectedTopics([]); // Resetuj selekciju
           })
           .catch((error) => {
-            Swal.fire(
+            BlackSwal.fire(
               "Error",
               error.response?.data?.error || "Failed to delete the selected topics.",
               "error"

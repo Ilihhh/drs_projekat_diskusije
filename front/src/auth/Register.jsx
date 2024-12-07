@@ -3,7 +3,7 @@ import axios from "axios";
 import RegisterEditForm from "../forms/RegisterEditForm";
 import { urlRegister } from "../utils/endpoints";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import BlackSwal from "../utils/BlackSwal"
 
 export default function Register() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function Register() {
         console.log("User registered successfully:", response.data);
 
         // SweetAlert potvrda za uspešnu registraciju
-        Swal.fire({
+        BlackSwal.fire({
           icon: "success",
           title: "Registration Successful",
           text: "Please wait for admin approval before logging in!",
@@ -36,7 +36,7 @@ export default function Register() {
         console.error("Server error:", error.response.data);
 
         // SweetAlert greška sa servera
-        Swal.fire({
+        BlackSwal.fire({
           icon: "error",
           title: "Registration Failed",
           text: error.response.data.message || "Please try again later.",
@@ -45,7 +45,7 @@ export default function Register() {
         console.error("Error during registration:", error);
 
         // SweetAlert generička greška
-        Swal.fire({
+        BlackSwal.fire({
           icon: "error",
           title: "Error",
           text: "There was an error during registration. Please try again later.",

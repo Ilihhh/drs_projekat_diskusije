@@ -2,27 +2,25 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { urlTopicCreate, urlTopicEdit, urlTopics } from "../utils/endpoints";
+import BlackSwal from "../utils/BlackSwal"
 
 function TopicForm() {
-  const [title, setTitle] = useState(""); // Polje za unos naziva teme
-  const [description, setDescription] = useState(""); // Polje za unos opisa
-  const [error, setError] = useState(""); // Polje za prikazivanje grešaka
-  const [isEditing, setIsEditing] = useState(false); // Da li uređujemo postojeću temu
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
-  const { id } = useParams(); // Preuzimanje ID-ja teme iz URL-a
-  const navigate = useNavigate(); // Za navigaciju na početnu stranicu nakon uspešnog editovanja
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  // Učitaj podatke teme sa servera ako postoji ID
   useEffect(() => {
     if (id) {
-      console.log("Fetching data for topic with ID:", id); // Proveri ID
-      setIsEditing(true); // Ako postoji ID, uređujemo postojeću temu
+      setIsEditing(true);
       axios
-        .get(`${urlTopics}/${id}`) // Poziv na backend da bi učitali podatke teme
+        .get(`${urlTopics}/${id}`)
         .then((response) => {
-          const { name, description } = response.data; // Primaš 'name' umesto 'title'
-          console.log("Topic data loaded:", response.data); // Proveri podatke
-          setTitle(name); // Postavljamo 'name' iz odgovora u 'title' state
+          const { name, description } = response.data;
+          setTitle(name);
           setDescription(description);
         })
         .catch((error) => {
@@ -40,22 +38,20 @@ function TopicForm() {
       return;
     }
 
-    // Pretpostavljamo da je ID korisnika dostupan, npr. sa autentifikacije
     const authorId = 1; // Zameni sa stvarnim ID-om korisnika
-    const creationDate = new Date().toISOString(); // Automatski dodeljujemo trenutni datum
+    const creationDate = new Date().toISOString();
 
     const topicData = {
       id: id,
-      name: title, // Šaljemo 'name' na back-end, jer server očekuje 'name', a ne 'title'
+      name: title,
       description,
       creation_date: creationDate,
       author_id: authorId,
     };
 
-    // Ako uređujemo postojeću temu, šaljemo PUT zahtev
     const apiCall = isEditing
-      ? axios.put(urlTopicEdit, topicData) // PUT zahtev za update
-      : axios.post(urlTopicCreate, topicData); // POST zahtev za kreiranje nove teme
+      ? axios.put(urlTopicEdit, topicData)
+      : axios.post(urlTopicCreate, topicData);
 
     apiCall
       .then((response) => {
@@ -63,13 +59,31 @@ function TopicForm() {
           isEditing ? "Topic updated:" : "Topic created:",
           response.data
         );
-        navigate("/topicmanagement"); // Preusmeravamo na početnu stranicu nakon uspešnog unosa
+        
+        // Dodato SweetAlert obaveštenje
+        BlackSwal.fire({
+          title: isEditing ? "Topic Updated!" : "Topic Created!",
+          text: isEditing 
+            ? "The topic has been successfully updated." 
+            : "The topic has been successfully created.",
+          icon: "success",
+        }).then(() => {
+          navigate("/topicmanagement"); // Preusmeravanje nakon zatvaranja modala
+        });
       })
       .catch((error) => {
         console.error(
           isEditing ? "Error updating topic:" : "Error creating topic:",
           error
         );
+        
+        // Dodato SweetAlert obaveštenje o grešci
+        BlackSwal.fire({
+          title: "Error",
+          text: "There was an error processing the topic.",
+          icon: "error",
+        });
+        
         setError("There was an error processing the topic");
       });
   };
@@ -87,9 +101,9 @@ function TopicForm() {
           <input
             type="text"
             className="form-control"
-            id="title" // Ovo je ID polja koje se koristi za unos naziva
-            value={title} // Ovdje se koristi title stanje
-            onChange={(e) => setTitle(e.target.value)} // Update stanje pri unosu
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             required
           />
         </div>

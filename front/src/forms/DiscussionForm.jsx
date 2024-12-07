@@ -6,7 +6,7 @@ import {
   urlEditDiscussion,
   urlTopics,
 } from "../utils/endpoints";
-import Swal from "sweetalert2";
+import BlackSwal from "../utils/BlackSwal";
 import "../styles/DiscussionStyle.css";
 
 function DiscussionForm() {
@@ -67,7 +67,7 @@ function DiscussionForm() {
 
   const handleSubmit = () => {
     if (!selectedTopic || !discussionTitle || !discussionText) {
-      Swal.fire({
+      BlackSwal.fire({
         icon: "warning",
         title: "Missing Information",
         text: "Please select a topic, enter a discussion title, and provide some discussion text.",
@@ -94,7 +94,7 @@ function DiscussionForm() {
           response.data
         );
 
-        Swal.fire({
+        BlackSwal.fire({
           icon: "success",
           title: isEditMode ? "Discussion Updated!" : "Discussion Created!",
           text: isEditMode
@@ -108,7 +108,7 @@ function DiscussionForm() {
       .catch((error) => {
         console.error("Error:", error);
 
-        Swal.fire({
+        BlackSwal.fire({
           icon: "error",
           title: "Error",
           text: "There was an error processing your request. Please try again later.",
