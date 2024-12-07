@@ -6,8 +6,7 @@ import { saveToken } from "./handleJWT";
 import { useContext } from "react";
 import AuthenticationContext from "./AuthenticationContext";
 import { getClaims } from "./handleJWT";
-import Swal from "sweetalert2"; // Import SweetAlert
-
+import BlackSwal from "../utils/BlackSwal";
 export default function Login() {
   const { update } = useContext(AuthenticationContext);
   const navigate = useNavigate();
@@ -29,7 +28,7 @@ export default function Login() {
       update(getClaims());
 
       // SweetAlert potvrda o uspehu
-      Swal.fire({
+      BlackSwal.fire({
         icon: "success",
         title: "Login Successful",
         text: "Welcome back!",
@@ -42,7 +41,7 @@ export default function Login() {
       console.error("Error during login: ", error);
 
       // SweetAlert za grešku prilikom logovanja
-      Swal.fire({
+      BlackSwal.fire({
         icon: "error",
         title: "Login Failed",
         text:

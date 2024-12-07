@@ -1,6 +1,9 @@
 /* Generalna podešavanja */
 body {
-  background-color: #121212;
+  background-color: #2c2a2a;
+  opacity: 0.8;
+  background-image: radial-gradient(circle at center center, #8e8e8f, #2c2a2a), repeating-radial-gradient(circle at center center, #8e8e8f, #8e8e8f, 10px, transparent 20px, transparent 10px);
+  background-blend-mode: multiply;
   font-family: "Arial", sans-serif;
   margin-top: 70px;
 }

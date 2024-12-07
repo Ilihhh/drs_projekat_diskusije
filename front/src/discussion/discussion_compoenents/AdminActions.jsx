@@ -21,6 +21,10 @@ export default function AdminActions({ discussionId, title, text, topic, onDelet
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
+      background: "#343a40",
+      color: "#fff",
+      confirmButtonColor: "#0d6efd",
+      cancelButtonColor: "#d33",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -34,7 +38,14 @@ export default function AdminActions({ discussionId, title, text, topic, onDelet
           );
 
           if (response.status === 200) {
-            Swal.fire("Deleted!", response.data.message, "success").then(() => {
+            Swal.fire({
+              title: "Deleted!",
+              text: response.data.message,
+              icon: "success",
+              background: "#343a40",
+              color: "#fff",
+              confirmButtonColor: "#0d6efd",
+            }).then(() => {
               if (onDelete) {
                 onDelete(discussionId);
               }
@@ -42,11 +53,14 @@ export default function AdminActions({ discussionId, title, text, topic, onDelet
           }
         } catch (error) {
           console.error("Error deleting discussion:", error.response || error);
-          Swal.fire(
-            "Error",
-            "Failed to delete discussion. Please try again.",
-            "error"
-          );
+          Swal.fire({
+            title: "Error",
+            text: "Failed to delete discussion. Please try again.",
+            icon: "error",
+            background: "#343a40",
+            color: "#fff",
+            confirmButtonColor: "#d33",
+          });
         }
       }
     });

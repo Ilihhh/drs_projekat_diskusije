@@ -1,10 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/TopicStyle.css";
-import Swal from "sweetalert2";
 import axios from "axios";
 import {urlTopicDeleteWithDiscussions} from "../utils/endpoints";
-
+import BlackSwal from "../utils/BlackSwal";
 const TopicCard = ({ topic, onDelete, onSelect, selected }) => {
   const navigate = useNavigate();
 
@@ -17,7 +16,7 @@ const TopicCard = ({ topic, onDelete, onSelect, selected }) => {
   const handleDelete = (e) => {
     e.stopPropagation();
   
-    Swal.fire({
+    BlackSwal.fire({
       title: `Are you sure you want to delete "${topic.name}"?`,
       text: "This will also delete all discussions associated with this topic.",
       icon: "warning",
@@ -32,25 +31,21 @@ const TopicCard = ({ topic, onDelete, onSelect, selected }) => {
             data: { id: topic.id, delete_discussions: true },
           })
           .then((response) => {
-            Swal.fire("Deleted!", response.data.message, "success");
+            BlackSwal.fire("Deleted!", response.data.message, "success");
             onDelete(topic.id); // Samo obaveštava `TopicList` o brisanju
           })
           .catch((error) => {
-            Swal.fire(
+            BlackSwal.fire(
               "Error",
               error.response?.data?.error || "Failed to delete the topic and discussions.",
               "error"
             );
           });
       } else {
-        Swal.fire("Cancelled", "The topic was not deleted.", "info");
+        BlackSwal.fire("Cancelled", "The topic was not deleted.", "info");
       }
     });
   };
-  
-  
-  
-  
   
 
 

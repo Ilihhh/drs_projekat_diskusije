@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Swal from "sweetalert2";
 import Loading from "../utils/Loading";
 import {
   urlRegistrationRequests,
@@ -8,6 +7,7 @@ import {
 } from "../utils/endpoints";
 import "../styles/ApproveUsersStyle.css";
 import socket from "../utils/websocket";
+import BlackSwal from "../utils/BlackSwal";
 
 export default function ApproveUsers() {
   const [users, setUsers] = useState([]);
@@ -47,13 +47,13 @@ export default function ApproveUsers() {
         status: "approved",
       });
       setUsers(users.filter((user) => user.id !== userId));
-      Swal.fire({
+      BlackSwal.fire({
         icon: "success",
         title: "User Accepted",
         text: `The user has been successfully accepted.`,
       });
     } catch (err) {
-      Swal.fire({
+      BlackSwal.fire({
         icon: "error",
         title: "Error",
         text: "Failed to accept user.",
@@ -70,13 +70,13 @@ export default function ApproveUsers() {
         status: "rejected",
       });
       setUsers(users.filter((user) => user.id !== userId));
-      Swal.fire({
+      BlackSwal.fire({
         icon: "success",
         title: "User Rejected",
         text: `The user has been successfully rejected.`,
       });
     } catch (err) {
-      Swal.fire({
+      BlackSwal.fire({
         icon: "error",
         title: "Error",
         text: "Failed to reject user.",

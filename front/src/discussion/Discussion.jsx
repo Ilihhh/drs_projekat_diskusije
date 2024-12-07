@@ -6,7 +6,6 @@ import AuthenticationContext from "../auth/AuthenticationContext";
 import CommentSection from "./discussion_compoenents/Comment";
 import AdminActions from "./discussion_compoenents/AdminActions";
 import DiscussionHeader from "./discussion_compoenents/DiscussionHeader";
-import Authorized from "../auth/Authorize";
 
 export default function Discussion({
   title,
