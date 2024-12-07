@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import { urlTopicCreate, urlTopicEdit } from "../utils/endpoints";
+import { urlTopicCreate, urlTopicEdit, urlTopics } from "../utils/endpoints";
 
 function TopicForm() {
   const [title, setTitle] = useState(""); // Polje za unos naziva teme
@@ -18,7 +18,7 @@ function TopicForm() {
       console.log("Fetching data for topic with ID:", id); // Proveri ID
       setIsEditing(true); // Ako postoji ID, uređujemo postojeću temu
       axios
-        .get(`/topics/${id}`) // Poziv na backend da bi učitali podatke teme
+        .get(`${urlTopics}/${id}`) // Poziv na backend da bi učitali podatke teme
         .then((response) => {
           const { name, description } = response.data; // Primaš 'name' umesto 'title'
           console.log("Topic data loaded:", response.data); // Proveri podatke
