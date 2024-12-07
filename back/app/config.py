@@ -1,7 +1,8 @@
-import os
-from dotenv import load_dotenv  # type: ignore
 import eventlet  # type: ignore
 eventlet.monkey_patch()
+import os
+from dotenv import load_dotenv  # type: ignore
+
 
 load_dotenv()  # Učitavanje varijabli iz .env fajla
 
