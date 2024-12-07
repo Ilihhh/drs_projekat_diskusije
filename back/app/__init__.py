@@ -21,7 +21,7 @@ def create_app():
     CORS(app)  # Add CORS support to all routes
 
     # Initialize SocketIO with Flask app
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
 
     # Register application routes
     initialize_routes(app)
