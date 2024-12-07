@@ -12,6 +12,16 @@
   flex-direction: column;
   justify-content: space-between;
   transition: all 0.3s ease-in-out;
+  word-wrap: break-word; /* Razlama preduge reči */
+  overflow-wrap: break-word; /* Podrška za savremene pretraživače */
+}
+
+.topic-card p {
+  white-space: pre-wrap; /* Omogućava prelome unutar reči i zadržava višelinijski tekst */
+  word-wrap: break-word; /* Razlama preduge reči */
+  overflow-wrap: break-word; /* Modernija podrška za razlamanje */
+  max-height: 300px; /* Ograničenje visine ako je potrebno */
+  overflow: auto; /* Dodaje skrolovanje ako je sadržaj predug */
 }
 
 /* Promena boje kada je kartica selektovana */
