@@ -1,5 +1,3 @@
-# import eventlet  # type: ignore
-# eventlet.monkey_patch()
 from .config import Config
 from flask import Flask  # type: ignore
 from .database import db, migrate
@@ -20,7 +18,7 @@ def create_app():
     CORS(app)  # Add CORS support to all routes
 
     # Initialize SocketIO with Flask app
-    socketio.init_app(app, cors_allowed_origins="*", async_mode="eventlet")
+    socketio.init_app(app, cors_allowed_origins="*", async_mode="gevent")
 
     # Register application routes
     initialize_routes(app)
