@@ -11,4 +11,4 @@ flask_socketio
 flask_mail
 pytz
 gunicorn
-eventlet
+gevent

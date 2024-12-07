@@ -3,6 +3,7 @@ from ..services.user_service import UserService
 from flask import Blueprint, jsonify, request  # type: ignore
 from ..dtos.user_schema import UserSchema
 from ..models.user import User
+from sqlalchemy.exc import IntegrityError # type: ignore
 
 users_blueprint = Blueprint('users', __name__)
 
@@ -21,11 +22,24 @@ def register():
     
     try:
         user = UserService.create_user(data)
-        
-        # Ne generišemo token, samo vraćamo potvrdu o primljenom zahtevu
         return jsonify({"message": "Registration request received. Awaiting approval."}), 201
+
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"errors": {"general": str(e)}}), 400  # Vrati generalnu grešku
+    
+    except IntegrityError as e:
+        errors = {}
+        if 'email' in str(e.orig):
+            errors['email'] = "Email is already registered"
+        if 'username' in str(e.orig):
+            errors['username'] = "Username is already taken"
+        
+        if errors:
+            return jsonify({"errors": errors}), 400
+        
+        return jsonify({"errors": {"general": "An unknown error occurred"}}), 400
+
+
 
 
 @users_blueprint.route('/login', methods=['POST'])
