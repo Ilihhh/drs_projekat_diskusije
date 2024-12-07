@@ -138,3 +138,12 @@ class DiscussionService:
         except Exception as e:
             db.session.rollback()
             raise ValueError(f"An error occurred while deleting the discussion: {str(e)}")
+        
+
+    @staticmethod
+    def get_discussion_by_id(discussion_id):
+  
+        discussion = Discussion.query.get(discussion_id)
+        if not discussion:
+            raise ValueError("Discussion not found.")
+        return discussion
