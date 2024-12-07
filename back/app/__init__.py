@@ -1,8 +1,7 @@
 # import eventlet  # type: ignore
 # eventlet.monkey_patch()
-
-from flask import Flask  # type: ignore
 from .config import Config
+from flask import Flask  # type: ignore
 from .database import db, migrate
 from .routes import initialize_routes
 from flask_cors import CORS  # type: ignore
