@@ -38,6 +38,8 @@ export default function Discussion({
     return claims.filter((x) => x.name === "username")[0]?.value;
   }
 
+  const isOwner = getUsername() === author.username;
+
   function getIsAdmin() {
     return claims.some(
       (claim) => claim.name === "role" && claim.value === "admin"
@@ -123,18 +125,15 @@ export default function Discussion({
       />
 
       {/* Admin Functionalities */}
-      <Authorized
-        role="admin"
-        authorized={
-          <AdminActions
-            discussionId={discussionId}
-            title={title}
-            text={text}
-            topic={topic}
-            onDelete={onDelete}
-          />
-        }
-      />
+      {(getIsAdmin() || isOwner) && (
+        <AdminActions
+          discussionId={discussionId}
+          title={title}
+          text={text}
+          topic={topic}
+          onDelete={onDelete}
+        />
+      )}
     </div>
   );
 }

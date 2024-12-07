@@ -58,27 +58,33 @@ def create_discussion(current_user):
     
 @discussions_blueprint.route('/edit-discussion', methods=['PUT'])
 @token_required
-@role_required('admin')  # You can adjust this depending on the required role
 def edit_discussion(current_user):
-    data = request.get_json()  # Get JSON data from the request
+    data = request.get_json()  
     
     try:
-        # Call the service method to handle the editing logic
-        discussion = DiscussionService.edit_discussion(data)
+
+        discussion = DiscussionService.get_discussion_by_id(data.get('id'))
         
-        # If the discussion is successfully updated, return a success message
-        if discussion:
+        # Provera prava pristupa: samo autor diskusije ili admin može da uređuje
+        if current_user.role != 'admin' and discussion.author_id != current_user.id:
+            return jsonify({"error": "You do not have permission to edit this discussion."}), 403
+
+   
+        updated_discussion = DiscussionService.edit_discussion(data)
+        
+       
+        if updated_discussion:
             return jsonify({"message": "Discussion edited successfully!"}), 200
         else:
             return jsonify({"error": "Failed to edit discussion."}), 500
     
     except ValueError as e:
-        # If the service raises a ValueError, it means validation failed (e.g., missing fields, duplicates)
-        return jsonify({"error": str(e)}), 400  # Return 400 Bad Request for validation issues
+       
+        return jsonify({"error": str(e)}), 400  
     
     except Exception as e:
-        # Catch any other unexpected errors and return a generic server error message
-        return jsonify({"error": "An internal error occurred."}), 500
+       
+        return jsonify({"error": "An internal error occurred.", "details": str(e)}), 500
     
 @discussions_blueprint.route('/search-discussions', methods=['POST'])
 def search_discussions():
@@ -101,11 +107,21 @@ def search_discussions():
 
 @discussions_blueprint.route('/delete-discussion/<int:discussion_id>', methods=['DELETE'])
 @token_required
-@role_required('admin')
 def delete_discussion(current_user, discussion_id):
     try:
+      
+        discussion = DiscussionService.get_discussion_by_id(discussion_id)
+        if not discussion:
+            return jsonify({"error": "Discussion not found"}), 404
+
+        # Proveri da li je korisnik admin ili vlasnik diskusije
+        if current_user.role != 'admin' and discussion.author_id != current_user.id:
+            return jsonify({"error": "You are not authorized to delete this discussion"}), 403
+
+       
         DiscussionService.delete_discussion(discussion_id)
         return jsonify({"message": "Discussion, comments, and reactions deleted successfully"}), 200
+
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
