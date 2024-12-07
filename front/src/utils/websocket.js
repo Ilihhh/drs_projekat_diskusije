@@ -1,7 +1,7 @@
 // src/socket.js
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // URL backend servera
+const socket = io("https://drs-projekat-diskusije.onrender.com"); // URL backend servera
 
 socket.on("connect", () => {
   console.log("Connected to server");
