@@ -9,6 +9,7 @@ import jwt  # type: ignore
 from .email_service import EmailService
 from ..socketio import socketio
 from ..dtos.user_schema import UserSchema
+from sqlalchemy.exc import IntegrityError # type: ignore
 
 class UserService:
 
@@ -24,7 +25,21 @@ class UserService:
         return token
     @staticmethod
     def create_user(data):
-        # Validacija i kreiranje korisnika (već implementirano)
+        """Kreiranje korisnika uz proveru jedinstvenosti email-a i korisničkog imena."""
+        
+        # 1. Provera da li već postoji korisnik sa istim email-om ili korisničkim imenom
+        existing_user = User.query.filter(
+            (User.email == data['email']) | 
+            (User.username == data['username'])
+        ).first()
+
+        if existing_user:
+            if existing_user.email == data['email']:
+                raise ValueError("Email je već u upotrebi.")
+            elif existing_user.username == data['username']:
+                raise ValueError("Korisničko ime je već u upotrebi.")
+
+        # 2. Kreiranje novog korisnika
         user = User(
             first_name=data['first_name'],
             last_name=data['last_name'],
@@ -38,22 +53,28 @@ class UserService:
             status='pending'  # Pretpostavka da je inicijalni status 'pending'
         )
         
-        # Sačuvaj korisnika u bazi
-        db.session.add(user)
-        db.session.commit()
+        try:
+            # 3. Sačuvaj korisnika u bazi
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            raise ValueError("Email ili korisničko ime već postoji.")
+        except Exception as e:
+            db.session.rollback()
+            raise ValueError("Došlo je do greške prilikom kreiranja korisnika.")
 
-        # Serijalizacija podataka korisnika pomoću šeme
+        # 4. Serijalizacija podataka korisnika pomoću šeme
         user_schema = UserSchema()
         serialized_user = user_schema.dump(user)
 
-        # Emituj događaj za novog korisnika
+        # 5. Emituj događaj za novog korisnika
         try:
             socketio.emit('new-user-registered', serialized_user)
         except Exception as e:
             print(f"SocketIO emit failed: {e}")
 
         return user
-
 
     @staticmethod
     def notify_admins_of_first_login(user):
@@ -160,6 +181,12 @@ class UserService:
         if not user:
             return None, "User not found"
         
+        # Provera da li korisničko ime već postoji pre nego što se dodeli
+        if data.get('username'):
+            existing_user = User.query.filter_by(username=data['username']).first()
+            if existing_user and existing_user.id != user.id:
+                return None, "Username already exists"
+        
         # Ažuriramo podatke korisnika
         user.first_name = data.get('first_name', user.first_name)
         user.last_name = data.get('last_name', user.last_name)
@@ -174,12 +201,6 @@ class UserService:
         new_password = data.get('password')
         if new_password and new_password.strip():
             user.password = generate_password_hash(new_password)
-
-        # Provera da li korisničko ime već postoji
-        if data.get('username'):
-            existing_user = User.query.filter_by(username=data['username']).first()
-            if existing_user and existing_user.id != user.id:
-                return None, "Username already exists"
 
         # Čuvanje promena u bazi
         try:

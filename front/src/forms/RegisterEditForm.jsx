@@ -3,7 +3,6 @@ import * as Yup from "yup";
 import TextField from "./TextField";
 import Button from "../utils/Button";
 import { Link } from "react-router-dom";
-import BlackSwal from "../utils/BlackSwal";
 import "../styles/LoginRegisterStyle.css";
 
 export default function RegisterEditForm(props) {
@@ -15,31 +14,8 @@ export default function RegisterEditForm(props) {
           // Poziv funkcije za registraciju ili ažuriranje profila
           await props.onSubmit(values);
 
-          // SweetAlert potvrda o uspehu
-          if (props.edit) {
-            BlackSwal.fire({
-              icon: "success",
-              title: "Profile Updated",
-              text: "Your profile has been updated successfully!",
-              confirmButtonText: "OK",
-            });
-          } else {
-            BlackSwal.fire({
-              icon: "success",
-              title: "Registration Successful",
-              text: "Please wait for admin approval before logging in!",
-              confirmButtonText: "OK",
-            });
-          }
         } catch (error) {
           console.error("Error during submission:", error);
-
-          // SweetAlert za grešku
-          BlackSwal.fire({
-            icon: "error",
-            title: props.edit ? "Update Failed" : "Registration Failed",
-            text: "An error occurred. Please try again.",
-          });
         } finally {
           setSubmitting(false);
         }

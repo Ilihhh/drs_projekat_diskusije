@@ -15,4 +15,4 @@ COPY . /app
 EXPOSE 5000
 
 # Pokreni aplikaciju koristeći Gunicorn, 
-CMD ["gunicorn", "-k", "eventlet", "-w 1",  "-b", "0.0.0.0:5000", "run:app"]                                   
+CMD ["gunicorn", "-k", "gevent", "-w 1",  "-b", "0.0.0.0:5000", "run:app"]                                   
