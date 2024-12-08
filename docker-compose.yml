@@ -24,7 +24,7 @@ services:
     build:
       context: ./front
     ports:
-      - "3000:3000"  # Mapiranje React development server porta
+      - "3000:80"  # Mapiranje React development server porta
     stdin_open: true
     tty: true
 
