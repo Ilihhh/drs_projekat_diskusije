@@ -1,26 +1,29 @@
 # Koristimo Node.js kao osnovni imidž za buildovanje React aplikacije
-FROM node:20
+FROM node:20 AS build
 
 # Postavi radni direktorijum
 WORKDIR /app
 
-# Kopiraj package.json i package-lock.json u radni direktorijum
+# Kopiraj package.json i package-lock.json
 COPY package.json package-lock.json ./
 
 # Instaliraj zavisnosti
 RUN npm install
 
-# Kopiraj ceo frontend kod u radni direktorijum
+# Kopiraj ceo frontend kod
 COPY . .
 
 # Build aplikacije za produkciju
 RUN npm run build
 
-# Koristimo `serve` paket za produkcijsko hostovanje aplikacije
-RUN npm install -g serve
+# 2. FAZA - Koristimo nginx za produkcijsko hostovanje
+FROM nginx:alpine
 
-# Izloži port 3000 za komunikaciju
-EXPOSE 3000
+# Kopiraj build iz prethodne faze u nginx public folder
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Pokreni aplikaciju koristeći `serve` (serviranje build-ovane aplikacije)
-CMD ["serve", "-s", "build", "-l", "3000"]
+# Expose port 80
+EXPOSE 80
+
+# Pokreni nginx
+CMD ["nginx", "-g", "daemon off;"]

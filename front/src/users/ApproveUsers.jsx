@@ -34,9 +34,9 @@ export default function ApproveUsers() {
       setUsers((prevUsers) => [...prevUsers, data]);
     });
 
-    return () => {
-      socket.off("new-user-registered");
-    };
+    // return () => {
+    //   socket.off("new-user-registered");
+    // };
   }, []);
   
 
