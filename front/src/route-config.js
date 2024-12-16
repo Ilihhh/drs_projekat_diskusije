@@ -9,6 +9,7 @@ import TopicForm from "./forms/TopicForm";
 import EditUser from "./users/EditUser";
 import UserInfo from "./users/UserInfo";
 import Topics from "./topic/Topics";
+import RegisteredUsers from "./users/RegisteredUsers";
 
 const routes = [
   { path: "/approveusers", element: ApproveUsers, isAdmin: true },
@@ -24,6 +25,7 @@ const routes = [
   { path: "/edit-topic/:id", element: TopicForm, isAdmin: true },
   { path: "/edituser", element: EditUser, isLoggedIn: true },
   { path: "/userinfo", element: UserInfo, isLoggedIn: true },
+  { path: "/registeredusers", element: RegisteredUsers, isAdmin: true},
 ];
 
 export default routes;
