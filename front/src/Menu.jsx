@@ -56,6 +56,11 @@ export default function Menu() {
                     </NavLink>
                   </li>
                   <li className="nav-item">
+                    <NavLink className="nav-link" to="/registeredusers">
+                      Registered Users
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
                     <NavLink className="nav-link" to="/topicmanagement">
                       Topic Management
                     </NavLink>

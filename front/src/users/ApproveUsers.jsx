@@ -34,9 +34,9 @@ export default function ApproveUsers() {
       setUsers((prevUsers) => [...prevUsers, data]);
     });
 
-    return () => {
-      socket.off("new-user-registered");
-    };
+    // return () => {
+    //   socket.off("new-user-registered");
+    // };
   }, []);
   
 
@@ -105,6 +105,7 @@ export default function ApproveUsers() {
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
+                <td>{user.username}</td>
                 <td>{user.first_name}</td>
                 <td>{user.last_name}</td>
                 <td>{user.email}</td>
