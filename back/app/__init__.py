@@ -1,8 +1,5 @@
-from gevent import monkey # type: ignore
-monkey.patch_all()
-
-from flask import Flask  # type: ignore
 from .config import Config
+from flask import Flask  # type: ignore
 from .database import db, migrate
 from .routes import initialize_routes
 from flask_cors import CORS  # type: ignore
@@ -21,7 +18,7 @@ def create_app():
     CORS(app)  # Add CORS support to all routes
 
     # Initialize SocketIO with Flask app
-    socketio.init_app(app, cors_allowed_origins="*")
+    socketio.init_app(app, cors_allowed_origins="*", async_mode="gevent")
 
     # Register application routes
     initialize_routes(app)
