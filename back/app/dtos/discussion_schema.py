@@ -8,7 +8,7 @@ class DiscussionSchema(Schema):
     id = fields.Int(dump_only=True)
     title = fields.Str(required=True)
     text = fields.Str(required=True)
-    creation_date = fields.DateTime(dump_only=True, default=datetime.utcnow)
+    creation_date = fields.DateTime(dump_only=True, dump_default=datetime.utcnow)
     author_id = fields.Int(required=True)
     topic_id = fields.Int(required=True)
     comments = fields.List(fields.Nested(CommentSchema))  # Direktna referenca na komentare
