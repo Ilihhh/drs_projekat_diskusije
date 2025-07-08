@@ -1,7 +1,9 @@
 // src/socket.js
 import { io } from "socket.io-client";
 
-const socket = io("https://drs-projekat-diskusije-9n3l.onrender.com");
+const baseURL = process.env.REACT_APP_API_URL;
+
+const socket = io(baseURL);
 
 
 socket.on("connect", () => {
